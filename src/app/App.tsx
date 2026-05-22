@@ -10,6 +10,8 @@ import { PredmetiPage } from '@/app/components/dashboard/PredmetiPage';
 import { OdeljenjaPage } from '@/app/components/dashboard/OdeljenjaPage';
 import { RasporedPage } from '@/app/components/dashboard/RasporedPage';
 import { ZamenePage } from '@/app/components/dashboard/ZamenePage';
+import { PlaceholderPage } from '@/app/components/dashboard/PlaceholderPage';
+import { Repeat, FileText, ClipboardList, BarChart3, Shield } from 'lucide-react';
 
 /** Preusmerava ulogovanog korisnika na njegovu pocetnu rutu. */
 function HomeRedirect() {
@@ -97,11 +99,98 @@ export default function App() {
           </ProtectedRoute>
         }
       />
-      {/* TemePage, NastavneJedinicePage i PredmetiOdeljenjaPage ce biti integrisani
-          kao child rute / dijalozi unutar PredmetiPage i OdeljenjaPage u sledecem koraku.
-          Trenutno zahtevaju props koji dolaze iz parent komponente. */}
-
-      {/* TODO: rotacija, godisnji + operativni planovi, PP — dolaze u sledecim koracima */}
+      {/* Rotacija, planovi, PP — placeholderi dok se UI ne dovrsi */}
+      <Route
+        path="/rotacija"
+        element={
+          <ProtectedRoute>
+            <PlaceholderPage
+              title="Rotacija grupa"
+              description="Generisanje balansiranog ciklusa za grupne casove (vezbe) — C(N,K) algoritam"
+              icon={Repeat}
+              endpoints={[
+                'POST   /api/v1/rotacija',
+                'POST   /api/v1/rotacija/{id}/generisi',
+                'GET    /api/v1/rotacija',
+                'PUT    /api/v1/rotacija/nedelje/{id}',
+              ]}
+            />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/planovi/godisnji"
+        element={
+          <ProtectedRoute>
+            <PlaceholderPage
+              title="Godisnji planovi"
+              description="Globalni plan rada po predmetu — generise Word/PDF i salje na mail skole"
+              icon={FileText}
+              endpoints={[
+                'POST   /api/v1/planovi/godisnji',
+                'GET    /api/v1/planovi/godisnji/me',
+                'GET    /api/v1/planovi/godisnji/svi',
+                'GET    /api/v1/planovi/godisnji/{id}/download/word',
+                'GET    /api/v1/planovi/godisnji/{id}/download/pdf',
+              ]}
+            />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/planovi/operativni"
+        element={
+          <ProtectedRoute>
+            <PlaceholderPage
+              title="Operativni planovi"
+              description="Mesecni operativni plan rada — 8-kolonska tabela casova"
+              icon={ClipboardList}
+              endpoints={[
+                'POST   /api/v1/planovi/operativni',
+                'POST   /api/v1/planovi/operativni/{id}/kloniraj',
+                'GET    /api/v1/planovi/operativni/me',
+                'GET    /api/v1/planovi/operativni/{id}/download/word',
+                'GET    /api/v1/planovi/operativni/{id}/download/pdf',
+              ]}
+            />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/pp/dashboard"
+        element={
+          <ProtectedRoute allowedRoles={['PP_SLUZBA', 'DIREKTOR', 'KOORDINATOR']}>
+            <PlaceholderPage
+              title="PP dashboard"
+              description="Pregled planova, izvestaja i statistike skole"
+              icon={BarChart3}
+              endpoints={[
+                'GET    /api/v1/pp/dashboard',
+                'GET    /api/v1/pp/statistika',
+                'GET    /api/v1/pp/eksport/excel',
+                'POST   /api/v1/pp/izvestaj',
+              ]}
+            />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/super-dashboard"
+        element={
+          <ProtectedRoute allowedRoles={['SUPER_ADMIN']}>
+            <PlaceholderPage
+              title="Super admin"
+              description="Kreiranje skola i njihovih koordinatora"
+              icon={Shield}
+              endpoints={[
+                'GET    /api/v1/super/skole',
+                'POST   /api/v1/super/skole',
+                'POST   /api/v1/super/skole/{id}/koordinator',
+              ]}
+            />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Sve nepoznato vraca na home redirect */}
       <Route path="*" element={<HomeRedirect />} />

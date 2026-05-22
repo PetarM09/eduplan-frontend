@@ -1,21 +1,8 @@
-import { useState } from 'react';
-import { Sidebar } from './Sidebar';
-import { TopBar } from './TopBar';
+import { useEffect, useMemo, useState } from 'react';
+import { AppLayout, PageHeader } from '@/app/components/layout/AppLayout';
 import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
-import { 
-  BookOpen, 
-  Plus, 
-  Pencil, 
-  Trash2, 
-  List,
-  Search,
-  ArrowLeft,
-  BookText,
-  MoreVertical,
-  ChevronRight
-} from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -25,337 +12,368 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/app/components/ui/dialog';
-import { TemePage } from './TemePage';
-import { NastavneJedinicePage } from './NastavneJedinicePage';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/app/components/ui/select';
+import {
+  AlertCircle,
+  BookOpen,
+  Loader2,
+  Plus,
+  School,
+  Search,
+  ShieldOff,
+} from 'lucide-react';
+import { api, ApiError } from '@/lib/api';
+import type {
+  KreirajPredmetRequest,
+  OdeljenjeResponse,
+  PredmetResponse,
+} from '@/lib/types';
 
-interface Predmet {
-  id: number;
-  naziv: string;
-  brojTema?: number;
-  brojUcenika?: number;
-}
-
-interface Tema {
-  id: number;
-  razred: 1 | 2 | 3 | 4;
-  naziv: string;
-  brojCasova: number;
-  predmetId: number;
-}
-
-const mockPredmeti: Predmet[] = [
-  { id: 1, naziv: 'Matematika', brojTema: 12, brojUcenika: 145 },
-  { id: 2, naziv: 'Srpski jezik', brojTema: 10, brojUcenika: 145 },
-  { id: 3, naziv: 'Engleski jezik', brojTema: 8, brojUcenika: 120 },
-  { id: 4, naziv: 'Istorija', brojTema: 15, brojUcenika: 145 },
-  { id: 5, naziv: 'Geografija', brojTema: 11, brojUcenika: 145 },
-  { id: 6, naziv: 'Fizika', brojTema: 14, brojUcenika: 90 },
-  { id: 7, naziv: 'Hemija', brojTema: 13, brojUcenika: 90 },
-  { id: 8, naziv: 'Biologija', brojTema: 12, brojUcenika: 90 },
-];
-
-type View = 'predmeti' | 'teme' | 'nastavne-jedinice';
+const PRAZNA_FORMA: KreirajPredmetRequest = {
+  naziv: '',
+  razred: null,
+  fondCasova: null,
+};
 
 export function PredmetiPage() {
-  const [predmeti, setPredmeti] = useState<Predmet[]>(mockPredmeti);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [newPredmet, setNewPredmet] = useState('');
-  const [editingPredmet, setEditingPredmet] = useState<Predmet | null>(null);
-  const [selectedPredmet, setSelectedPredmet] = useState<Predmet | null>(null);
-  const [selectedTema, setSelectedTema] = useState<Tema | null>(null);
-  const [currentView, setCurrentView] = useState<View>('predmeti');
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [predmeti, setPredmeti] = useState<PredmetResponse[]>([]);
+  const [odeljenja, setOdeljenja] = useState<OdeljenjeResponse[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleAddPredmet = () => {
-    if (newPredmet.trim()) {
-      const novPredmet: Predmet = {
-        id: Math.max(...predmeti.map(p => p.id), 0) + 1,
-        naziv: newPredmet.trim(),
-        brojTema: 0,
-        brojUcenika: 0
-      };
-      setPredmeti([...predmeti, novPredmet]);
-      setNewPredmet('');
-      setIsAddDialogOpen(false);
+  const [pretraga, setPretraga] = useState('');
+  const [filterRazred, setFilterRazred] = useState<'sve' | '1' | '2' | '3' | '4'>('sve');
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [forma, setForma] = useState<KreirajPredmetRequest>(PRAZNA_FORMA);
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  // Dijalog za dodelu odeljenja konkretnom predmetu
+  const [dodelaPredmet, setDodelaPredmet] = useState<PredmetResponse | null>(null);
+  const [dodelaIzbor, setDodelaIzbor] = useState<Set<string>>(new Set());
+
+  const ucitaj = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [p, o] = await Promise.all([
+        api.get<PredmetResponse[]>('/predmeti/svi'),
+        api.get<OdeljenjeResponse[]>('/odeljenja'),
+      ]);
+      setPredmeti(p);
+      setOdeljenja(o);
+    } catch (e) {
+      setError(e instanceof ApiError ? e.message : 'Greska pri ucitavanju');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleEditPredmet = () => {
-    if (editingPredmet && editingPredmet.naziv.trim()) {
-      setPredmeti(predmeti.map(p => 
-        p.id === editingPredmet.id ? editingPredmet : p
-      ));
-      setEditingPredmet(null);
-      setIsEditDialogOpen(false);
+  useEffect(() => {
+    ucitaj();
+  }, []);
+
+  const filtrirani = useMemo(() => {
+    const q = pretraga.trim().toLowerCase();
+    return predmeti.filter((p) => {
+      if (q && !p.naziv.toLowerCase().includes(q)) return false;
+      if (filterRazred !== 'sve' && String(p.razred) !== filterRazred) return false;
+      return true;
+    });
+  }, [predmeti, pretraga, filterRazred]);
+
+  const handleDodaj = async () => {
+    setFormError(null);
+    if (!forma.naziv.trim()) {
+      setFormError('Naziv predmeta je obavezan');
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const novi = await api.post<PredmetResponse>('/predmeti', forma);
+      setPredmeti((prev) => [...prev, novi]);
+      setForma(PRAZNA_FORMA);
+      setDialogOpen(false);
+    } catch (e) {
+      setFormError(e instanceof ApiError ? e.message : 'Greska pri kreiranju predmeta');
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const handleDeletePredmet = (id: number) => {
-    setPredmeti(predmeti.filter(p => p.id !== id));
+  const handleDeaktiviraj = async (p: PredmetResponse) => {
+    if (!confirm(`Deaktivirati predmet "${p.naziv}"?`)) return;
+    try {
+      await api.delete(`/predmeti/${p.id}`);
+      setPredmeti((prev) => prev.map((x) => (x.id === p.id ? { ...x, aktivan: false } : x)));
+    } catch (e) {
+      alert(e instanceof ApiError ? e.message : 'Greska pri deaktivaciji');
+    }
   };
 
-  const handleOpenTeme = (predmet: Predmet) => {
-    setSelectedPredmet(predmet);
-    setCurrentView('teme');
+  const otvoriDodelu = (p: PredmetResponse) => {
+    setDodelaPredmet(p);
+    setDodelaIzbor(new Set(p.odeljenja.map((o) => o.id)));
   };
 
-  const handleBackToPredmeti = () => {
-    setCurrentView('predmeti');
-    setSelectedPredmet(null);
-    setSelectedTema(null);
+  const sacuvajDodelu = async () => {
+    if (!dodelaPredmet) return;
+    try {
+      const azurirano = await api.put<PredmetResponse>(
+        `/predmeti/${dodelaPredmet.id}/odeljenja`,
+        { odeljenjaIds: Array.from(dodelaIzbor) }
+      );
+      setPredmeti((prev) => prev.map((x) => (x.id === azurirano.id ? azurirano : x)));
+      setDodelaPredmet(null);
+    } catch (e) {
+      alert(e instanceof ApiError ? e.message : 'Greska pri dodeli odeljenja');
+    }
   };
 
-  const handleBackToTeme = () => {
-    setCurrentView('teme');
-    setSelectedTema(null);
+  const toggleOdeljenje = (id: string) => {
+    setDodelaIzbor((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   };
-
-  const handleOpenNJ = (tema: Tema) => {
-    setSelectedTema(tema);
-    setCurrentView('nastavne-jedinice');
-  };
-
-  const filteredPredmeti = predmeti.filter(p =>
-    p.naziv.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50">
-      <Sidebar />
-      
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar />
-        
-        <main className="flex-1 overflow-y-auto">
-          {currentView === 'predmeti' && (
-            <div className="p-8">
-              <div className="max-w-7xl mx-auto space-y-6">
-                {/* Header */}
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Predmeti</h1>
-                    <p className="text-gray-600">Upravljajte predmetima, temama i nastavnim jedinicama</p>
-                  </div>
-                  <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                    <DialogTrigger asChild>
-                      <button className="inline-flex items-center justify-center gap-2 h-11 px-5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-lg shadow-blue-600/25 transition-all">
-                        <Plus className="w-4 h-4" />
-                        Dodaj predmet
-                      </button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Dodaj novi predmet</DialogTitle>
-                        <DialogDescription>
-                          Unesite naziv novog predmeta
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="space-y-4 py-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="naziv">Naziv predmeta</Label>
-                          <Input
-                            id="naziv"
-                            placeholder="npr. Matematika"
-                            value={newPredmet}
-                            onChange={(e) => setNewPredmet(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleAddPredmet()}
-                            className="h-11"
-                          />
-                        </div>
-                      </div>
-                      <DialogFooter>
-                        <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-                          Otkaži
-                        </Button>
-                        <Button onClick={handleAddPredmet} className="bg-blue-600 hover:bg-blue-700">
-                          Dodaj
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
+    <AppLayout>
+      <PageHeader
+        title="Predmeti"
+        description="Registar predmeta skole i dodeljenih odeljenja"
+        action={
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <Button size="lg">
+                <Plus className="w-4 h-4" /> Dodaj predmet
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Novi predmet</DialogTitle>
+                <DialogDescription>
+                  Posle kreiranja, dodeli odeljenja u kojima se predmet realizuje preko "Dodeli odeljenja".
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid grid-cols-1 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="naziv">Naziv</Label>
+                  <Input
+                    id="naziv"
+                    value={forma.naziv}
+                    onChange={(e) => setForma({ ...forma, naziv: e.target.value })}
+                    placeholder="npr. Racunarske mreze"
+                  />
                 </div>
-
-                {/* Search */}
-                <div className="bg-white rounded-xl border border-gray-200 p-4">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="razred">Razred</Label>
+                    <Select
+                      value={forma.razred ? String(forma.razred) : ''}
+                      onValueChange={(v) => setForma({ ...forma, razred: Number(v) })}
+                    >
+                      <SelectTrigger id="razred"><SelectValue placeholder="Izaberi razred" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="1">1. razred</SelectItem>
+                        <SelectItem value="2">2. razred</SelectItem>
+                        <SelectItem value="3">3. razred</SelectItem>
+                        <SelectItem value="4">4. razred</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="fond">Nedeljni fond casova</Label>
                     <Input
-                      type="search"
-                      placeholder="Pretraži predmete..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-11 h-11 bg-gray-50 border-gray-200"
+                      id="fond"
+                      type="number"
+                      min={1}
+                      max={20}
+                      value={forma.fondCasova ?? ''}
+                      onChange={(e) =>
+                        setForma({ ...forma, fondCasova: e.target.value ? Number(e.target.value) : null })
+                      }
                     />
                   </div>
                 </div>
-
-                {/* Table */}
-                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead className="bg-gray-50 border-b border-gray-200">
-                        <tr>
-                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                            Predmet
-                          </th>
-                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                            Teme
-                          </th>
-                          <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                            Akcije
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-100">
-                        {filteredPredmeti.map((predmet) => (
-                          <tr key={predmet.id} className="group hover:bg-gray-50 transition-colors">
-                            <td className="px-6 py-4">
-                              <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
-                                  <BookOpen className="w-5 h-5 text-blue-600" />
-                                </div>
-                                <div>
-                                  <div className="font-semibold text-gray-900">{predmet.naziv}</div>
-                                </div>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4">
-                              <div className="flex items-center gap-2">
-                                <div className="text-2xl font-bold text-gray-900">{predmet.brojTema}</div>
-                                <div className="text-sm text-gray-500">tema</div>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4">
-                              <div className="flex items-center justify-end gap-2">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="gap-2 border-blue-200 text-blue-700 hover:bg-blue-50"
-                                  onClick={() => handleOpenTeme(predmet)}
-                                >
-                                  Teme
-                                  <ChevronRight className="w-4 h-4" />
-                                </Button>
-                                <Dialog open={isEditDialogOpen && editingPredmet?.id === predmet.id} onOpenChange={(open) => {
-                                  setIsEditDialogOpen(open);
-                                  if (!open) setEditingPredmet(null);
-                                }}>
-                                  <DialogTrigger asChild>
-                                    <button
-                                      className="w-9 h-9 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 flex items-center justify-center transition-colors"
-                                      onClick={() => setEditingPredmet({ ...predmet })}
-                                    >
-                                      <Pencil className="w-4 h-4 text-gray-600" />
-                                    </button>
-                                  </DialogTrigger>
-                                  <DialogContent>
-                                    <DialogHeader>
-                                      <DialogTitle>Izmeni predmet</DialogTitle>
-                                      <DialogDescription>
-                                        Promenite naziv predmeta
-                                      </DialogDescription>
-                                    </DialogHeader>
-                                    <div className="space-y-4 py-4">
-                                      <div className="space-y-2">
-                                        <Label htmlFor="edit-naziv">Naziv predmeta</Label>
-                                        <Input
-                                          id="edit-naziv"
-                                          value={editingPredmet?.naziv || ''}
-                                          onChange={(e) => setEditingPredmet(editingPredmet ? { ...editingPredmet, naziv: e.target.value } : null)}
-                                          onKeyDown={(e) => e.key === 'Enter' && handleEditPredmet()}
-                                          className="h-11"
-                                        />
-                                      </div>
-                                    </div>
-                                    <DialogFooter>
-                                      <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-                                        Otkaži
-                                      </Button>
-                                      <Button onClick={handleEditPredmet} className="bg-blue-600 hover:bg-blue-700">
-                                        Sačuvaj
-                                      </Button>
-                                    </DialogFooter>
-                                  </DialogContent>
-                                </Dialog>
-                                <button
-                                  className="w-9 h-9 rounded-lg border border-red-200 bg-white hover:bg-red-50 flex items-center justify-center transition-colors"
-                                  onClick={() => handleDeletePredmet(predmet.id)}
-                                >
-                                  <Trash2 className="w-4 h-4 text-red-600" />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  {filteredPredmeti.length === 0 && (
-                    <div className="text-center py-12">
-                      <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-500">Nema pronađenih predmeta</p>
-                    </div>
-                  )}
-                </div>
               </div>
-            </div>
-          )}
-
-          {currentView === 'teme' && selectedPredmet && (
-            <div className="p-8">
-              <div className="max-w-7xl mx-auto space-y-6">
-                {/* Header */}
-                <div className="flex items-center gap-4">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="gap-2"
-                    onClick={handleBackToPredmeti}
-                  >
-                    <ArrowLeft className="w-4 h-4" />
-                    Nazad
-                  </Button>
-                  <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Teme - {selectedPredmet.naziv}</h1>
-                    <p className="text-gray-600">Upravljajte temama predmeta po razredima</p>
-                  </div>
+              {formError && (
+                <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                  <AlertCircle className="w-4 h-4" /> {formError}
                 </div>
+              )}
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setDialogOpen(false)} disabled={submitting}>
+                  Odustani
+                </Button>
+                <Button onClick={handleDodaj} disabled={submitting}>
+                  {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Kreiraj'}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        }
+      />
 
-                {/* Teme Page */}
-                <TemePage predmet={selectedPredmet} onOpenNJ={handleOpenNJ} />
-              </div>
-            </div>
-          )}
-
-          {currentView === 'nastavne-jedinice' && selectedPredmet && selectedTema && (
-            <div className="p-8">
-              <div className="max-w-7xl mx-auto space-y-6">
-                {/* Header */}
-                <div className="flex items-center gap-4">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="gap-2"
-                    onClick={handleBackToTeme}
-                  >
-                    <ArrowLeft className="w-4 h-4" />
-                    Nazad
-                  </Button>
-                  <div>
-                    <h1 className="text-3xl font-bold text-gray-900">{selectedTema.naziv}</h1>
-                    <p className="text-gray-600">{selectedPredmet.naziv} - {selectedTema.razred}. razred</p>
-                  </div>
-                </div>
-
-                {/* Nastavne Jedinice Page */}
-                <NastavneJedinicePage tema={selectedTema} predmet={selectedPredmet} />
-              </div>
-            </div>
-          )}
-        </main>
+      {/* Filteri */}
+      <div className="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col lg:flex-row gap-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Input
+            placeholder="Pretrazi po nazivu predmeta"
+            value={pretraga}
+            onChange={(e) => setPretraga(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        <Select value={filterRazred} onValueChange={(v) => setFilterRazred(v as typeof filterRazred)}>
+          <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="sve">Svi razredi</SelectItem>
+            <SelectItem value="1">1. razred</SelectItem>
+            <SelectItem value="2">2. razred</SelectItem>
+            <SelectItem value="3">3. razred</SelectItem>
+            <SelectItem value="4">4. razred</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
+
+      {/* Lista */}
+      {loading ? (
+        <CenteredLoader />
+      ) : error ? (
+        <ErrorRow message={error} onRetry={ucitaj} />
+      ) : filtrirani.length === 0 ? (
+        <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center text-gray-500">
+          Nema predmeta. Klikni "Dodaj predmet" da napravis prvi.
+        </div>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {filtrirani.map((p) => (
+            <article
+              key={p.id}
+              className={`bg-white rounded-2xl border p-5 transition-shadow hover:shadow-md ${
+                p.aktivan ? 'border-gray-200' : 'border-gray-200 opacity-60'
+              }`}
+            >
+              <div className="flex items-start justify-between mb-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                  <BookOpen className="w-5 h-5" />
+                </div>
+                {!p.aktivan && (
+                  <span className="text-xs font-medium rounded-full bg-gray-100 text-gray-600 px-2 py-0.5">
+                    Deaktiviran
+                  </span>
+                )}
+              </div>
+              <h3 className="font-semibold text-gray-900 text-lg mb-1">{p.naziv}</h3>
+              <p className="text-sm text-gray-500 mb-4">
+                {p.razred ? `${p.razred}. razred` : 'Razred nije zadat'}
+                {p.fondCasova ? ` • ${p.fondCasova} casa nedeljno` : ''}
+              </p>
+              <div className="flex flex-wrap gap-1.5 mb-4 min-h-7">
+                {p.odeljenja.length === 0 ? (
+                  <span className="text-xs text-gray-400 italic">Nema dodeljenih odeljenja</span>
+                ) : (
+                  p.odeljenja.map((o) => (
+                    <span
+                      key={o.id}
+                      className="inline-flex items-center gap-1 rounded-full bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-0.5"
+                    >
+                      <School className="w-3 h-3" /> {o.label}
+                    </span>
+                  ))
+                )}
+              </div>
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={() => otvoriDodelu(p)} className="flex-1">
+                  Dodeli odeljenja
+                </Button>
+                {p.aktivan && (
+                  <Button size="sm" variant="ghost" onClick={() => handleDeaktiviraj(p)} title="Deaktiviraj">
+                    <ShieldOff className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+
+      {/* Dijalog za dodelu odeljenja */}
+      <Dialog open={!!dodelaPredmet} onOpenChange={(o) => !o && setDodelaPredmet(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Dodeli odeljenja: {dodelaPredmet?.naziv}</DialogTitle>
+            <DialogDescription>
+              Odaberi sva odeljenja u kojima se predmet realizuje.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="max-h-80 overflow-y-auto space-y-1 -mx-2 px-2">
+            {odeljenja.length === 0 ? (
+              <p className="text-sm text-gray-500 py-6 text-center">
+                Nema odeljenja u skoli. Prvo kreiraj odeljenja u sekciji "Odeljenja".
+              </p>
+            ) : (
+              odeljenja.map((o) => {
+                const checked = dodelaIzbor.has(o.id);
+                return (
+                  <label
+                    key={o.id}
+                    className={`flex items-center gap-3 rounded-xl px-3 py-2 cursor-pointer ${
+                      checked ? 'bg-blue-50' : 'hover:bg-gray-50'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => toggleOdeljenje(o.id)}
+                      className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600/40"
+                    />
+                    <span className="font-medium text-gray-900">{o.label}</span>
+                    {o.staresinaIme && (
+                      <span className="text-xs text-gray-500 ml-auto">staresina: {o.staresinaIme}</span>
+                    )}
+                  </label>
+                );
+              })
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDodelaPredmet(null)}>Odustani</Button>
+            <Button onClick={sacuvajDodelu}>Sacuvaj</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </AppLayout>
+  );
+}
+
+function CenteredLoader() {
+  return (
+    <div className="bg-white rounded-2xl border border-gray-200 p-12 flex items-center justify-center text-gray-500">
+      <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam...
+    </div>
+  );
+}
+
+function ErrorRow({ message, onRetry }: { message: string; onRetry: () => void }) {
+  return (
+    <div className="bg-red-50 border border-red-200 rounded-2xl p-6 flex items-center gap-2 text-red-700">
+      <AlertCircle className="w-5 h-5" />
+      <span>{message}</span>
+      <Button size="sm" variant="outline" onClick={onRetry} className="ml-auto">
+        Pokusaj ponovo
+      </Button>
     </div>
   );
 }
