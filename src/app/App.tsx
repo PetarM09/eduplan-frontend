@@ -10,8 +10,10 @@ import { PredmetiPage } from '@/app/components/dashboard/PredmetiPage';
 import { OdeljenjaPage } from '@/app/components/dashboard/OdeljenjaPage';
 import { RasporedPage } from '@/app/components/dashboard/RasporedPage';
 import { ZamenePage } from '@/app/components/dashboard/ZamenePage';
+import { SuperAdminPage } from '@/app/components/dashboard/SuperAdminPage';
+import { KatalogPage } from '@/app/components/dashboard/KatalogPage';
 import { PlaceholderPage } from '@/app/components/dashboard/PlaceholderPage';
-import { Repeat, FileText, ClipboardList, BarChart3, Shield } from 'lucide-react';
+import { Repeat, FileText, ClipboardList, BarChart3 } from 'lucide-react';
 
 /** Preusmerava ulogovanog korisnika na njegovu pocetnu rutu. */
 function HomeRedirect() {
@@ -178,16 +180,15 @@ export default function App() {
         path="/super-dashboard"
         element={
           <ProtectedRoute allowedRoles={['SUPER_ADMIN']}>
-            <PlaceholderPage
-              title="Super admin"
-              description="Kreiranje skola i njihovih koordinatora"
-              icon={Shield}
-              endpoints={[
-                'GET    /api/v1/super/skole',
-                'POST   /api/v1/super/skole',
-                'POST   /api/v1/super/skole/{id}/koordinator',
-              ]}
-            />
+            <SuperAdminPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/katalog"
+        element={
+          <ProtectedRoute>
+            <KatalogPage />
           </ProtectedRoute>
         }
       />

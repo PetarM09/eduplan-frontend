@@ -14,6 +14,7 @@ import {
   Repeat,
   ClipboardList,
   BarChart3,
+  Library,
   type LucideIcon,
 } from 'lucide-react';
 import { useAuth, type Uloga } from '@/context/AuthContext';
@@ -30,14 +31,16 @@ interface MenuItem {
  * sadrzaj za nastavnika, koordinatora/direktora, PP sluzbu i super admin-a.
  */
 const STAVKE_GLAVNO: MenuItem[] = [
+  { path: '/super-dashboard', icon: Shield, label: 'Skole', uloge: ['SUPER_ADMIN'] },
   { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', uloge: ['NASTAVNIK'] },
   { path: '/admin-dashboard', icon: Shield, label: 'Dashboard', uloge: ['KOORDINATOR', 'ADMIN', 'DIREKTOR'] },
   { path: '/pp/dashboard', icon: BarChart3, label: 'PP Dashboard', uloge: ['PP_SLUZBA'] },
-  { path: '/raspored', icon: Calendar, label: 'Raspored' },
-  { path: '/zamene', icon: UserX, label: 'Zamene' },
+  { path: '/raspored', icon: Calendar, label: 'Raspored', uloge: ['NASTAVNIK', 'KOORDINATOR', 'ADMIN', 'DIREKTOR', 'PP_SLUZBA'] },
+  { path: '/zamene', icon: UserX, label: 'Zamene', uloge: ['NASTAVNIK', 'KOORDINATOR', 'ADMIN', 'DIREKTOR', 'PP_SLUZBA'] },
   { path: '/rotacija', icon: Repeat, label: 'Rotacija', uloge: ['NASTAVNIK', 'KOORDINATOR', 'ADMIN', 'DIREKTOR'] },
   { path: '/planovi/godisnji', icon: FileText, label: 'Godisnji planovi', uloge: ['NASTAVNIK', 'PP_SLUZBA', 'DIREKTOR', 'KOORDINATOR'] },
   { path: '/planovi/operativni', icon: ClipboardList, label: 'Operativni planovi', uloge: ['NASTAVNIK', 'PP_SLUZBA', 'DIREKTOR', 'KOORDINATOR'] },
+  { path: '/katalog', icon: Library, label: 'Katalog', uloge: ['NASTAVNIK', 'KOORDINATOR', 'ADMIN', 'DIREKTOR', 'PP_SLUZBA'] },
 ];
 
 const STAVKE_ADMIN: MenuItem[] = [
