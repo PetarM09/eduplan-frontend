@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { Sidebar } from '@/app/components/dashboard/Sidebar';
 import { TopBar } from '@/app/components/dashboard/TopBar';
+import { useAuth } from '@/context/AuthContext';
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -8,8 +9,15 @@ interface AppLayoutProps {
 
 /** Standardni layout za zasticene stranice — Sidebar levo, TopBar gore, sadrzaj desno. */
 export function AppLayout({ children }: AppLayoutProps) {
+  const { user } = useAuth();
+  // SUPER_ADMIN dobija tamniju "profi" pozadinu da vizuelno odvoji globalnu konzolu
+  const pozadina =
+    user?.uloga === 'SUPER_ADMIN'
+      ? 'bg-gradient-to-br from-slate-200 via-slate-100 to-slate-200'
+      : 'bg-gray-50';
+
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50">
+    <div className={`flex h-screen overflow-hidden ${pozadina}`}>
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <TopBar />

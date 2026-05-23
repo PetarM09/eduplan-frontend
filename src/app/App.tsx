@@ -19,6 +19,7 @@ import { OperativniPlanEditorPage } from '@/app/components/dashboard/OperativniP
 import { PPDashboardPage } from '@/app/components/dashboard/PPDashboardPage';
 import { PPIzvestajiPage } from '@/app/components/dashboard/PPIzvestajiPage';
 import { RotacijaPage } from '@/app/components/dashboard/RotacijaPage';
+import { PostavkeSkolePage } from '@/app/components/dashboard/PostavkeSkolePage';
 
 /** Preusmerava ulogovanog korisnika na njegovu pocetnu rutu. */
 function HomeRedirect() {
@@ -191,6 +192,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <KatalogPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/skola/postavke"
+        element={
+          <ProtectedRoute allowedRoles={['KOORDINATOR', 'DIREKTOR']}>
+            <PostavkeSkolePage />
           </ProtectedRoute>
         }
       />

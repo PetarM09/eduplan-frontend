@@ -16,6 +16,7 @@ import {
   BarChart3,
   Library,
   ClipboardCheck,
+  Settings,
   type LucideIcon,
 } from 'lucide-react';
 import { useAuth, type Uloga } from '@/context/AuthContext';
@@ -49,6 +50,7 @@ const STAVKE_ADMIN: MenuItem[] = [
   { path: '/korisnici', icon: Users, label: 'Korisnici', uloge: ['KOORDINATOR', 'DIREKTOR'] },
   { path: '/predmeti', icon: BookOpen, label: 'Predmeti', uloge: ['KOORDINATOR', 'ADMIN', 'DIREKTOR'] },
   { path: '/odeljenja', icon: School, label: 'Odeljenja', uloge: ['KOORDINATOR', 'ADMIN', 'DIREKTOR'] },
+  { path: '/skola/postavke', icon: Settings, label: 'Postavke skole', uloge: ['KOORDINATOR', 'DIREKTOR'] },
 ];
 
 function imaPristup(item: MenuItem, uloga: Uloga | undefined): boolean {

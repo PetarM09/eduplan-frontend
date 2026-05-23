@@ -14,11 +14,14 @@ import {
 } from '@/app/components/ui/dialog';
 import {
   AlertCircle,
+  CalendarClock,
   CheckCircle2,
   Loader2,
   Mail,
   MapPin,
   Plus,
+  Power,
+  PowerOff,
   School,
   Trash2,
   UserCheck,
@@ -47,20 +50,21 @@ interface SkolaResponse {
   adresa: string | null;
   mailPlanovi: string | null;
   aktivan: boolean;
+  vaziDo: string | null;
 }
 
 interface KreirajSkoluRequest {
   naziv: string;
   grad?: string | null;
   adresa?: string | null;
-  mailPlanovi?: string | null;
+  vaziDo?: string | null;
 }
 
 const PRAZNA_SKOLA: KreirajSkoluRequest = {
   naziv: '',
   grad: '',
   adresa: '',
-  mailPlanovi: '',
+  vaziDo: '',
 };
 
 const PRAZAN_KOORDINATOR: KreirajKorisnikaRequest = {
@@ -127,7 +131,7 @@ export function SuperAdminPage() {
         naziv: novaSkola.naziv.trim(),
         grad: novaSkola.grad?.trim() || null,
         adresa: novaSkola.adresa?.trim() || null,
-        mailPlanovi: novaSkola.mailPlanovi?.trim() || null,
+        vaziDo: novaSkola.vaziDo?.trim() || null,
       });
       setSkole((prev) => [...prev, kreirana]);
       setNovaSkola(PRAZNA_SKOLA);
@@ -169,6 +173,47 @@ export function SuperAdminPage() {
       setKoordError(e instanceof ApiError ? e.message : 'Greska pri kreiranju koordinatora');
     } finally {
       setKoordSubmit(false);
+    }
+  };
+
+  const azurirajSkoluUListi = (s: SkolaResponse) =>
+    setSkole((prev) => prev.map((x) => (x.id === s.id ? s : x)));
+
+  const aktivirajSkolu = async (id: string) => {
+    try {
+      const s = await api.post<SkolaResponse>(`/super/skole/${id}/aktiviraj`);
+      azurirajSkoluUListi(s);
+    } catch (e) {
+      alert(e instanceof ApiError ? e.message : 'Greska');
+    }
+  };
+
+  const deaktivirajSkolu = async (id: string) => {
+    if (!confirm('Deaktivirati skolu? Svi korisnici skole nece moci da se loguju.')) return;
+    try {
+      const s = await api.post<SkolaResponse>(`/super/skole/${id}/deaktiviraj`);
+      azurirajSkoluUListi(s);
+    } catch (e) {
+      alert(e instanceof ApiError ? e.message : 'Greska');
+    }
+  };
+
+  const postaviVaziDo = async (id: string, trenutni: string | null) => {
+    const ulaz = prompt(
+      'Datum automatske deaktivacije (YYYY-MM-DD). Ostavi prazno da uklonis ogranicenje.',
+      trenutni ?? ''
+    );
+    if (ulaz === null) return;
+    const novi = ulaz.trim() || null;
+    if (novi && !/^\d{4}-\d{2}-\d{2}$/.test(novi)) {
+      alert('Datum mora biti u formatu YYYY-MM-DD');
+      return;
+    }
+    try {
+      const s = await api.patch<SkolaResponse>(`/super/skole/${id}/vazi-do`, { vaziDo: novi });
+      azurirajSkoluUListi(s);
+    } catch (e) {
+      alert(e instanceof ApiError ? e.message : 'Greska');
     }
   };
 
@@ -265,13 +310,17 @@ export function SuperAdminPage() {
                   <Field id="adresa" label="Adresa" value={novaSkola.adresa ?? ''} onChange={(v) => setNovaSkola({ ...novaSkola, adresa: v })} />
                 </div>
                 <Field
-                  id="mailPlanovi"
-                  label="Mail za primanje planova"
-                  type="email"
-                  value={novaSkola.mailPlanovi ?? ''}
-                  onChange={(v) => setNovaSkola({ ...novaSkola, mailPlanovi: v })}
-                  placeholder="planovi@skola.rs"
+                  id="vaziDo"
+                  label="Datum vazenja (opcionalno)"
+                  type="date"
+                  value={novaSkola.vaziDo ?? ''}
+                  onChange={(v) => setNovaSkola({ ...novaSkola, vaziDo: v })}
+                  placeholder="YYYY-MM-DD"
                 />
+                <p className="text-xs text-gray-500 -mt-2">
+                  Kada datum prodje, login svih korisnika skole se automatski blokira.
+                  Mail za primanje planova postavlja koordinator skole.
+                </p>
               </div>
               {skolaError && <ErrorBox message={skolaError} />}
               <DialogFooter>
@@ -303,61 +352,99 @@ export function SuperAdminPage() {
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {skole.map((s) => (
-            <article
-              key={s.id}
-              className={`bg-white rounded-2xl border border-gray-200 p-5 ${
-                s.aktivan ? '' : 'opacity-60'
-              }`}
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
-                  <School className="w-5 h-5" />
+          {skole.map((s) => {
+            const istekla = !!s.vaziDo && s.vaziDo < new Date().toISOString().slice(0, 10);
+            return (
+              <article
+                key={s.id}
+                className={`bg-white rounded-2xl border p-5 ${
+                  s.aktivan && !istekla ? 'border-gray-200' : 'border-amber-200 bg-amber-50/30'
+                }`}
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <div
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                      s.aktivan && !istekla ? 'bg-purple-50 text-purple-600' : 'bg-amber-50 text-amber-600'
+                    }`}
+                  >
+                    <School className="w-5 h-5" />
+                  </div>
+                  {!s.aktivan ? (
+                    <span className="text-xs font-medium rounded-full bg-gray-100 text-gray-600 px-2 py-0.5">
+                      Deaktivirana
+                    </span>
+                  ) : istekla ? (
+                    <span className="text-xs font-medium rounded-full bg-amber-100 text-amber-700 px-2 py-0.5">
+                      Istekla
+                    </span>
+                  ) : null}
                 </div>
-                {!s.aktivan && (
-                  <span className="text-xs font-medium rounded-full bg-gray-100 text-gray-600 px-2 py-0.5">
-                    Neaktivna
-                  </span>
-                )}
-              </div>
-              <h3 className="font-semibold text-gray-900 text-lg mb-2">{s.naziv}</h3>
-              <div className="space-y-1.5 text-sm text-gray-600 mb-4">
-                {s.grad && (
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-gray-400" />
-                    {s.grad}
-                    {s.adresa && `, ${s.adresa}`}
-                  </div>
-                )}
-                {s.mailPlanovi && (
-                  <div className="flex items-center gap-2 truncate">
-                    <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                    <span className="truncate">{s.mailPlanovi}</span>
-                  </div>
-                )}
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => otvoriKorisnike(s)}
-                >
-                  <Users className="w-4 h-4" /> Korisnici
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    setKoordZaSkolu(s);
-                    setKoordForma(PRAZAN_KOORDINATOR);
-                    setKoordError(null);
-                  }}
-                >
-                  <UserPlus className="w-4 h-4" /> Koordinator
-                </Button>
-              </div>
-            </article>
-          ))}
+                <h3 className="font-semibold text-gray-900 text-lg mb-2">{s.naziv}</h3>
+                <div className="space-y-1.5 text-sm text-gray-600 mb-4">
+                  {s.grad && (
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-gray-400" />
+                      {s.grad}
+                      {s.adresa && `, ${s.adresa}`}
+                    </div>
+                  )}
+                  {s.mailPlanovi && (
+                    <div className="flex items-center gap-2 truncate">
+                      <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                      <span className="truncate">{s.mailPlanovi}</span>
+                    </div>
+                  )}
+                  <button
+                    onClick={() => postaviVaziDo(s.id, s.vaziDo)}
+                    className="w-full flex items-center gap-2 text-left hover:text-gray-900 transition-colors"
+                    title="Klikni da promenis datum"
+                  >
+                    <CalendarClock className="w-4 h-4 text-gray-400" />
+                    {s.vaziDo ? (
+                      <span>Vazi do <strong>{s.vaziDo}</strong></span>
+                    ) : (
+                      <span className="text-gray-400">Bez ogranicenja — postavi datum</span>
+                    )}
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button size="sm" variant="outline" onClick={() => otvoriKorisnike(s)}>
+                    <Users className="w-4 h-4" /> Korisnici
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setKoordZaSkolu(s);
+                      setKoordForma(PRAZAN_KOORDINATOR);
+                      setKoordError(null);
+                    }}
+                  >
+                    <UserPlus className="w-4 h-4" /> Koordinator
+                  </Button>
+                  {s.aktivan ? (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => deaktivirajSkolu(s.id)}
+                      className="col-span-2 text-amber-700 hover:bg-amber-50"
+                    >
+                      <PowerOff className="w-4 h-4" /> Deaktiviraj skolu
+                    </Button>
+                  ) : (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => aktivirajSkolu(s.id)}
+                      className="col-span-2 text-emerald-700 hover:bg-emerald-50"
+                    >
+                      <Power className="w-4 h-4" /> Aktiviraj skolu
+                    </Button>
+                  )}
+                </div>
+              </article>
+            );
+          })}
         </div>
       )}
 
@@ -414,26 +501,19 @@ export function SuperAdminPage() {
                           <div className="text-xs text-gray-400 truncate max-w-[200px]">{k.email}</div>
                         </td>
                         <td className="px-3 py-2 text-sm">
-                          <div className="flex items-center gap-2">
-                            <span
-                              className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${ULOGA_BADGE[k.uloga]}`}
-                            >
-                              {k.uloga}
-                            </span>
-                            <select
-                              value={k.uloga}
-                              onChange={(e) => promeniUlogu(k.id, e.target.value as Uloga)}
-                              disabled={radi}
-                              className="h-8 px-2 rounded border border-gray-300 text-xs"
-                              title="Promeni ulogu"
-                            >
-                              {ULOGE_U_SKOLI.map((u) => (
-                                <option key={u} value={u}>
-                                  {u}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
+                          <select
+                            value={k.uloga}
+                            onChange={(e) => promeniUlogu(k.id, e.target.value as Uloga)}
+                            disabled={radi}
+                            className={`h-8 px-2 rounded-full border-0 text-xs font-medium cursor-pointer focus:ring-2 focus:ring-offset-1 focus:ring-purple-400 ${ULOGA_BADGE[k.uloga]}`}
+                            title="Promeni ulogu"
+                          >
+                            {ULOGE_U_SKOLI.map((u) => (
+                              <option key={u} value={u}>
+                                {u}
+                              </option>
+                            ))}
+                          </select>
                         </td>
                         <td className="px-3 py-2 text-sm">
                           {k.aktivan ? (
