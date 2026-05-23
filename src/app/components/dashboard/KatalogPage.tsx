@@ -2,6 +2,16 @@ import { useEffect, useMemo, useState } from 'react';
 import { AppLayout, PageHeader } from '@/app/components/layout/AppLayout';
 import { Input } from '@/app/components/ui/input';
 import { Button } from '@/app/components/ui/button';
+import { Label } from '@/app/components/ui/label';
+import { Textarea } from '@/app/components/ui/textarea';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/app/components/ui/dialog';
 import {
   Select,
   SelectContent,
@@ -13,17 +23,22 @@ import {
   AlertCircle,
   BookOpen,
   ChevronRight,
+  Cog,
   Folder,
   GraduationCap,
   Layers,
   Loader2,
+  Plus,
   Search,
+  Sparkles,
   Target,
 } from 'lucide-react';
 import { api, ApiError } from '@/lib/api';
+import { useAuth } from '@/context/AuthContext';
 import type {
   IshodResponse,
   NastavnaJedinicaResponse,
+  PadajuciMeniResponse,
   PredmetResponse,
   TemaResponse,
 } from '@/lib/types';
@@ -34,12 +49,15 @@ import type {
  * pa je ova stranica primarno read-only pregled "biblioteke znanja" skole.
  */
 export function KatalogPage() {
+  const { user } = useAuth();
   const [predmeti, setPredmeti] = useState<PredmetResponse[]>([]);
   const [predmetId, setPredmetId] = useState<string | null>(null);
   const [teme, setTeme] = useState<TemaResponse[]>([]);
   const [temaId, setTemaId] = useState<string | null>(null);
   const [jedinice, setJedinice] = useState<NastavnaJedinicaResponse[]>([]);
   const [ishodi, setIshodi] = useState<IshodResponse[]>([]);
+  const [tipoviCasa, setTipoviCasa] = useState<PadajuciMeniResponse[]>([]);
+  const [metodeRada, setMetodeRada] = useState<PadajuciMeniResponse[]>([]);
 
   const [loadingPredmeti, setLoadingPredmeti] = useState(true);
   const [loadingTeme, setLoadingTeme] = useState(false);
@@ -47,6 +65,28 @@ export function KatalogPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [pretragaTema, setPretragaTema] = useState('');
+
+  // Dialog: dodavanje ishoda (samo nastavnik)
+  const [ishodOpen, setIshodOpen] = useState(false);
+  const [noviIshodOpis, setNoviIshodOpis] = useState('');
+  const [ishodSubmit, setIshodSubmit] = useState(false);
+  const [ishodError, setIshodError] = useState<string | null>(null);
+
+  // Ucitaj padajuce menije jednom
+  useEffect(() => {
+    (async () => {
+      try {
+        const [tc, mr] = await Promise.all([
+          api.get<PadajuciMeniResponse[]>('/katalog/tipovi-casa'),
+          api.get<PadajuciMeniResponse[]>('/katalog/metode-rada'),
+        ]);
+        setTipoviCasa(tc);
+        setMetodeRada(mr);
+      } catch {
+        // tihi fallback — pregled je sekundarno
+      }
+    })();
+  }, []);
 
   // Ucitaj predmete na start
   useEffect(() => {
@@ -121,6 +161,29 @@ export function KatalogPage() {
     [predmeti, predmetId]
   );
   const izabranaTema = useMemo(() => teme.find((t) => t.id === temaId) ?? null, [teme, temaId]);
+
+  const dodajIshod = async () => {
+    if (!temaId) return;
+    setIshodError(null);
+    const opis = noviIshodOpis.trim();
+    if (opis.length < 3) {
+      setIshodError('Ishod mora imati najmanje 3 karaktera');
+      return;
+    }
+    setIshodSubmit(true);
+    try {
+      const nov = await api.post<IshodResponse>('/katalog/ishodi', { temaId, opis });
+      setIshodi((prev) => [...prev, nov]);
+      setNoviIshodOpis('');
+      setIshodOpen(false);
+    } catch (e) {
+      setIshodError(e instanceof ApiError ? e.message : 'Greska pri dodavanju ishoda');
+    } finally {
+      setIshodSubmit(false);
+    }
+  };
+
+  const mozeUreditiIshode = user?.uloga === 'NASTAVNIK';
 
   return (
     <AppLayout>
@@ -276,6 +339,11 @@ export function KatalogPage() {
                       Ishodi ucenja — {izabranaTema.naziv}
                     </h2>
                     <span className="ml-auto text-xs text-gray-500">{ishodi.length} ukupno</span>
+                    {mozeUreditiIshode && (
+                      <Button size="sm" variant="outline" onClick={() => setIshodOpen(true)}>
+                        <Plus className="w-3.5 h-3.5" /> Dodaj
+                      </Button>
+                    )}
                   </header>
                   {ishodi.length === 0 ? (
                     <EmptyState
@@ -300,7 +368,129 @@ export function KatalogPage() {
           </section>
         </div>
       )}
+
+      {/* Padajuci meniji — sistemski + skolski */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        <PadajuciSekcija
+          naslov="Tipovi casa"
+          opis="Vrednosti koje koristis u operativnom planu (tip casa)"
+          ikona={Sparkles}
+          stavke={tipoviCasa}
+        />
+        <PadajuciSekcija
+          naslov="Metode rada"
+          opis="Pedagoske metode izbora u operativnom planu"
+          ikona={Cog}
+          stavke={metodeRada}
+        />
+      </div>
+
+      {/* Dijalog: dodaj ishod */}
+      <Dialog open={ishodOpen} onOpenChange={setIshodOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Novi ishod ucenja</DialogTitle>
+            <DialogDescription>
+              Ishod ostaje u katalogu i moze se birati u svakom buducem planu za temu{' '}
+              <strong>{izabranaTema?.naziv}</strong>.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <Label htmlFor="ishod-opis">Opis ishoda</Label>
+            <Textarea
+              id="ishod-opis"
+              value={noviIshodOpis}
+              onChange={(e) => setNoviIshodOpis(e.target.value)}
+              placeholder="Ucenik je u stanju da..."
+              rows={4}
+            />
+            <p className="text-xs text-gray-500">Maks. 2000 karaktera. Trenutno: {noviIshodOpis.length}</p>
+          </div>
+          {ishodError && (
+            <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              {ishodError}
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIshodOpen(false)} disabled={ishodSubmit}>
+              Odustani
+            </Button>
+            <Button onClick={dodajIshod} disabled={ishodSubmit || noviIshodOpis.trim().length < 3}>
+              {ishodSubmit ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+              Dodaj ishod
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AppLayout>
+  );
+}
+
+function PadajuciSekcija({
+  naslov,
+  opis,
+  ikona: Icon,
+  stavke,
+}: {
+  naslov: string;
+  opis: string;
+  ikona: React.ComponentType<{ className?: string }>;
+  stavke: PadajuciMeniResponse[];
+}) {
+  const sistemski = stavke.filter((s) => s.sistemski);
+  const skolski = stavke.filter((s) => !s.sistemski);
+  return (
+    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+      <header className="p-4 border-b border-gray-200">
+        <div className="flex items-center gap-2 mb-1">
+          <Icon className="w-5 h-5 text-amber-600" />
+          <h2 className="font-semibold text-gray-900">{naslov}</h2>
+          <span className="ml-auto text-xs text-gray-500">{stavke.length} ukupno</span>
+        </div>
+        <p className="text-xs text-gray-500">{opis}</p>
+      </header>
+      {stavke.length === 0 ? (
+        <p className="p-6 text-sm text-gray-500 text-center">Lista je prazna.</p>
+      ) : (
+        <div className="p-4 space-y-3">
+          {sistemski.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">
+                Sistemski
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {sistemski.map((s) => (
+                  <span
+                    key={s.id}
+                    className="inline-flex items-center rounded-full bg-amber-50 text-amber-700 px-2.5 py-1 text-xs"
+                  >
+                    {s.naziv}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+          {skolski.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">
+                Skolski
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {skolski.map((s) => (
+                  <span
+                    key={s.id}
+                    className="inline-flex items-center rounded-full bg-blue-50 text-blue-700 px-2.5 py-1 text-xs"
+                  >
+                    {s.naziv}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 
