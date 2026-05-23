@@ -296,10 +296,10 @@ export function SuperAdminPage() {
                 <Plus className="w-4 h-4" /> Dodaj skolu
               </button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="bg-slate-900 border-slate-700 text-slate-200">
               <DialogHeader>
-                <DialogTitle>Nova skola</DialogTitle>
-                <DialogDescription>
+                <DialogTitle className="text-white">Nova skola</DialogTitle>
+                <DialogDescription className="text-slate-400">
                   Posle kreiranja skole automatski se otvara dialog za njenog koordinatora.
                 </DialogDescription>
               </DialogHeader>
@@ -317,16 +317,20 @@ export function SuperAdminPage() {
                   onChange={(v) => setNovaSkola({ ...novaSkola, vaziDo: v })}
                   placeholder="YYYY-MM-DD"
                 />
-                <p className="text-xs text-gray-500 -mt-2">
+                <p className="text-xs text-slate-400 -mt-2">
                   Kada datum prodje, login svih korisnika skole se automatski blokira.
                   Mail za primanje planova postavlja koordinator skole.
                 </p>
               </div>
               {skolaError && <ErrorBox message={skolaError} />}
               <DialogFooter>
-                <Button variant="outline" onClick={() => setSkolaOpen(false)} disabled={skolaSubmit}>
+                <button
+                  onClick={() => setSkolaOpen(false)}
+                  disabled={skolaSubmit}
+                  className="h-10 px-4 rounded-xl border border-slate-600 bg-slate-800 text-slate-300 text-sm font-medium hover:bg-slate-700 hover:text-white transition-colors disabled:opacity-50"
+                >
                   Odustani
-                </Button>
+                </button>
                 <button
                   onClick={dodajSkolu}
                   disabled={skolaSubmit}
@@ -458,66 +462,66 @@ export function SuperAdminPage() {
 
       {/* Dijalog za korisnike skole */}
       <Dialog open={!!korisniciSkola} onOpenChange={(o) => !o && setKorisniciSkola(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="bg-slate-900 border-slate-700 text-slate-200 max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Korisnici: {korisniciSkola?.naziv}</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-white">Korisnici: {korisniciSkola?.naziv}</DialogTitle>
+            <DialogDescription className="text-slate-400">
               Promeni ulogu inline, deaktiviraj umesto brisanja ako korisnik ima vezane podatke.
             </DialogDescription>
           </DialogHeader>
 
           {korisniciLoading ? (
-            <CenteredLoader />
+            <CenteredLoader tamna />
           ) : korisniciError ? (
             <ErrorBox message={korisniciError} />
           ) : korisnici.length === 0 ? (
-            <p className="p-6 text-sm text-gray-500 text-center">
+            <p className="p-6 text-sm text-slate-400 text-center">
               Skola jos nema kreiranih korisnika.
             </p>
           ) : (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto rounded-lg border border-slate-700">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-slate-800/80 border-b border-slate-700">
                   <tr>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
                       Ime i prezime
                     </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
                       Username / Email
                     </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
                       Uloga
                     </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-3 py-2 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-2 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">
                       Akcije
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-slate-800 bg-slate-900/40">
                   {korisnici.map((k) => {
                     const radi = akcijaInProgress === k.id;
                     return (
-                      <tr key={k.id} className={`${k.aktivan ? '' : 'opacity-60'}`}>
-                        <td className="px-3 py-2 text-sm font-medium text-gray-900">
+                      <tr key={k.id} className={`hover:bg-slate-800/60 transition-colors ${k.aktivan ? '' : 'opacity-60'}`}>
+                        <td className="px-3 py-2 text-sm font-medium text-white">
                           {k.ime} {k.prezime}
                         </td>
-                        <td className="px-3 py-2 text-sm text-gray-600">
+                        <td className="px-3 py-2 text-sm text-slate-300">
                           <div>{k.username}</div>
-                          <div className="text-xs text-gray-400 truncate max-w-[200px]">{k.email}</div>
+                          <div className="text-xs text-slate-500 truncate max-w-[200px]">{k.email}</div>
                         </td>
                         <td className="px-3 py-2 text-sm">
                           <select
                             value={k.uloga}
                             onChange={(e) => promeniUlogu(k.id, e.target.value as Uloga)}
                             disabled={radi}
-                            className={`h-8 px-2 rounded-full border-0 text-xs font-medium cursor-pointer focus:ring-2 focus:ring-offset-1 focus:ring-purple-400 ${ULOGA_BADGE[k.uloga]}`}
+                            className={`h-8 px-2 rounded-full border-0 text-xs font-medium cursor-pointer focus:ring-2 focus:ring-offset-1 focus:ring-offset-slate-900 focus:ring-orange-400 ${ULOGA_BADGE[k.uloga]}`}
                             title="Promeni ulogu"
                           >
                             {ULOGE_U_SKOLI.map((u) => (
-                              <option key={u} value={u}>
+                              <option key={u} value={u} className="bg-slate-800 text-white">
                                 {u}
                               </option>
                             ))}
@@ -525,51 +529,45 @@ export function SuperAdminPage() {
                         </td>
                         <td className="px-3 py-2 text-sm">
                           {k.aktivan ? (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-700 px-2 py-0.5 text-xs font-medium">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 text-emerald-300 px-2 py-0.5 text-xs font-medium">
                               <CheckCircle2 className="w-3 h-3" /> Aktivan
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 text-gray-600 px-2 py-0.5 text-xs font-medium">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-slate-700 text-slate-300 px-2 py-0.5 text-xs font-medium">
                               <UserX className="w-3 h-3" /> Neaktivan
                             </span>
                           )}
                         </td>
                         <td className="px-3 py-2 text-right">
                           <div className="inline-flex items-center gap-1">
-                            {radi && <Loader2 className="w-3.5 h-3.5 animate-spin text-gray-400" />}
+                            {radi && <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-400" />}
                             {k.aktivan ? (
-                              <Button
-                                size="sm"
-                                variant="ghost"
+                              <button
                                 onClick={() => deaktiviraj(k.id)}
                                 disabled={radi}
                                 title="Deaktiviraj"
-                                className="text-amber-600 hover:text-amber-700"
+                                className="h-8 w-8 rounded-lg text-amber-400 hover:bg-amber-500/15 hover:text-amber-300 transition-colors flex items-center justify-center disabled:opacity-50"
                               >
                                 <UserX className="w-3.5 h-3.5" />
-                              </Button>
+                              </button>
                             ) : (
-                              <Button
-                                size="sm"
-                                variant="ghost"
+                              <button
                                 onClick={() => aktiviraj(k.id)}
                                 disabled={radi}
                                 title="Aktiviraj"
-                                className="text-emerald-600 hover:text-emerald-700"
+                                className="h-8 w-8 rounded-lg text-emerald-400 hover:bg-emerald-500/15 hover:text-emerald-300 transition-colors flex items-center justify-center disabled:opacity-50"
                               >
                                 <UserCheck className="w-3.5 h-3.5" />
-                              </Button>
+                              </button>
                             )}
-                            <Button
-                              size="sm"
-                              variant="ghost"
+                            <button
                               onClick={() => obrisi(k)}
                               disabled={radi}
                               title="Obrisi"
-                              className="text-red-600 hover:text-red-700"
+                              className="h-8 w-8 rounded-lg text-red-400 hover:bg-red-500/15 hover:text-red-300 transition-colors flex items-center justify-center disabled:opacity-50"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
-                            </Button>
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -581,19 +579,22 @@ export function SuperAdminPage() {
           )}
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setKorisniciSkola(null)}>
+            <button
+              onClick={() => setKorisniciSkola(null)}
+              className="h-10 px-4 rounded-xl border border-slate-600 bg-slate-800 text-slate-300 text-sm font-medium hover:bg-slate-700 hover:text-white transition-colors"
+            >
               Zatvori
-            </Button>
+            </button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Dijalog za koordinatora */}
       <Dialog open={!!koordZaSkolu} onOpenChange={(o) => !o && setKoordZaSkolu(null)}>
-        <DialogContent>
+        <DialogContent className="bg-slate-900 border-slate-700 text-slate-200">
           <DialogHeader>
-            <DialogTitle>Koordinator za: {koordZaSkolu?.naziv}</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-white">Koordinator za: {koordZaSkolu?.naziv}</DialogTitle>
+            <DialogDescription className="text-slate-400">
               Koordinator je administrator skole. On dalje kreira sve ostale naloge
               (DIREKTOR, ADMIN, PP_SLUZBA, NASTAVNIK).
             </DialogDescription>
@@ -607,9 +608,13 @@ export function SuperAdminPage() {
           </div>
           {koordError && <ErrorBox message={koordError} />}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setKoordZaSkolu(null)} disabled={koordSubmit}>
+            <button
+              onClick={() => setKoordZaSkolu(null)}
+              disabled={koordSubmit}
+              className="h-10 px-4 rounded-xl border border-slate-600 bg-slate-800 text-slate-300 text-sm font-medium hover:bg-slate-700 hover:text-white transition-colors disabled:opacity-50"
+            >
               Odustani
-            </Button>
+            </button>
             <button
               onClick={dodajKoordinatora}
               disabled={koordSubmit}
@@ -638,8 +643,15 @@ interface FieldProps {
 function Field({ id, label, value, onChange, type = 'text', placeholder }: FieldProps) {
   return (
     <div className="space-y-1.5">
-      <Label htmlFor={id}>{label}</Label>
-      <Input id={id} type={type} value={value} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} />
+      <Label htmlFor={id} className="text-slate-300">{label}</Label>
+      <Input
+        id={id}
+        type={type}
+        value={value}
+        placeholder={placeholder}
+        onChange={(e) => onChange(e.target.value)}
+        className="bg-slate-800/60 border-slate-600 text-white placeholder:text-slate-500 focus-visible:border-orange-500 focus-visible:ring-orange-500/30"
+      />
     </div>
   );
 }
@@ -655,7 +667,7 @@ function StatBox({ label, value, accent }: { label: string; value: number; accen
 
 function ErrorBox({ message }: { message: string }) {
   return (
-    <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+    <div className="flex items-center gap-2 text-sm text-red-300 bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2">
       <AlertCircle className="w-4 h-4 flex-shrink-0" />
       {message}
     </div>

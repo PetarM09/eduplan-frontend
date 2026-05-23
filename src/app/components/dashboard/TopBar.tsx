@@ -53,7 +53,20 @@ export function TopBar() {
   const chevronClass = sa
     ? 'text-slate-400 group-hover:text-slate-200'
     : 'text-gray-400 group-hover:text-gray-600';
-  const roleBadge = sa ? 'bg-orange-500/20 text-orange-700' : 'bg-blue-50 text-blue-700';
+
+  // Dropdown stilovi
+  const dropdownBg = sa
+    ? 'bg-slate-900 border-slate-700'
+    : 'bg-white border-gray-200';
+  const dropdownDivider = sa ? 'border-slate-800' : 'border-gray-100';
+  const dropdownUsername = sa ? 'text-white' : 'text-gray-900';
+  const dropdownEmail = sa ? 'text-slate-400' : 'text-gray-500';
+  const roleBadge = sa
+    ? 'bg-orange-500/20 text-orange-300 ring-1 ring-orange-500/30'
+    : 'bg-blue-50 text-blue-700';
+  const logoutBtn = sa
+    ? 'text-red-400 hover:bg-red-500/15 hover:text-red-300'
+    : 'text-red-600 hover:bg-red-50';
 
   return (
     <header className={`h-16 border-b px-8 flex items-center justify-end ${barBg}`}>
@@ -73,17 +86,17 @@ export function TopBar() {
         </button>
 
         {open && (
-          <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-200 py-2 z-50">
-            <div className="px-4 py-3 border-b border-gray-100">
-              <div className="font-medium text-gray-900">{user?.username ?? '—'}</div>
-              <div className="text-sm text-gray-500">{user?.email ?? ''}</div>
+          <div className={`absolute right-0 top-full mt-2 w-64 rounded-xl shadow-xl border py-2 z-50 ${dropdownBg}`}>
+            <div className={`px-4 py-3 border-b ${dropdownDivider}`}>
+              <div className={`font-medium ${dropdownUsername}`}>{user?.username ?? '—'}</div>
+              <div className={`text-sm ${dropdownEmail}`}>{user?.email ?? ''}</div>
               <div className={`mt-1 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${roleBadge}`}>
                 {ulogaLabel(user?.uloga)}
               </div>
             </div>
             <button
               onClick={handleLogout}
-              className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2"
+              className={`w-full px-4 py-2 text-left text-sm transition-colors flex items-center gap-2 ${logoutBtn}`}
             >
               <LogOut className="w-4 h-4" />
               Odjavi se
