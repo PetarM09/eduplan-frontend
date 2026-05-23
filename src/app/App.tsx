@@ -12,8 +12,12 @@ import { RasporedPage } from '@/app/components/dashboard/RasporedPage';
 import { ZamenePage } from '@/app/components/dashboard/ZamenePage';
 import { SuperAdminPage } from '@/app/components/dashboard/SuperAdminPage';
 import { KatalogPage } from '@/app/components/dashboard/KatalogPage';
+import { GodisnjiPlanoviPage } from '@/app/components/dashboard/GodisnjiPlanoviPage';
+import { GodisnjiPlanEditorPage } from '@/app/components/dashboard/GodisnjiPlanEditorPage';
+import { OperativniPlanoviPage } from '@/app/components/dashboard/OperativniPlanoviPage';
+import { OperativniPlanEditorPage } from '@/app/components/dashboard/OperativniPlanEditorPage';
 import { PlaceholderPage } from '@/app/components/dashboard/PlaceholderPage';
-import { Repeat, FileText, ClipboardList, BarChart3 } from 'lucide-react';
+import { Repeat, BarChart3 } from 'lucide-react';
 
 /** Preusmerava ulogovanog korisnika na njegovu pocetnu rutu. */
 function HomeRedirect() {
@@ -124,18 +128,23 @@ export default function App() {
         path="/planovi/godisnji"
         element={
           <ProtectedRoute>
-            <PlaceholderPage
-              title="Godisnji planovi"
-              description="Globalni plan rada po predmetu — generise Word/PDF i salje na mail skole"
-              icon={FileText}
-              endpoints={[
-                'POST   /api/v1/planovi/godisnji',
-                'GET    /api/v1/planovi/godisnji/me',
-                'GET    /api/v1/planovi/godisnji/svi',
-                'GET    /api/v1/planovi/godisnji/{id}/download/word',
-                'GET    /api/v1/planovi/godisnji/{id}/download/pdf',
-              ]}
-            />
+            <GodisnjiPlanoviPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/planovi/godisnji/novi"
+        element={
+          <ProtectedRoute allowedRoles={['NASTAVNIK']}>
+            <GodisnjiPlanEditorPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/planovi/godisnji/:id"
+        element={
+          <ProtectedRoute>
+            <GodisnjiPlanEditorPage />
           </ProtectedRoute>
         }
       />
@@ -143,18 +152,23 @@ export default function App() {
         path="/planovi/operativni"
         element={
           <ProtectedRoute>
-            <PlaceholderPage
-              title="Operativni planovi"
-              description="Mesecni operativni plan rada — 8-kolonska tabela casova"
-              icon={ClipboardList}
-              endpoints={[
-                'POST   /api/v1/planovi/operativni',
-                'POST   /api/v1/planovi/operativni/{id}/kloniraj',
-                'GET    /api/v1/planovi/operativni/me',
-                'GET    /api/v1/planovi/operativni/{id}/download/word',
-                'GET    /api/v1/planovi/operativni/{id}/download/pdf',
-              ]}
-            />
+            <OperativniPlanoviPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/planovi/operativni/novi"
+        element={
+          <ProtectedRoute allowedRoles={['NASTAVNIK']}>
+            <OperativniPlanEditorPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/planovi/operativni/:id"
+        element={
+          <ProtectedRoute>
+            <OperativniPlanEditorPage />
           </ProtectedRoute>
         }
       />

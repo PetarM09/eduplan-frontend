@@ -125,6 +125,155 @@ export interface ZamenaResponse {
   createdAt: string;
 }
 
+// =============== PLANOVI ===============
+
+export type PlanStatus = 'NACRT' | 'PODNET' | 'VRACENO_NA_DORADU' | 'ARHIVIRAN';
+
+export const MESECI_KEYS = ['IX', 'X', 'XI', 'XII', 'I', 'II', 'III', 'IV', 'V', 'VI'] as const;
+export type MesecKey = (typeof MESECI_KEYS)[number];
+
+// ----- Godisnji plan -----
+
+export interface GodisnjiPlanResponse {
+  id: string;
+  nastavnikId: string;
+  nastavnikIme: string;
+  predmetId: string;
+  predmetNaziv: string;
+  razred: number | null;
+  skolskaGodina: string;
+  odeljenjaIds: string[];
+  ciljeviZadaci: string | null;
+  udzebenik: string | null;
+  autori: string | null;
+  literatura: string | null;
+  godisnjiFond: number | null;
+  nedeljniFond: number | null;
+  dopunskiRad: string | null;
+  dodatniRad: string | null;
+  napomene: string | null;
+  status: PlanStatus;
+  podnetAt: string | null;
+  imaWord: boolean;
+  imaPdf: boolean;
+  teme: GodisnjiPlanTemaResponse[];
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface GodisnjiPlanTemaResponse {
+  id: string;
+  temaId: string;
+  nazivTeme: string;
+  redniBroj: number;
+  meseci: Record<string, boolean>;
+  casObrada: number;
+  casUtvrd: number;
+  casOstalo: number;
+  ukupnoCasova: number;
+  ishodi: { id: string; opis: string }[];
+}
+
+export interface KreirajGodisnjiPlanRequest {
+  predmetId: string;
+  skolskaGodina: string;
+  razred?: number | null;
+  odeljenjaIds?: string[];
+  ciljeviZadaci?: string | null;
+  udzebenik?: string | null;
+  autori?: string | null;
+  literatura?: string | null;
+  godisnjiFond?: number | null;
+  nedeljniFond?: number | null;
+  dopunskiRad?: string | null;
+  dodatniRad?: string | null;
+  napomene?: string | null;
+  teme: GodisnjiPlanTemaRequest[];
+}
+
+export interface GodisnjiPlanTemaRequest {
+  temaId?: string | null;
+  nazivTeme?: string | null;
+  redniBroj?: number | null;
+  casObrada?: number | null;
+  casUtvrd?: number | null;
+  casOstalo?: number | null;
+  ukupnoCasova?: number | null;
+  meseci?: string[];
+  ishodiIds?: string[] | null;
+  noviIshodi?: string[] | null;
+}
+
+// ----- Operativni plan -----
+
+export interface OperativniPlanResponse {
+  id: string;
+  nastavnikId: string;
+  nastavnikIme: string;
+  predmetId: string;
+  predmetNaziv: string;
+  odeljenjeId: string;
+  odeljenjeLabel: string;
+  mesec: number;
+  skolskaGodina: string;
+  nedeljniFond: number | null;
+  samoprocenaIshoda: string | null;
+  napomene: string | null;
+  status: PlanStatus;
+  podnetAt: string | null;
+  imaWord: boolean;
+  imaPdf: boolean;
+  stavke: OpStavkaResponse[];
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface OpStavkaResponse {
+  id: string;
+  redniBrojCasa: number;
+  temaId: string | null;
+  nazivTeme: string | null;
+  nastavnaJedinicaId: string | null;
+  nazivJedinice: string | null;
+  tipCasaId: string | null;
+  tipCasa: string | null;
+  metodaRadaId: string | null;
+  metodaRada: string | null;
+  evaluacija: string | null;
+  ishodi: { id: string; opis: string }[];
+  medjupredmetno: { id: string; predmetId: string; predmetNaziv: string; opisKompetencije: string }[];
+}
+
+export interface KreirajOperativniPlanRequest {
+  predmetId: string;
+  odeljenjeId: string;
+  mesec: number;
+  skolskaGodina: string;
+  nedeljniFond?: number | null;
+  samoprocenaIshoda?: string | null;
+  napomene?: string | null;
+  stavke: OpStavkaRequest[];
+}
+
+export interface OpStavkaRequest {
+  redniBrojCasa: number;
+  temaId?: string | null;
+  nazivTeme?: string | null;
+  nastavnaJedinicaId?: string | null;
+  nazivJedinice?: string | null;
+  tipCasaId: string;
+  metodaRadaId?: string | null;
+  ishodiIds?: string[] | null;
+  noviIshodi?: string[] | null;
+  medjupredmetno?: MedjupredmetnoRequest[];
+  evaluacija?: string | null;
+}
+
+export interface MedjupredmetnoRequest {
+  predmetId: string;
+  opisKompetencije: string;
+}
+
 // =============== RASPORED ===============
 
 export type Dan = 'PONEDELJAK' | 'UTORAK' | 'SREDA' | 'CETVRTAK' | 'PETAK' | 'SUBOTA';
