@@ -292,9 +292,9 @@ export function SuperAdminPage() {
         action={
           <Dialog open={skolaOpen} onOpenChange={setSkolaOpen}>
             <DialogTrigger asChild>
-              <Button size="lg">
+              <button className="h-12 px-6 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 text-white font-medium shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 hover:from-orange-400 hover:to-amber-500 transition-all flex items-center gap-2">
                 <Plus className="w-4 h-4" /> Dodaj skolu
-              </Button>
+              </button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
@@ -327,9 +327,14 @@ export function SuperAdminPage() {
                 <Button variant="outline" onClick={() => setSkolaOpen(false)} disabled={skolaSubmit}>
                   Odustani
                 </Button>
-                <Button onClick={dodajSkolu} disabled={skolaSubmit}>
-                  {skolaSubmit ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Kreiraj skolu'}
-                </Button>
+                <button
+                  onClick={dodajSkolu}
+                  disabled={skolaSubmit}
+                  className="h-10 px-4 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 text-white font-medium shadow hover:from-orange-400 hover:to-amber-500 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {skolaSubmit ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                  Kreiraj skolu
+                </button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -415,7 +420,7 @@ export function SuperAdminPage() {
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={() => otvoriKorisnike(s)}
-                    className="h-9 px-3 rounded-lg border border-slate-600 bg-slate-800 text-slate-200 text-sm font-medium hover:bg-slate-700 hover:border-slate-500 transition-colors flex items-center justify-center gap-2"
+                    className="h-9 px-3 rounded-lg border border-orange-500/30 bg-orange-500/10 text-orange-200 text-sm font-medium hover:bg-orange-500/20 hover:border-orange-500/50 hover:text-orange-100 transition-colors flex items-center justify-center gap-2"
                   >
                     <Users className="w-4 h-4" /> Korisnici
                   </button>
@@ -425,7 +430,7 @@ export function SuperAdminPage() {
                       setKoordForma(PRAZAN_KOORDINATOR);
                       setKoordError(null);
                     }}
-                    className="h-9 px-3 rounded-lg border border-slate-600 bg-slate-800 text-slate-200 text-sm font-medium hover:bg-slate-700 hover:border-slate-500 transition-colors flex items-center justify-center gap-2"
+                    className="h-9 px-3 rounded-lg border border-orange-500/30 bg-orange-500/10 text-orange-200 text-sm font-medium hover:bg-orange-500/20 hover:border-orange-500/50 hover:text-orange-100 transition-colors flex items-center justify-center gap-2"
                   >
                     <UserPlus className="w-4 h-4" /> Koordinator
                   </button>
@@ -605,9 +610,14 @@ export function SuperAdminPage() {
             <Button variant="outline" onClick={() => setKoordZaSkolu(null)} disabled={koordSubmit}>
               Odustani
             </Button>
-            <Button onClick={dodajKoordinatora} disabled={koordSubmit}>
-              {koordSubmit ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Kreiraj koordinatora'}
-            </Button>
+            <button
+              onClick={dodajKoordinatora}
+              disabled={koordSubmit}
+              className="h-10 px-4 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 text-white font-medium shadow hover:from-orange-400 hover:to-amber-500 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {koordSubmit ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
+              Kreiraj koordinatora
+            </button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
