@@ -44,21 +44,32 @@ export function TopBar() {
     navigate('/login', { replace: true });
   };
 
+  const sa = user?.uloga === 'SUPER_ADMIN';
+  const barBg = sa ? 'bg-slate-900 border-slate-800' : 'bg-white border-gray-200';
+  const btnHover = sa ? 'hover:bg-slate-800' : 'hover:bg-gray-50';
+  const userGradient = sa ? 'from-orange-500 to-amber-600' : 'from-blue-600 to-indigo-600';
+  const usernameClass = sa ? 'text-white' : 'text-gray-900';
+  const subClass = sa ? 'text-orange-300' : 'text-gray-500';
+  const chevronClass = sa
+    ? 'text-slate-400 group-hover:text-slate-200'
+    : 'text-gray-400 group-hover:text-gray-600';
+  const roleBadge = sa ? 'bg-orange-500/20 text-orange-700' : 'bg-blue-50 text-blue-700';
+
   return (
-    <header className="h-16 bg-white border-b border-gray-200 px-8 flex items-center justify-end">
+    <header className={`h-16 border-b px-8 flex items-center justify-end ${barBg}`}>
       <div className="relative" ref={ref}>
         <button
           onClick={() => setOpen((o) => !o)}
-          className="flex items-center gap-3 px-3 h-10 rounded-xl hover:bg-gray-50 transition-colors group"
+          className={`flex items-center gap-3 px-3 h-10 rounded-xl transition-colors group ${btnHover}`}
         >
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center">
+          <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${userGradient} flex items-center justify-center`}>
             <User className="w-5 h-5 text-white" />
           </div>
           <div className="text-left hidden xl:block">
-            <div className="text-sm font-medium text-gray-900">{user?.username ?? '—'}</div>
-            <div className="text-xs text-gray-500">{ulogaLabel(user?.uloga)}</div>
+            <div className={`text-sm font-medium ${usernameClass}`}>{user?.username ?? '—'}</div>
+            <div className={`text-xs ${subClass}`}>{ulogaLabel(user?.uloga)}</div>
           </div>
-          <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors hidden xl:block" />
+          <ChevronDown className={`w-4 h-4 transition-colors hidden xl:block ${chevronClass}`} />
         </button>
 
         {open && (
@@ -66,7 +77,7 @@ export function TopBar() {
             <div className="px-4 py-3 border-b border-gray-100">
               <div className="font-medium text-gray-900">{user?.username ?? '—'}</div>
               <div className="text-sm text-gray-500">{user?.email ?? ''}</div>
-              <div className="mt-1 inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
+              <div className={`mt-1 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${roleBadge}`}>
                 {ulogaLabel(user?.uloga)}
               </div>
             </div>

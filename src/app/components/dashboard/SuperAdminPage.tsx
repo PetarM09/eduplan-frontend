@@ -357,15 +357,13 @@ export function SuperAdminPage() {
             return (
               <article
                 key={s.id}
-                className={`bg-white rounded-2xl border p-5 ${
-                  s.aktivan && !istekla ? 'border-gray-200' : 'border-amber-200 bg-amber-50/30'
-                }`}
+                className={`bg-white rounded-2xl border p-5 ${s.aktivan && !istekla ? 'border-gray-200' : 'border-amber-200 bg-amber-50/30'
+                  }`}
               >
                 <div className="flex items-start justify-between mb-3">
                   <div
-                    className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                      s.aktivan && !istekla ? 'bg-purple-50 text-purple-600' : 'bg-amber-50 text-amber-600'
-                    }`}
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center ${s.aktivan && !istekla ? 'bg-purple-50 text-purple-600' : 'bg-amber-50 text-amber-600'
+                      }`}
                   >
                     <School className="w-5 h-5" />
                   </div>

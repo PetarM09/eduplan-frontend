@@ -10,10 +10,10 @@ interface AppLayoutProps {
 /** Standardni layout za zasticene stranice — Sidebar levo, TopBar gore, sadrzaj desno. */
 export function AppLayout({ children }: AppLayoutProps) {
   const { user } = useAuth();
-  // SUPER_ADMIN dobija tamniju "profi" pozadinu da vizuelno odvoji globalnu konzolu
+  // SUPER_ADMIN paleta — tople sivkasto-narandzaste nijanse (command-center stil)
   const pozadina =
     user?.uloga === 'SUPER_ADMIN'
-      ? 'bg-gradient-to-br from-slate-200 via-slate-100 to-slate-200'
+      ? 'bg-gradient-to-br from-stone-200 via-stone-100 to-orange-50'
       : 'bg-gray-50';
 
   return (
