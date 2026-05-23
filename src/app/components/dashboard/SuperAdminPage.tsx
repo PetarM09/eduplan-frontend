@@ -14,15 +14,31 @@ import {
 } from '@/app/components/ui/dialog';
 import {
   AlertCircle,
+  CheckCircle2,
   Loader2,
   Mail,
   MapPin,
   Plus,
   School,
+  Trash2,
+  UserCheck,
   UserPlus,
+  UserX,
+  Users,
 } from 'lucide-react';
 import { api, ApiError } from '@/lib/api';
-import type { KorisnikResponse, KreirajKorisnikaRequest } from '@/lib/types';
+import type { KorisnikResponse, KreirajKorisnikaRequest, Uloga } from '@/lib/types';
+
+const ULOGE_U_SKOLI: Uloga[] = ['KOORDINATOR', 'DIREKTOR', 'ADMIN', 'PP_SLUZBA', 'NASTAVNIK'];
+
+const ULOGA_BADGE: Record<Uloga, string> = {
+  SUPER_ADMIN: 'bg-red-100 text-red-700',
+  KOORDINATOR: 'bg-purple-100 text-purple-700',
+  DIREKTOR: 'bg-blue-100 text-blue-700',
+  ADMIN: 'bg-indigo-100 text-indigo-700',
+  PP_SLUZBA: 'bg-emerald-100 text-emerald-700',
+  NASTAVNIK: 'bg-gray-100 text-gray-700',
+};
 
 interface SkolaResponse {
   id: string;
@@ -72,6 +88,13 @@ export function SuperAdminPage() {
   const [koordForma, setKoordForma] = useState<KreirajKorisnikaRequest>(PRAZAN_KOORDINATOR);
   const [koordSubmit, setKoordSubmit] = useState(false);
   const [koordError, setKoordError] = useState<string | null>(null);
+
+  // Dijalog: korisnici skole
+  const [korisniciSkola, setKorisniciSkola] = useState<SkolaResponse | null>(null);
+  const [korisnici, setKorisnici] = useState<KorisnikResponse[]>([]);
+  const [korisniciLoading, setKorisniciLoading] = useState(false);
+  const [korisniciError, setKorisniciError] = useState<string | null>(null);
+  const [akcijaInProgress, setAkcijaInProgress] = useState<string | null>(null);
 
   const ucitaj = async () => {
     setLoading(true);
@@ -146,6 +169,73 @@ export function SuperAdminPage() {
       setKoordError(e instanceof ApiError ? e.message : 'Greska pri kreiranju koordinatora');
     } finally {
       setKoordSubmit(false);
+    }
+  };
+
+  const otvoriKorisnike = async (skola: SkolaResponse) => {
+    setKorisniciSkola(skola);
+    setKorisnici([]);
+    setKorisniciError(null);
+    setKorisniciLoading(true);
+    try {
+      const data = await api.get<KorisnikResponse[]>(`/super/skole/${skola.id}/korisnici`);
+      setKorisnici(data);
+    } catch (e) {
+      setKorisniciError(e instanceof ApiError ? e.message : 'Greska pri ucitavanju korisnika');
+    } finally {
+      setKorisniciLoading(false);
+    }
+  };
+
+  const azurirajUListi = (k: KorisnikResponse) =>
+    setKorisnici((prev) => prev.map((p) => (p.id === k.id ? k : p)));
+
+  const aktiviraj = async (id: string) => {
+    setAkcijaInProgress(id);
+    try {
+      const k = await api.post<KorisnikResponse>(`/super/korisnici/${id}/aktiviraj`);
+      azurirajUListi(k);
+    } catch (e) {
+      alert(e instanceof ApiError ? e.message : 'Greska');
+    } finally {
+      setAkcijaInProgress(null);
+    }
+  };
+
+  const deaktiviraj = async (id: string) => {
+    setAkcijaInProgress(id);
+    try {
+      const k = await api.post<KorisnikResponse>(`/super/korisnici/${id}/deaktiviraj`);
+      azurirajUListi(k);
+    } catch (e) {
+      alert(e instanceof ApiError ? e.message : 'Greska');
+    } finally {
+      setAkcijaInProgress(null);
+    }
+  };
+
+  const promeniUlogu = async (id: string, nova: Uloga) => {
+    setAkcijaInProgress(id);
+    try {
+      const k = await api.patch<KorisnikResponse>(`/super/korisnici/${id}/uloga`, { uloga: nova });
+      azurirajUListi(k);
+    } catch (e) {
+      alert(e instanceof ApiError ? e.message : 'Greska');
+    } finally {
+      setAkcijaInProgress(null);
+    }
+  };
+
+  const obrisi = async (k: KorisnikResponse) => {
+    if (!confirm(`Obrisati ${k.ime} ${k.prezime} (${k.username})? Ako ima vezane planove ili izvestaje, brisanje ce biti odbijeno — koristi deaktivaciju.`)) return;
+    setAkcijaInProgress(k.id);
+    try {
+      await api.delete(`/super/korisnici/${k.id}`);
+      setKorisnici((prev) => prev.filter((p) => p.id !== k.id));
+    } catch (e) {
+      alert(e instanceof ApiError ? e.message : 'Greska');
+    } finally {
+      setAkcijaInProgress(null);
     }
   };
 
@@ -246,22 +336,169 @@ export function SuperAdminPage() {
                   </div>
                 )}
               </div>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => {
-                  setKoordZaSkolu(s);
-                  setKoordForma(PRAZAN_KOORDINATOR);
-                  setKoordError(null);
-                }}
-                className="w-full"
-              >
-                <UserPlus className="w-4 h-4" /> Dodaj koordinatora
-              </Button>
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => otvoriKorisnike(s)}
+                >
+                  <Users className="w-4 h-4" /> Korisnici
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    setKoordZaSkolu(s);
+                    setKoordForma(PRAZAN_KOORDINATOR);
+                    setKoordError(null);
+                  }}
+                >
+                  <UserPlus className="w-4 h-4" /> Koordinator
+                </Button>
+              </div>
             </article>
           ))}
         </div>
       )}
+
+      {/* Dijalog za korisnike skole */}
+      <Dialog open={!!korisniciSkola} onOpenChange={(o) => !o && setKorisniciSkola(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Korisnici: {korisniciSkola?.naziv}</DialogTitle>
+            <DialogDescription>
+              Promeni ulogu inline, deaktiviraj umesto brisanja ako korisnik ima vezane podatke.
+            </DialogDescription>
+          </DialogHeader>
+
+          {korisniciLoading ? (
+            <CenteredLoader />
+          ) : korisniciError ? (
+            <ErrorBox message={korisniciError} />
+          ) : korisnici.length === 0 ? (
+            <p className="p-6 text-sm text-gray-500 text-center">
+              Skola jos nema kreiranih korisnika.
+            </p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      Ime i prezime
+                    </th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      Username / Email
+                    </th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      Uloga
+                    </th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-3 py-2 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      Akcije
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {korisnici.map((k) => {
+                    const radi = akcijaInProgress === k.id;
+                    return (
+                      <tr key={k.id} className={`${k.aktivan ? '' : 'opacity-60'}`}>
+                        <td className="px-3 py-2 text-sm font-medium text-gray-900">
+                          {k.ime} {k.prezime}
+                        </td>
+                        <td className="px-3 py-2 text-sm text-gray-600">
+                          <div>{k.username}</div>
+                          <div className="text-xs text-gray-400 truncate max-w-[200px]">{k.email}</div>
+                        </td>
+                        <td className="px-3 py-2 text-sm">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${ULOGA_BADGE[k.uloga]}`}
+                            >
+                              {k.uloga}
+                            </span>
+                            <select
+                              value={k.uloga}
+                              onChange={(e) => promeniUlogu(k.id, e.target.value as Uloga)}
+                              disabled={radi}
+                              className="h-8 px-2 rounded border border-gray-300 text-xs"
+                              title="Promeni ulogu"
+                            >
+                              {ULOGE_U_SKOLI.map((u) => (
+                                <option key={u} value={u}>
+                                  {u}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </td>
+                        <td className="px-3 py-2 text-sm">
+                          {k.aktivan ? (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-700 px-2 py-0.5 text-xs font-medium">
+                              <CheckCircle2 className="w-3 h-3" /> Aktivan
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 text-gray-600 px-2 py-0.5 text-xs font-medium">
+                              <UserX className="w-3 h-3" /> Neaktivan
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-3 py-2 text-right">
+                          <div className="inline-flex items-center gap-1">
+                            {radi && <Loader2 className="w-3.5 h-3.5 animate-spin text-gray-400" />}
+                            {k.aktivan ? (
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => deaktiviraj(k.id)}
+                                disabled={radi}
+                                title="Deaktiviraj"
+                                className="text-amber-600 hover:text-amber-700"
+                              >
+                                <UserX className="w-3.5 h-3.5" />
+                              </Button>
+                            ) : (
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => aktiviraj(k.id)}
+                                disabled={radi}
+                                title="Aktiviraj"
+                                className="text-emerald-600 hover:text-emerald-700"
+                              >
+                                <UserCheck className="w-3.5 h-3.5" />
+                              </Button>
+                            )}
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => obrisi(k)}
+                              disabled={radi}
+                              title="Obrisi"
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setKorisniciSkola(null)}>
+              Zatvori
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Dijalog za koordinatora */}
       <Dialog open={!!koordZaSkolu} onOpenChange={(o) => !o && setKoordZaSkolu(null)}>
