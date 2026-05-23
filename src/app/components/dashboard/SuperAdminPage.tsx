@@ -337,107 +337,112 @@ export function SuperAdminPage() {
       />
 
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-        <StatBox label="Ukupno skola" value={skole.length} />
-        <StatBox label="Aktivnih" value={aktivnih} accent="text-green-600" />
-        <StatBox label="Neaktivnih" value={skole.length - aktivnih} accent="text-gray-500" />
+        <StatBox label="Ukupno skola" value={skole.length} accent="text-white" />
+        <StatBox label="Aktivnih" value={aktivnih} accent="text-emerald-400" />
+        <StatBox label="Neaktivnih" value={skole.length - aktivnih} accent="text-slate-400" />
       </div>
 
       {loading ? (
-        <CenteredLoader />
+        <CenteredLoader tamna />
       ) : error ? (
         <ErrorRow message={error} onRetry={ucitaj} />
       ) : skole.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center text-gray-500">
+        <div className="bg-slate-800/60 backdrop-blur rounded-2xl border border-slate-700 p-12 text-center text-slate-300">
           Nema kreiranih skola. Klikni "Dodaj skolu" da napravis prvu.
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {skole.map((s) => {
             const istekla = !!s.vaziDo && s.vaziDo < new Date().toISOString().slice(0, 10);
+            const problematicna = !s.aktivan || istekla;
             return (
               <article
                 key={s.id}
-                className={`bg-white rounded-2xl border p-5 ${s.aktivan && !istekla ? 'border-gray-200' : 'border-amber-200 bg-amber-50/30'
-                  }`}
+                className={`rounded-2xl border p-5 backdrop-blur transition-colors ${
+                  problematicna
+                    ? 'bg-amber-900/20 border-amber-500/40'
+                    : 'bg-slate-800/60 border-slate-700 hover:border-orange-500/40'
+                }`}
               >
                 <div className="flex items-start justify-between mb-3">
                   <div
-                    className={`w-10 h-10 rounded-xl flex items-center justify-center ${s.aktivan && !istekla ? 'bg-purple-50 text-purple-600' : 'bg-amber-50 text-amber-600'
-                      }`}
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                      problematicna
+                        ? 'bg-amber-500/20 text-amber-300'
+                        : 'bg-orange-500/20 text-orange-400'
+                    }`}
                   >
                     <School className="w-5 h-5" />
                   </div>
                   {!s.aktivan ? (
-                    <span className="text-xs font-medium rounded-full bg-gray-100 text-gray-600 px-2 py-0.5">
+                    <span className="text-xs font-medium rounded-full bg-slate-700 text-slate-300 px-2 py-0.5">
                       Deaktivirana
                     </span>
                   ) : istekla ? (
-                    <span className="text-xs font-medium rounded-full bg-amber-100 text-amber-700 px-2 py-0.5">
+                    <span className="text-xs font-medium rounded-full bg-amber-500/20 text-amber-300 px-2 py-0.5">
                       Istekla
                     </span>
                   ) : null}
                 </div>
-                <h3 className="font-semibold text-gray-900 text-lg mb-2">{s.naziv}</h3>
-                <div className="space-y-1.5 text-sm text-gray-600 mb-4">
+                <h3 className="font-semibold text-white text-lg mb-2">{s.naziv}</h3>
+                <div className="space-y-1.5 text-sm text-slate-300 mb-4">
                   {s.grad && (
                     <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-gray-400" />
+                      <MapPin className="w-4 h-4 text-slate-500" />
                       {s.grad}
                       {s.adresa && `, ${s.adresa}`}
                     </div>
                   )}
                   {s.mailPlanovi && (
                     <div className="flex items-center gap-2 truncate">
-                      <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                      <Mail className="w-4 h-4 text-slate-500 flex-shrink-0" />
                       <span className="truncate">{s.mailPlanovi}</span>
                     </div>
                   )}
                   <button
                     onClick={() => postaviVaziDo(s.id, s.vaziDo)}
-                    className="w-full flex items-center gap-2 text-left hover:text-gray-900 transition-colors"
+                    className="w-full flex items-center gap-2 text-left text-slate-300 hover:text-orange-300 transition-colors"
                     title="Klikni da promenis datum"
                   >
-                    <CalendarClock className="w-4 h-4 text-gray-400" />
+                    <CalendarClock className="w-4 h-4 text-slate-500" />
                     {s.vaziDo ? (
-                      <span>Vazi do <strong>{s.vaziDo}</strong></span>
+                      <span>Vazi do <strong className="text-white">{s.vaziDo}</strong></span>
                     ) : (
-                      <span className="text-gray-400">Bez ogranicenja — postavi datum</span>
+                      <span className="text-slate-500">Bez ogranicenja — postavi datum</span>
                     )}
                   </button>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                  <Button size="sm" variant="outline" onClick={() => otvoriKorisnike(s)}>
+                  <button
+                    onClick={() => otvoriKorisnike(s)}
+                    className="h-9 px-3 rounded-lg border border-slate-600 bg-slate-800 text-slate-200 text-sm font-medium hover:bg-slate-700 hover:border-slate-500 transition-colors flex items-center justify-center gap-2"
+                  >
                     <Users className="w-4 h-4" /> Korisnici
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
+                  </button>
+                  <button
                     onClick={() => {
                       setKoordZaSkolu(s);
                       setKoordForma(PRAZAN_KOORDINATOR);
                       setKoordError(null);
                     }}
+                    className="h-9 px-3 rounded-lg border border-slate-600 bg-slate-800 text-slate-200 text-sm font-medium hover:bg-slate-700 hover:border-slate-500 transition-colors flex items-center justify-center gap-2"
                   >
                     <UserPlus className="w-4 h-4" /> Koordinator
-                  </Button>
+                  </button>
                   {s.aktivan ? (
-                    <Button
-                      size="sm"
-                      variant="outline"
+                    <button
                       onClick={() => deaktivirajSkolu(s.id)}
-                      className="col-span-2 text-amber-700 hover:bg-amber-50"
+                      className="col-span-2 h-9 px-3 rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-300 text-sm font-medium hover:bg-amber-500/20 transition-colors flex items-center justify-center gap-2"
                     >
                       <PowerOff className="w-4 h-4" /> Deaktiviraj skolu
-                    </Button>
+                    </button>
                   ) : (
-                    <Button
-                      size="sm"
-                      variant="outline"
+                    <button
                       onClick={() => aktivirajSkolu(s.id)}
-                      className="col-span-2 text-emerald-700 hover:bg-emerald-50"
+                      className="col-span-2 h-9 px-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 text-sm font-medium hover:bg-emerald-500/20 transition-colors flex items-center justify-center gap-2"
                     >
                       <Power className="w-4 h-4" /> Aktiviraj skolu
-                    </Button>
+                    </button>
                   )}
                 </div>
               </article>
@@ -631,9 +636,9 @@ function Field({ id, label, value, onChange, type = 'text', placeholder }: Field
 
 function StatBox({ label, value, accent }: { label: string; value: number; accent?: string }) {
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-4">
-      <div className="text-sm text-gray-500">{label}</div>
-      <div className={`text-2xl font-bold mt-1 ${accent ?? 'text-gray-900'}`}>{value}</div>
+    <div className="bg-slate-800/60 backdrop-blur rounded-2xl border border-slate-700 p-4">
+      <div className="text-sm text-slate-400">{label}</div>
+      <div className={`text-2xl font-bold mt-1 ${accent ?? 'text-white'}`}>{value}</div>
     </div>
   );
 }
@@ -647,9 +652,15 @@ function ErrorBox({ message }: { message: string }) {
   );
 }
 
-function CenteredLoader() {
+function CenteredLoader({ tamna = false }: { tamna?: boolean }) {
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-12 flex items-center justify-center text-gray-500">
+    <div
+      className={`rounded-2xl border p-12 flex items-center justify-center ${
+        tamna
+          ? 'bg-slate-800/60 backdrop-blur border-slate-700 text-slate-300'
+          : 'bg-white border-gray-200 text-gray-500'
+      }`}
+    >
       <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam...
     </div>
   );
@@ -657,12 +668,15 @@ function CenteredLoader() {
 
 function ErrorRow({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
-    <div className="bg-red-50 border border-red-200 rounded-2xl p-6 flex items-center gap-2 text-red-700">
+    <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-6 flex items-center gap-2 text-red-300">
       <AlertCircle className="w-5 h-5" />
       <span>{message}</span>
-      <Button size="sm" variant="outline" onClick={onRetry} className="ml-auto">
+      <button
+        onClick={onRetry}
+        className="ml-auto h-8 px-3 rounded-lg border border-red-500/40 text-sm text-red-200 hover:bg-red-500/10 transition-colors"
+      >
         Pokusaj ponovo
-      </Button>
+      </button>
     </div>
   );
 }

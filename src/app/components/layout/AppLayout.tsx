@@ -10,10 +10,10 @@ interface AppLayoutProps {
 /** Standardni layout za zasticene stranice — Sidebar levo, TopBar gore, sadrzaj desno. */
 export function AppLayout({ children }: AppLayoutProps) {
   const { user } = useAuth();
-  // SUPER_ADMIN paleta — tople sivkasto-narandzaste nijanse (command-center stil)
+  // SUPER_ADMIN paleta — tamna sa narandzastim nagibom (command-center stil)
   const pozadina =
     user?.uloga === 'SUPER_ADMIN'
-      ? 'bg-gradient-to-br from-stone-200 via-stone-100 to-orange-50'
+      ? 'bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800'
       : 'bg-gray-50';
 
   return (
@@ -37,11 +37,15 @@ interface PageHeaderProps {
 
 /** Header sekcija stranice — naslov + opis + akcija (npr. dugme "Dodaj"). */
 export function PageHeader({ title, description, action }: PageHeaderProps) {
+  const { user } = useAuth();
+  const sa = user?.uloga === 'SUPER_ADMIN';
   return (
     <header className="flex items-start justify-between gap-4">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">{title}</h1>
-        {description && <p className="text-gray-600 mt-1">{description}</p>}
+        <h1 className={`text-3xl font-bold ${sa ? 'text-white' : 'text-gray-900'}`}>{title}</h1>
+        {description && (
+          <p className={`mt-1 ${sa ? 'text-slate-300' : 'text-gray-600'}`}>{description}</p>
+        )}
       </div>
       {action && <div className="flex-shrink-0">{action}</div>}
     </header>
