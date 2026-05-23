@@ -15,6 +15,7 @@ import {
   ClipboardList,
   BarChart3,
   Library,
+  ClipboardCheck,
   type LucideIcon,
 } from 'lucide-react';
 import { useAuth, type Uloga } from '@/context/AuthContext';
@@ -40,6 +41,7 @@ const STAVKE_GLAVNO: MenuItem[] = [
   { path: '/rotacija', icon: Repeat, label: 'Rotacija', uloge: ['NASTAVNIK', 'KOORDINATOR', 'ADMIN', 'DIREKTOR'] },
   { path: '/planovi/godisnji', icon: FileText, label: 'Godisnji planovi', uloge: ['NASTAVNIK', 'PP_SLUZBA', 'DIREKTOR', 'KOORDINATOR'] },
   { path: '/planovi/operativni', icon: ClipboardList, label: 'Operativni planovi', uloge: ['NASTAVNIK', 'PP_SLUZBA', 'DIREKTOR', 'KOORDINATOR'] },
+  { path: '/pp/izvestaji', icon: ClipboardCheck, label: 'PP izvestaji', uloge: ['NASTAVNIK', 'PP_SLUZBA', 'DIREKTOR', 'KOORDINATOR'] },
   { path: '/katalog', icon: Library, label: 'Katalog', uloge: ['NASTAVNIK', 'KOORDINATOR', 'ADMIN', 'DIREKTOR', 'PP_SLUZBA'] },
 ];
 

@@ -17,6 +17,7 @@ import { GodisnjiPlanEditorPage } from '@/app/components/dashboard/GodisnjiPlanE
 import { OperativniPlanoviPage } from '@/app/components/dashboard/OperativniPlanoviPage';
 import { OperativniPlanEditorPage } from '@/app/components/dashboard/OperativniPlanEditorPage';
 import { PPDashboardPage } from '@/app/components/dashboard/PPDashboardPage';
+import { PPIzvestajiPage } from '@/app/components/dashboard/PPIzvestajiPage';
 import { RotacijaPage } from '@/app/components/dashboard/RotacijaPage';
 
 /** Preusmerava ulogovanog korisnika na njegovu pocetnu rutu. */
@@ -166,6 +167,14 @@ export default function App() {
         element={
           <ProtectedRoute allowedRoles={['PP_SLUZBA', 'DIREKTOR', 'KOORDINATOR']}>
             <PPDashboardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/pp/izvestaji"
+        element={
+          <ProtectedRoute allowedRoles={['NASTAVNIK', 'PP_SLUZBA', 'DIREKTOR', 'KOORDINATOR']}>
+            <PPIzvestajiPage />
           </ProtectedRoute>
         }
       />
