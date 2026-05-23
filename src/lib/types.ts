@@ -274,6 +274,107 @@ export interface MedjupredmetnoRequest {
   opisKompetencije: string;
 }
 
+// =============== PP SLUZBA ===============
+
+export type PPStatus = 'NACRT' | 'PODNET' | 'PRIHVACEN' | 'VRACENO_NA_DORADU';
+export type PPPeriod = 'PRVO_TROMESECJE' | 'PRVO_POLUGODISTE' | 'TRECE_TROMESECJE' | 'KRAJ_GODINE';
+
+export interface PPIzvestajResponse {
+  id: string;
+  staresinaId: string;
+  staresinaIme: string;
+  odeljenjeId: string;
+  odeljenjeLabel: string;
+  period: PPPeriod;
+  skolskaGodina: string;
+  podaci: Record<string, unknown>;
+  status: PPStatus;
+  podnetAt: string | null;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface PPIzvestajRequest {
+  odeljenjeId: string;
+  period: PPPeriod;
+  skolskaGodina: string;
+  podaci?: Record<string, unknown> | null;
+}
+
+export interface PPDashboardResponse {
+  skolskaGodina: string;
+  ukupnoGodisnjihPlanova: number;
+  ukupnoOperativnihPlanova: number;
+  ukupnoIzvestaja: number;
+  godisnjiPoStatusu: Record<string, number>;
+  operativniPoStatusu: Record<string, number>;
+  izvestajiPoStatusu: Record<string, number>;
+  godisnjiPlanovi: GodisnjiPlanResponse[];
+  operativniPlanovi: OperativniPlanResponse[];
+  izvestaji: PPIzvestajResponse[];
+}
+
+export interface StatistikaResponse {
+  skolskaGodina: string;
+  period: PPPeriod;
+  brojIzvestaja: number;
+  ukupnoUcenika: number;
+  ucenikaMuski: number;
+  ucenikaZenski: number;
+  prisustvo: { opravdana: number; neopravdana: number };
+  vladanjeDistribucija: Record<string, number>;
+  uspehDistribucija: Record<string, number>;
+}
+
+// =============== ROTACIJA ===============
+
+export interface RotacijaOdeljenjeKratko {
+  id: string;
+  label: string;
+  razred: number;
+  oznaka: string;
+}
+
+export interface RotNedeljaResponse {
+  id: string;
+  brojNedelje: number;
+  odeljenja: RotacijaOdeljenjeKratko[];
+}
+
+export interface RotacijaResponse {
+  id: string;
+  naziv: string;
+  nastavnikId: string;
+  nastavnikIme: string;
+  predmetId: string | null;
+  predmetNaziv: string | null;
+  grupaVelicina: number;
+  casovaNedeljno: number;
+  skolskaGodina: string;
+  odeljenja: RotacijaOdeljenjeKratko[];
+  nedelje: RotNedeljaResponse[];
+  statistika: {
+    balansirano: boolean;
+    minCasovaPoOdeljenju: number;
+    maxCasovaPoOdeljenju: number;
+    casoviPoOdeljenju: Record<string, number>;
+    ukupnoNedelja: number;
+  };
+}
+
+export interface KreirajRotacijuRequest {
+  naziv: string;
+  predmetId?: string | null;
+  odeljenjaIds: string[];
+  grupaVelicina: number;
+  casovaNedeljno: number;
+  skolskaGodina: string;
+}
+
+export interface AzurirajNedeljuRequest {
+  odeljenjaIds: string[];
+}
+
 // =============== RASPORED ===============
 
 export type Dan = 'PONEDELJAK' | 'UTORAK' | 'SREDA' | 'CETVRTAK' | 'PETAK' | 'SUBOTA';

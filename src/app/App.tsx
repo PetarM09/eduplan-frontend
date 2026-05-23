@@ -16,8 +16,8 @@ import { GodisnjiPlanoviPage } from '@/app/components/dashboard/GodisnjiPlanoviP
 import { GodisnjiPlanEditorPage } from '@/app/components/dashboard/GodisnjiPlanEditorPage';
 import { OperativniPlanoviPage } from '@/app/components/dashboard/OperativniPlanoviPage';
 import { OperativniPlanEditorPage } from '@/app/components/dashboard/OperativniPlanEditorPage';
-import { PlaceholderPage } from '@/app/components/dashboard/PlaceholderPage';
-import { Repeat, BarChart3 } from 'lucide-react';
+import { PPDashboardPage } from '@/app/components/dashboard/PPDashboardPage';
+import { RotacijaPage } from '@/app/components/dashboard/RotacijaPage';
 
 /** Preusmerava ulogovanog korisnika na njegovu pocetnu rutu. */
 function HomeRedirect() {
@@ -105,22 +105,11 @@ export default function App() {
           </ProtectedRoute>
         }
       />
-      {/* Rotacija, planovi, PP — placeholderi dok se UI ne dovrsi */}
       <Route
         path="/rotacija"
         element={
           <ProtectedRoute>
-            <PlaceholderPage
-              title="Rotacija grupa"
-              description="Generisanje balansiranog ciklusa za grupne casove (vezbe) — C(N,K) algoritam"
-              icon={Repeat}
-              endpoints={[
-                'POST   /api/v1/rotacija',
-                'POST   /api/v1/rotacija/{id}/generisi',
-                'GET    /api/v1/rotacija',
-                'PUT    /api/v1/rotacija/nedelje/{id}',
-              ]}
-            />
+            <RotacijaPage />
           </ProtectedRoute>
         }
       />
@@ -176,17 +165,7 @@ export default function App() {
         path="/pp/dashboard"
         element={
           <ProtectedRoute allowedRoles={['PP_SLUZBA', 'DIREKTOR', 'KOORDINATOR']}>
-            <PlaceholderPage
-              title="PP dashboard"
-              description="Pregled planova, izvestaja i statistike skole"
-              icon={BarChart3}
-              endpoints={[
-                'GET    /api/v1/pp/dashboard',
-                'GET    /api/v1/pp/statistika',
-                'GET    /api/v1/pp/eksport/excel',
-                'POST   /api/v1/pp/izvestaj',
-              ]}
-            />
+            <PPDashboardPage />
           </ProtectedRoute>
         }
       />
