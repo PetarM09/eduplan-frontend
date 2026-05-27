@@ -6,9 +6,9 @@ import { Label } from '@/app/components/ui/label';
 import {
   AlertCircle,
   ArrowLeft,
+  ArrowRight,
   CheckCircle2,
   Loader2,
-  Play,
   Plus,
   Repeat,
   Trash2,
@@ -16,26 +16,34 @@ import {
 import { api, ApiError } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import type {
+  Dan,
+  DetekcijaVezbiResponse,
   KreirajRotacijuRequest,
   OdeljenjeResponse,
-  PredmetResponse,
   RotacijaResponse,
 } from '@/lib/types';
+
+const DAN_LABEL: Record<Dan, string> = {
+  PONEDELJAK: 'Pon',
+  UTORAK: 'Uto',
+  SREDA: 'Sre',
+  CETVRTAK: 'Cet',
+  PETAK: 'Pet',
+  SUBOTA: 'Sub',
+};
+
+const DAN_REDOSLED: Dan[] = ['PONEDELJAK', 'UTORAK', 'SREDA', 'CETVRTAK', 'PETAK', 'SUBOTA'];
 
 type Tab = 'lista' | 'novi' | 'detalj';
 
 export function RotacijaPage() {
-  const { user } = useAuth();
   const [tab, setTab] = useState<Tab>('lista');
   const [izabranaRotacijaId, setIzabranaRotacijaId] = useState<string | null>(null);
-
-  const mojRezim = user?.uloga === 'NASTAVNIK';
 
   return (
     <AppLayout>
       {tab === 'lista' && (
         <ListaRotacija
-          mojRezim={mojRezim}
           onKreiraj={() => setTab('novi')}
           onOtvori={(id) => {
             setIzabranaRotacijaId(id);
@@ -44,7 +52,7 @@ export function RotacijaPage() {
         />
       )}
       {tab === 'novi' && (
-        <NoviRotacijaForma
+        <NoviRotacijaWizard
           onOtkazi={() => setTab('lista')}
           onSnimljeno={(id) => {
             setIzabranaRotacijaId(id);
@@ -53,11 +61,7 @@ export function RotacijaPage() {
         />
       )}
       {tab === 'detalj' && izabranaRotacijaId && (
-        <DetaljRotacije
-          rotacijaId={izabranaRotacijaId}
-          onNazad={() => setTab('lista')}
-          mojRezim={mojRezim}
-        />
+        <DetaljRotacije rotacijaId={izabranaRotacijaId} onNazad={() => setTab('lista')} />
       )}
     </AppLayout>
   );
@@ -66,15 +70,14 @@ export function RotacijaPage() {
 // ============= LISTA =============
 
 function ListaRotacija({
-  mojRezim,
   onKreiraj,
   onOtvori,
 }: {
-  mojRezim: boolean;
   onKreiraj: () => void;
   onOtvori: (id: string) => void;
 }) {
   const { user } = useAuth();
+  const mojRezim = user?.uloga === 'NASTAVNIK';
   const [rotacije, setRotacije] = useState<RotacijaResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -98,7 +101,7 @@ function ListaRotacija({
   }, [mojRezim]);
 
   const obrisi = async (id: string) => {
-    if (!confirm('Obrisati rotaciju (sve nedelje ce se obrisati)?')) return;
+    if (!confirm('Obrisati rotaciju sa svim dodelama?')) return;
     try {
       await api.delete(`/rotacija/${id}`);
       setRotacije((prev) => prev.filter((r) => r.id !== id));
@@ -111,7 +114,7 @@ function ListaRotacija({
     <>
       <PageHeader
         title={mojRezim ? 'Moje rotacije' : 'Rotacije'}
-        description="Generisanje balansiranog ciklusa za grupne casove (vezbe) — C(N,K) algoritam"
+        description="Rotacioni raspored grupa ucenika za casove vezbi (auto-detekcija iz rasporeda)"
         action={
           user?.uloga === 'NASTAVNIK' && (
             <Button size="lg" onClick={onKreiraj}>
@@ -135,7 +138,7 @@ function ListaRotacija({
         </div>
       ) : rotacije.length === 0 ? (
         <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center text-gray-500">
-          Jos nema rotacija. {user?.uloga === 'NASTAVNIK' && 'Klikni "Nova rotacija" da kreiras.'}
+          Jos nema rotacija. {user?.uloga === 'NASTAVNIK' && 'Klikni "Nova rotacija" da kreiras prvu.'}
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
@@ -144,64 +147,44 @@ function ListaRotacija({
               <tr>
                 <Th>Naziv</Th>
                 {!mojRezim && <Th>Nastavnik</Th>}
-                <Th>Predmet</Th>
+                <Th>Odeljenje</Th>
                 <Th>Sk. godina</Th>
-                <Th>Odeljenja / Grupa</Th>
-                <Th>Nedelje</Th>
-                <Th>Balans</Th>
+                <Th>Grupe / nedelje</Th>
+                <Th>Predmeti</Th>
                 <Th className="text-right">Akcije</Th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {rotacije.map((r) => {
-                const balOk = r.statistika.balansirano;
-                return (
-                  <tr key={r.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => onOtvori(r.id)}>
-                    <Td className="font-medium text-gray-900 flex items-center gap-2">
+              {rotacije.map((r) => (
+                <tr key={r.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => onOtvori(r.id)}>
+                  <Td className="font-medium text-gray-900">
+                    <div className="flex items-center gap-2">
                       <Repeat className="w-4 h-4 text-indigo-500" />
                       {r.naziv}
-                    </Td>
-                    {!mojRezim && <Td>{r.nastavnikIme}</Td>}
-                    <Td>{r.predmetNaziv ?? '—'}</Td>
-                    <Td>{r.skolskaGodina}</Td>
-                    <Td>
-                      {r.odeljenja.length} odeljenja, grupa od {r.grupaVelicina}
-                    </Td>
-                    <Td>{r.statistika.ukupnoNedelja}</Td>
-                    <Td>
-                      <span
-                        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          balOk
-                            ? 'bg-emerald-100 text-emerald-700'
-                            : r.statistika.ukupnoNedelja === 0
-                            ? 'bg-gray-100 text-gray-500'
-                            : 'bg-amber-100 text-amber-700'
-                        }`}
+                    </div>
+                  </Td>
+                  {!mojRezim && <Td>{r.nastavnikIme}</Td>}
+                  <Td>{r.odeljenjeLabel}</Td>
+                  <Td>{r.skolskaGodina}</Td>
+                  <Td>
+                    {r.brojGrupa} grupa × {r.brojNedelja} ned.
+                  </Td>
+                  <Td className="text-xs text-gray-500">{r.predmeti.length}</Td>
+                  <Td className="text-right" onClick={(e) => e.stopPropagation()}>
+                    {user?.uloga === 'NASTAVNIK' && r.nastavnikId === user.id && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => obrisi(r.id)}
+                        title="Obrisi"
+                        className="text-red-600 hover:text-red-700"
                       >
-                        {balOk && <CheckCircle2 className="w-3 h-3" />}
-                        {r.statistika.ukupnoNedelja === 0
-                          ? 'Negenerisano'
-                          : balOk
-                          ? 'Balansirano'
-                          : `${r.statistika.minCasovaPoOdeljenju}–${r.statistika.maxCasovaPoOdeljenju}`}
-                      </span>
-                    </Td>
-                    <Td className="text-right" onClick={(e) => e.stopPropagation()}>
-                      {user?.uloga === 'NASTAVNIK' && r.nastavnikId === user.id && (
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => obrisi(r.id)}
-                          title="Obrisi"
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </Button>
-                      )}
-                    </Td>
-                  </tr>
-                );
-              })}
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </Button>
+                    )}
+                  </Td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -210,81 +193,139 @@ function ListaRotacija({
   );
 }
 
-// ============= NOVI =============
+// ============= WIZARD =============
 
-function NoviRotacijaForma({
+interface UnosPredmet {
+  profesorId: string;
+  naziv: string;
+  casovaNedeljno: number;
+}
+
+function NoviRotacijaWizard({
   onOtkazi,
   onSnimljeno,
 }: {
   onOtkazi: () => void;
   onSnimljeno: (id: string) => void;
 }) {
+  const [korak, setKorak] = useState<1 | 2 | 3>(1);
+
+  // Korak 1
   const [naziv, setNaziv] = useState('');
-  const [predmetId, setPredmetId] = useState<string>('');
-  const [predmeti, setPredmeti] = useState<PredmetResponse[]>([]);
   const [odeljenja, setOdeljenja] = useState<OdeljenjeResponse[]>([]);
-  const [odabrana, setOdabrana] = useState<Set<string>>(new Set());
-  const [grupaVelicina, setGrupaVelicina] = useState<number>(2);
-  const [casovaNedeljno, setCasovaNedeljno] = useState<number>(2);
+  const [odeljenjeId, setOdeljenjeId] = useState<string>('');
   const [skolskaGodina, setSkolskaGodina] = useState<string>('');
+
+  // Korak 2
+  const [detekcija, setDetekcija] = useState<DetekcijaVezbiResponse | null>(null);
+  const [detekcijaLoading, setDetekcijaLoading] = useState(false);
+  const [detekcijaError, setDetekcijaError] = useState<string | null>(null);
+  const [predmeti, setPredmeti] = useState<UnosPredmet[]>([]);
+
+  // Korak 3
+  const [brojGrupa, setBrojGrupa] = useState<number>(2);
+  const [brojNedelja, setBrojNedelja] = useState<number>(2);
   const [snimanje, setSnimanje] = useState(false);
 
   useEffect(() => {
-    (async () => {
-      try {
-        const [pr, od] = await Promise.all([
-          api.get<PredmetResponse[]>('/predmeti'),
-          api.get<OdeljenjeResponse[]>('/odeljenja'),
-        ]);
-        setPredmeti(pr);
+    api
+      .get<OdeljenjeResponse[]>('/odeljenja')
+      .then((od) => {
         setOdeljenja(od);
-        // default sk. godina iz prvog odeljenja
-        if (od.length > 0 && !skolskaGodina) setSkolskaGodina(od[0].skolskaGodina);
-      } catch {
-        // ignored — UI će prikazati prazne select-e
-      }
-    })();
+        if (od.length > 0) setSkolskaGodina(od[0].skolskaGodina);
+      })
+      .catch(() => setOdeljenja([]));
   }, []);
 
-  const toggle = (id: string) => {
-    setOdabrana((prev) => {
-      const novi = new Set(prev);
-      if (novi.has(id)) novi.delete(id);
-      else novi.add(id);
-      return novi;
-    });
+  const idiNaKorak2 = async () => {
+    if (!naziv.trim()) {
+      alert('Naziv je obavezan');
+      return;
+    }
+    if (!odeljenjeId) {
+      alert('Izaberi odeljenje');
+      return;
+    }
+    if (!/^\d{4}\/\d{4}$/.test(skolskaGodina)) {
+      alert('Skolska godina mora biti u formatu 2025/2026');
+      return;
+    }
+    setDetekcijaLoading(true);
+    setDetekcijaError(null);
+    try {
+      const d = await api.get<DetekcijaVezbiResponse>(`/rotacija/vezbe/${odeljenjeId}`);
+      setDetekcija(d);
+      // Inicijalno: jedan red po profesoru sa svim njegovim casovima
+      setPredmeti(
+        d.profesori.map((p) => ({ profesorId: p.profesorId, naziv: '', casovaNedeljno: p.brojCasovaVezbi }))
+      );
+      setKorak(2);
+    } catch (e) {
+      setDetekcijaError(e instanceof ApiError ? e.message : 'Greska pri detekciji vezbi');
+    } finally {
+      setDetekcijaLoading(false);
+    }
   };
 
-  const validno = useMemo(() => {
-    return (
-      naziv.trim().length > 0 &&
-      odabrana.size >= 2 &&
-      odabrana.size <= 12 &&
-      grupaVelicina >= 1 &&
-      grupaVelicina <= 11 &&
-      casovaNedeljno >= 1 &&
-      casovaNedeljno <= 20 &&
-      /^\d{4}\/\d{4}$/.test(skolskaGodina) &&
-      grupaVelicina < odabrana.size
+  const sumePoProfesoru = useMemo(() => {
+    const m: Record<string, number> = {};
+    predmeti.forEach((p) => {
+      m[p.profesorId] = (m[p.profesorId] ?? 0) + (p.casovaNedeljno || 0);
+    });
+    return m;
+  }, [predmeti]);
+
+  const sumeOK = useMemo(() => {
+    if (!detekcija) return false;
+    return detekcija.profesori.every(
+      (p) => (sumePoProfesoru[p.profesorId] ?? 0) === p.brojCasovaVezbi
     );
-  }, [naziv, odabrana, grupaVelicina, casovaNedeljno, skolskaGodina]);
+  }, [detekcija, sumePoProfesoru]);
+
+  const sviNaziviUneti = useMemo(() => predmeti.every((p) => p.naziv.trim().length > 0), [predmeti]);
+
+  const dodajPredmet = (profesorId: string) => {
+    setPredmeti((prev) => [...prev, { profesorId, naziv: '', casovaNedeljno: 1 }]);
+  };
+
+  const obrisiPredmet = (idx: number) => {
+    setPredmeti((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  const azurirajPredmet = (idx: number, key: 'naziv' | 'casovaNedeljno', vrednost: string | number) => {
+    setPredmeti((prev) =>
+      prev.map((p, i) => (i === idx ? { ...p, [key]: vrednost } : p))
+    );
+  };
 
   const snimi = async () => {
-    if (!validno) return;
+    if (!detekcija) return;
+    if (brojGrupa < 2 || brojGrupa > 12) {
+      alert('Broj grupa mora biti izmedju 2 i 12');
+      return;
+    }
+    if (brojNedelja < 1 || brojNedelja > 52) {
+      alert('Broj nedelja mora biti izmedju 1 i 52');
+      return;
+    }
     setSnimanje(true);
     try {
       const body: KreirajRotacijuRequest = {
         naziv: naziv.trim(),
-        predmetId: predmetId || null,
-        odeljenjaIds: Array.from(odabrana),
-        grupaVelicina,
-        casovaNedeljno,
+        odeljenjeId,
         skolskaGodina,
+        brojGrupa,
+        brojNedelja,
+        predmeti: predmeti.map((p) => ({
+          profesorId: p.profesorId,
+          naziv: p.naziv.trim(),
+          casovaNedeljno: p.casovaNedeljno,
+        })),
       };
       const rez = await api.post<RotacijaResponse>('/rotacija', body);
       onSnimljeno(rez.id);
     } catch (e) {
-      alert(e instanceof ApiError ? e.message : 'Greska');
+      alert(e instanceof ApiError ? e.message : 'Greska pri snimanju');
     } finally {
       setSnimanje(false);
     }
@@ -294,7 +335,9 @@ function NoviRotacijaForma({
     <>
       <PageHeader
         title="Nova rotacija"
-        description="Kreiraj konfiguraciju — generisanje ciklusa pokrenuces u sledecem koraku"
+        description={`Korak ${korak} od 3 — ${
+          korak === 1 ? 'odeljenje' : korak === 2 ? 'profesori i predmeti vezbi' : 'grupe i nedelje'
+        }`}
         action={
           <Button variant="outline" onClick={onOtkazi}>
             <ArrowLeft className="w-4 h-4" /> Otkazi
@@ -302,165 +345,274 @@ function NoviRotacijaForma({
         }
       />
 
-      <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-5">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="naziv">Naziv</Label>
-            <Input
-              id="naziv"
-              value={naziv}
-              onChange={(e) => setNaziv(e.target.value)}
-              placeholder="npr. Vezbe iz informatike — III/6"
-            />
-          </div>
-          <div>
-            <Label htmlFor="predmet">Predmet (opcionalno)</Label>
-            <select
-              id="predmet"
-              value={predmetId}
-              onChange={(e) => setPredmetId(e.target.value)}
-              className="h-10 px-3 rounded-lg border border-gray-300 text-sm w-full"
-            >
-              <option value="">—</option>
-              {predmeti.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.naziv}
-                  {p.razred ? ` (${p.razred}.)` : ''}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <Label htmlFor="sk-godina">Skolska godina</Label>
-            <Input
-              id="sk-godina"
-              value={skolskaGodina}
-              onChange={(e) => setSkolskaGodina(e.target.value)}
-              placeholder="2025/2026"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
+      <div className="flex items-center gap-2 text-sm text-gray-500">
+        <KorakIndikator broj={1} aktivan={korak === 1} prosao={korak > 1} label="Odeljenje" />
+        <div className="flex-1 h-px bg-gray-200" />
+        <KorakIndikator broj={2} aktivan={korak === 2} prosao={korak > 2} label="Predmeti" />
+        <div className="flex-1 h-px bg-gray-200" />
+        <KorakIndikator broj={3} aktivan={korak === 3} prosao={false} label="Generisi" />
+      </div>
+
+      {korak === 1 && (
+        <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="grupa">Grupa od (K)</Label>
+              <Label htmlFor="naziv">Naziv rotacije</Label>
               <Input
-                id="grupa"
-                type="number"
-                min={1}
-                max={11}
-                value={grupaVelicina}
-                onChange={(e) => setGrupaVelicina(Number(e.target.value))}
+                id="naziv"
+                value={naziv}
+                onChange={(e) => setNaziv(e.target.value)}
+                placeholder="npr. Vezbe IV-4, prvo polugodiste"
               />
             </div>
             <div>
-              <Label htmlFor="casovi">Casova nedeljno</Label>
+              <Label htmlFor="sk">Skolska godina</Label>
               <Input
-                id="casovi"
-                type="number"
-                min={1}
-                max={20}
-                value={casovaNedeljno}
-                onChange={(e) => setCasovaNedeljno(Number(e.target.value))}
+                id="sk"
+                value={skolskaGodina}
+                onChange={(e) => setSkolskaGodina(e.target.value)}
+                placeholder="2025/2026"
               />
             </div>
+            <div className="md:col-span-2">
+              <Label htmlFor="od">Odeljenje</Label>
+              <select
+                id="od"
+                value={odeljenjeId}
+                onChange={(e) => setOdeljenjeId(e.target.value)}
+                className="h-10 px-3 rounded-lg border border-gray-300 text-sm w-full"
+              >
+                <option value="">— izaberi —</option>
+                {odeljenja.map((o) => (
+                  <option key={o.id} value={o.id}>
+                    {o.label} ({o.skolskaGodina})
+                  </option>
+                ))}
+              </select>
+              <p className="text-xs text-gray-500 mt-1">
+                Sistem ce auto-detektovati profesore vezbi za izabrano odeljenje iz aktivne verzije rasporeda.
+              </p>
+            </div>
+          </div>
+          {detekcijaError && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700 flex items-center gap-2">
+              <AlertCircle className="w-4 h-4" /> {detekcijaError}
+            </div>
+          )}
+          <div className="flex justify-end gap-2 pt-2 border-t border-gray-100">
+            <Button variant="outline" onClick={onOtkazi}>
+              Otkazi
+            </Button>
+            <Button onClick={idiNaKorak2} disabled={detekcijaLoading}>
+              {detekcijaLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
+              Dalje
+            </Button>
           </div>
         </div>
+      )}
 
-        <div>
-          <Label>Odeljenja u rotaciji (2–12)</Label>
-          <div className="mt-2 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
-            {odeljenja.length === 0 ? (
-              <p className="text-sm text-gray-500 col-span-full">Nema odeljenja.</p>
-            ) : (
-              odeljenja.map((o) => {
-                const checked = odabrana.has(o.id);
+      {korak === 2 && detekcija && (
+        <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Profesori vezbi — {detekcija.odeljenjeLabel}
+              </h2>
+              <p className="text-sm text-gray-500">
+                Detektovano {detekcija.termini.length} termina vezbi, {detekcija.profesori.length} profesora.
+                Suma casova po predmetima mora biti jednaka detektovanom broju casova.
+              </p>
+            </div>
+          </div>
+
+          {detekcija.profesori.length === 0 ? (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-800">
+              U ovom odeljenju nema termina sa 2+ profesora — nema casova vezbi za rotaciju.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {detekcija.profesori.map((p) => {
+                const suma = sumePoProfesoru[p.profesorId] ?? 0;
+                const ok = suma === p.brojCasovaVezbi;
+                const predmetiProfesora = predmeti
+                  .map((pred, idx) => ({ ...pred, idx }))
+                  .filter((x) => x.profesorId === p.profesorId);
                 return (
-                  <label
-                    key={o.id}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-sm cursor-pointer ${
-                      checked ? 'bg-indigo-50 border-indigo-300' : 'bg-white border-gray-200 hover:bg-gray-50'
+                  <div
+                    key={p.profesorId}
+                    className={`rounded-xl border p-4 ${
+                      ok ? 'border-gray-200' : 'border-amber-300 bg-amber-50/30'
                     }`}
                   >
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      onChange={() => toggle(o.id)}
-                      className="rounded"
-                    />
-                    <span className="font-medium text-gray-900">{o.label}</span>
-                  </label>
+                    <div className="flex items-center justify-between mb-3">
+                      <div>
+                        <p className="font-medium text-gray-900">{p.profesorIme}</p>
+                        <p className="text-xs text-gray-500">
+                          Iz rasporeda: <strong>{p.brojCasovaVezbi}</strong> casova vezbi
+                        </p>
+                      </div>
+                      <span
+                        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                          ok ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+                        }`}
+                      >
+                        Suma: {suma} / {p.brojCasovaVezbi}
+                      </span>
+                    </div>
+                    <div className="space-y-2">
+                      {predmetiProfesora.map((pred) => (
+                        <div key={pred.idx} className="grid grid-cols-[1fr_120px_40px] gap-2 items-center">
+                          <Input
+                            value={pred.naziv}
+                            onChange={(e) => azurirajPredmet(pred.idx, 'naziv', e.target.value)}
+                            placeholder="Naziv predmeta"
+                          />
+                          <Input
+                            type="number"
+                            min={1}
+                            max={20}
+                            value={pred.casovaNedeljno}
+                            onChange={(e) => azurirajPredmet(pred.idx, 'casovaNedeljno', Number(e.target.value) || 0)}
+                            title="Casova nedeljno"
+                          />
+                          <button
+                            onClick={() => obrisiPredmet(pred.idx)}
+                            disabled={predmetiProfesora.length === 1}
+                            className="h-9 w-9 rounded-lg text-red-600 hover:bg-red-50 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center"
+                            title="Obrisi predmet"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        onClick={() => dodajPredmet(p.profesorId)}
+                        className="text-sm text-blue-600 hover:text-blue-700 inline-flex items-center gap-1"
+                      >
+                        <Plus className="w-3.5 h-3.5" /> Jos jedan predmet
+                      </button>
+                    </div>
+                  </div>
                 );
-              })
-            )}
-          </div>
-          {odabrana.size > 0 && (
-            <p className="text-xs text-gray-500 mt-2">
-              Odabrano {odabrana.size} odeljenja. Grupa K = {grupaVelicina}. Algoritam ce ucitati C({odabrana.size},
-              {grupaVelicina}) ={' '}
-              <strong>{binom(odabrana.size, grupaVelicina)}</strong> kombinacija u ciklusu.
-            </p>
+              })}
+            </div>
           )}
-        </div>
 
-        <div className="flex justify-end gap-2 pt-2 border-t border-gray-100">
-          <Button variant="outline" onClick={onOtkazi}>
-            Otkazi
-          </Button>
-          <Button onClick={snimi} disabled={!validno || snimanje}>
-            {snimanje ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-            Kreiraj
-          </Button>
+          <div className="flex justify-between items-center gap-2 pt-2 border-t border-gray-100">
+            <Button variant="outline" onClick={() => setKorak(1)}>
+              <ArrowLeft className="w-4 h-4" /> Nazad
+            </Button>
+            <Button onClick={() => setKorak(3)} disabled={!sumeOK || !sviNaziviUneti}>
+              <ArrowRight className="w-4 h-4" /> Dalje
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
+
+      {korak === 3 && (
+        <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-5">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900">Grupe i nedelje</h2>
+            <p className="text-sm text-gray-500">
+              Odeljenje se deli na grupe; rotacija prati casove vezbi kroz N nedelja.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="grupe">Broj grupa</Label>
+              <Input
+                id="grupe"
+                type="number"
+                min={2}
+                max={12}
+                value={brojGrupa}
+                onChange={(e) => setBrojGrupa(Number(e.target.value) || 2)}
+              />
+            </div>
+            <div>
+              <Label htmlFor="nedelje">Broj nedelja u ciklusu</Label>
+              <Input
+                id="nedelje"
+                type="number"
+                min={1}
+                max={52}
+                value={brojNedelja}
+                onChange={(e) => setBrojNedelja(Number(e.target.value) || 1)}
+              />
+            </div>
+          </div>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
+            Rotacija ce kreirati ukupno{' '}
+            <strong>
+              {brojNedelja} × {(detekcija?.termini.length ?? 0)} termina = {brojNedelja * (detekcija?.termini.length ?? 0)}
+            </strong>{' '}
+            dodela grupa.
+          </div>
+
+          <div className="flex justify-between items-center gap-2 pt-2 border-t border-gray-100">
+            <Button variant="outline" onClick={() => setKorak(2)}>
+              <ArrowLeft className="w-4 h-4" /> Nazad
+            </Button>
+            <Button onClick={snimi} disabled={snimanje}>
+              {snimanje ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+              Kreiraj rotaciju
+            </Button>
+          </div>
+        </div>
+      )}
     </>
+  );
+}
+
+function KorakIndikator({
+  broj,
+  aktivan,
+  prosao,
+  label,
+}: {
+  broj: number;
+  aktivan: boolean;
+  prosao: boolean;
+  label: string;
+}) {
+  const klasa = aktivan
+    ? 'bg-blue-600 text-white'
+    : prosao
+    ? 'bg-emerald-500 text-white'
+    : 'bg-gray-200 text-gray-600';
+  return (
+    <div className="flex items-center gap-2">
+      <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold ${klasa}`}>
+        {prosao ? <CheckCircle2 className="w-4 h-4" /> : broj}
+      </div>
+      <span className={`text-xs font-medium ${aktivan ? 'text-blue-700' : prosao ? 'text-emerald-700' : 'text-gray-500'}`}>
+        {label}
+      </span>
+    </div>
   );
 }
 
 // ============= DETALJ =============
 
-function DetaljRotacije({
-  rotacijaId,
-  onNazad,
-  mojRezim,
-}: {
-  rotacijaId: string;
-  onNazad: () => void;
-  mojRezim: boolean;
-}) {
-  const { user } = useAuth();
+function DetaljRotacije({ rotacijaId, onNazad }: { rotacijaId: string; onNazad: () => void }) {
   const [rot, setRot] = useState<RotacijaResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [generisanje, setGenerisanje] = useState(false);
-
-  const ucitaj = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await api.get<RotacijaResponse>(`/rotacija/${rotacijaId}`);
-      setRot(data);
-    } catch (e) {
-      setError(e instanceof ApiError ? e.message : 'Greska');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
-    ucitaj();
+    (async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await api.get<RotacijaResponse>(`/rotacija/${rotacijaId}`);
+        setRot(data);
+      } catch (e) {
+        setError(e instanceof ApiError ? e.message : 'Greska');
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, [rotacijaId]);
-
-  const generisi = async () => {
-    if (!confirm('Generisanje ce obrisati postojeće nedelje i ponovo izracunati pun ciklus. Nastaviti?')) return;
-    setGenerisanje(true);
-    try {
-      const data = await api.post<RotacijaResponse>(`/rotacija/${rotacijaId}/generisi`);
-      setRot(data);
-    } catch (e) {
-      alert(e instanceof ApiError ? e.message : 'Greska');
-    } finally {
-      setGenerisanje(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -481,123 +633,133 @@ function DetaljRotacije({
     );
   }
 
-  const mojaRotacija = user?.uloga === 'NASTAVNIK' && rot.nastavnikId === user.id;
-
   return (
     <>
       <PageHeader
         title={rot.naziv}
-        description={`${rot.predmetNaziv ?? '—'} • ${rot.skolskaGodina} • ${rot.nastavnikIme}`}
+        description={`${rot.odeljenjeLabel} • ${rot.skolskaGodina} • ${rot.brojGrupa} grupa × ${rot.brojNedelja} nedelja • ${rot.nastavnikIme}`}
         action={
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={onNazad}>
-              <ArrowLeft className="w-4 h-4" /> Nazad
-            </Button>
-            {mojaRotacija && (
-              <Button onClick={generisi} disabled={generisanje}>
-                {generisanje ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
-                Generisi ciklus
-              </Button>
-            )}
-          </div>
+          <Button variant="outline" onClick={onNazad}>
+            <ArrowLeft className="w-4 h-4" /> Nazad
+          </Button>
         }
       />
 
-      {/* Statistika */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-6">
-        <div className="flex flex-wrap items-center gap-4 text-sm">
-          <Stat label="Ukupno nedelja" value={rot.statistika.ukupnoNedelja.toString()} />
-          <Stat label="Grupa (K)" value={rot.grupaVelicina.toString()} />
-          <Stat label="Casova nedeljno" value={rot.casovaNedeljno.toString()} />
-          <Stat label="Min/max po odeljenju" value={`${rot.statistika.minCasovaPoOdeljenju} / ${rot.statistika.maxCasovaPoOdeljenju}`} />
-          <span
-            className={`ml-auto inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${
-              rot.statistika.balansirano
-                ? 'bg-emerald-100 text-emerald-700'
-                : rot.statistika.ukupnoNedelja === 0
-                ? 'bg-gray-100 text-gray-500'
-                : 'bg-amber-100 text-amber-700'
-            }`}
-          >
-            {rot.statistika.balansirano && <CheckCircle2 className="w-3 h-3" />}
-            {rot.statistika.ukupnoNedelja === 0
-              ? 'Jos negenerisano'
-              : rot.statistika.balansirano
-              ? 'Savrseno balansirano'
-              : 'Neravnomeran raspored'}
-          </span>
+      <div className="bg-white rounded-2xl border border-gray-200 p-5">
+        <h3 className="font-semibold text-gray-900 mb-3">Predmeti vezbi</h3>
+        <div className="flex flex-wrap gap-2">
+          {rot.predmeti.map((p) => (
+            <span
+              key={p.id}
+              className="inline-flex items-center rounded-full bg-indigo-50 text-indigo-700 px-3 py-1 text-xs font-medium"
+            >
+              {p.profesorIme} → <strong className="ml-1">{p.naziv}</strong> ({p.casovaNedeljno}č)
+            </span>
+          ))}
         </div>
-
-        {Object.keys(rot.statistika.casoviPoOdeljenju).length > 0 && (
-          <div className="mt-4 pt-4 border-t border-gray-100">
-            <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Casovi po odeljenju</p>
-            <div className="flex flex-wrap gap-1.5">
-              {rot.odeljenja.map((o) => {
-                const broj = rot.statistika.casoviPoOdeljenju[o.id] ?? 0;
-                return (
-                  <span
-                    key={o.id}
-                    className="inline-flex items-center gap-1 rounded-full bg-indigo-50 text-indigo-700 px-2.5 py-0.5 text-xs"
-                  >
-                    {o.label}: <strong>{broj}</strong>
-                  </span>
-                );
-              })}
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* Nedelje */}
-      {rot.nedelje.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center text-gray-500">
-          Klikni "Generisi ciklus" da pokrenes C(N,K) algoritam.
-        </div>
-      ) : (
-        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <Th>Nedelja</Th>
-                <Th>Odeljenja u grupi</Th>
-                <Th>Broj odeljenja</Th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {rot.nedelje.map((n) => (
-                <tr key={n.id} className="hover:bg-gray-50">
-                  <Td className="font-medium text-gray-900">{n.brojNedelje}.</Td>
-                  <Td>
-                    <div className="flex flex-wrap gap-1">
-                      {n.odeljenja.map((o) => (
-                        <span
-                          key={o.id}
-                          className="inline-flex items-center rounded-full bg-indigo-100 text-indigo-700 px-2 py-0.5 text-xs"
-                        >
-                          {o.label}
-                        </span>
-                      ))}
-                    </div>
-                  </Td>
-                  <Td className="text-xs text-gray-500">{n.odeljenja.length}</Td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      {rot.nedelje.map((n) => (
+        <NedeljaTabela key={n.brojNedelje} brojNedelje={n.brojNedelje} termini={n.termini} />
+      ))}
     </>
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function NedeljaTabela({
+  brojNedelje,
+  termini,
+}: {
+  brojNedelje: number;
+  termini: RotacijaResponse['nedelje'][number]['termini'];
+}) {
+  // Grupisi termine po (profesorIme, predmetNaziv) redovima i (dan, cas) kolonama
+  const kljucevi = new Map<string, { profesorIme: string; predmetNaziv: string }>();
+  const koloneSet = new Set<string>();
+  const koloneSorted: { dan: Dan; cas: number; key: string }[] = [];
+
+  for (const t of termini) {
+    const key = `${t.profesorIme}|${t.predmetNaziv}`;
+    if (!kljucevi.has(key)) kljucevi.set(key, { profesorIme: t.profesorIme, predmetNaziv: t.predmetNaziv });
+    const colKey = `${t.dan}|${t.cas}`;
+    if (!koloneSet.has(colKey)) {
+      koloneSet.add(colKey);
+      koloneSorted.push({ dan: t.dan, cas: t.cas, key: colKey });
+    }
+  }
+
+  koloneSorted.sort((a, b) => {
+    const da = DAN_REDOSLED.indexOf(a.dan);
+    const db = DAN_REDOSLED.indexOf(b.dan);
+    if (da !== db) return da - db;
+    return a.cas - b.cas;
+  });
+
+  const redovi = Array.from(kljucevi.values()).sort((a, b) =>
+    a.profesorIme.localeCompare(b.profesorIme) || a.predmetNaziv.localeCompare(b.predmetNaziv)
+  );
+
+  const dodelaMapa = new Map<string, number>();
+  termini.forEach((t) => {
+    const k = `${t.profesorIme}|${t.predmetNaziv}|${t.dan}|${t.cas}`;
+    dodelaMapa.set(k, t.brojGrupe);
+  });
+
   return (
-    <div>
-      <p className="text-xs text-gray-500 uppercase tracking-wider">{label}</p>
-      <p className="text-lg font-semibold text-gray-900">{value}</p>
+    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+      <header className="p-4 border-b border-gray-200 flex items-center gap-2">
+        <span className="inline-flex w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 items-center justify-center text-xs font-semibold">
+          {brojNedelje}
+        </span>
+        <h3 className="font-semibold text-gray-900">Nedelja {brojNedelje}</h3>
+      </header>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead className="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th className="px-4 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Profesor (Predmet)
+              </th>
+              {koloneSorted.map((c) => (
+                <th
+                  key={c.key}
+                  className="px-3 py-2 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                >
+                  {DAN_LABEL[c.dan]} {c.cas}.č
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {redovi.map((r) => (
+              <tr key={`${r.profesorIme}|${r.predmetNaziv}`}>
+                <td className="px-4 py-2 font-medium text-gray-900">
+                  {r.profesorIme} <span className="text-gray-500 font-normal">({r.predmetNaziv})</span>
+                </td>
+                {koloneSorted.map((c) => {
+                  const g = dodelaMapa.get(`${r.profesorIme}|${r.predmetNaziv}|${c.dan}|${c.cas}`);
+                  return (
+                    <td key={c.key} className="px-3 py-2 text-center">
+                      {g != null ? (
+                        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold">
+                          G{g}
+                        </span>
+                      ) : (
+                        <span className="text-gray-300">—</span>
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
+
+// ============= HELPERI =============
 
 function Th({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
@@ -621,15 +783,4 @@ function Td({
       {children}
     </td>
   );
-}
-
-function binom(n: number, k: number): number {
-  if (k < 0 || k > n) return 0;
-  if (k === 0 || k === n) return 1;
-  k = Math.min(k, n - k);
-  let res = 1;
-  for (let i = 0; i < k; i++) {
-    res = (res * (n - i)) / (i + 1);
-  }
-  return Math.round(res);
 }

@@ -328,17 +328,47 @@ export interface StatistikaResponse {
 
 // =============== ROTACIJA ===============
 
-export interface RotacijaOdeljenjeKratko {
-  id: string;
-  label: string;
-  razred: number;
-  oznaka: string;
+export interface DetekcijaVezbiResponse {
+  odeljenjeId: string;
+  odeljenjeLabel: string;
+  profesori: ProfesorVezbi[];
+  termini: TerminVezbi[];
 }
 
-export interface RotNedeljaResponse {
+export interface ProfesorVezbi {
+  profesorId: string;
+  profesorIme: string;
+  brojCasovaVezbi: number;
+}
+
+export interface TerminVezbi {
+  dan: Dan;
+  cas: number;
+  profesoriIds: string[];
+  profesoriImena: string[];
+}
+
+export interface RotPredmetResponse {
   id: string;
+  profesorId: string;
+  profesorIme: string;
+  naziv: string;
+  casovaNedeljno: number;
+  redniBroj: number;
+}
+
+export interface TerminDodela {
+  dan: Dan;
+  cas: number;
+  profesorId: string;
+  profesorIme: string;
+  predmetNaziv: string;
+  brojGrupe: number;
+}
+
+export interface NedeljaDodela {
   brojNedelje: number;
-  odeljenja: RotacijaOdeljenjeKratko[];
+  termini: TerminDodela[];
 }
 
 export interface RotacijaResponse {
@@ -346,33 +376,23 @@ export interface RotacijaResponse {
   naziv: string;
   nastavnikId: string;
   nastavnikIme: string;
-  predmetId: string | null;
-  predmetNaziv: string | null;
-  grupaVelicina: number;
-  casovaNedeljno: number;
+  odeljenjeId: string;
+  odeljenjeLabel: string;
+  brojGrupa: number;
+  brojNedelja: number;
   skolskaGodina: string;
-  odeljenja: RotacijaOdeljenjeKratko[];
-  nedelje: RotNedeljaResponse[];
-  statistika: {
-    balansirano: boolean;
-    minCasovaPoOdeljenju: number;
-    maxCasovaPoOdeljenju: number;
-    casoviPoOdeljenju: Record<string, number>;
-    ukupnoNedelja: number;
-  };
+  predmeti: RotPredmetResponse[];
+  nedelje: NedeljaDodela[];
+  createdAt: string;
 }
 
 export interface KreirajRotacijuRequest {
   naziv: string;
-  predmetId?: string | null;
-  odeljenjaIds: string[];
-  grupaVelicina: number;
-  casovaNedeljno: number;
+  odeljenjeId: string;
   skolskaGodina: string;
-}
-
-export interface AzurirajNedeljuRequest {
-  odeljenjaIds: string[];
+  brojGrupa: number;
+  brojNedelja: number;
+  predmeti: { profesorId: string; naziv: string; casovaNedeljno: number }[];
 }
 
 // =============== RASPORED ===============
