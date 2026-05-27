@@ -26,6 +26,7 @@ import {
   School,
   Search,
   ShieldOff,
+  Trash2,
   UserCog,
 } from 'lucide-react';
 import { api, ApiError } from '@/lib/api';
@@ -123,10 +124,23 @@ export function OdeljenjaPage() {
   const handleDeaktiviraj = async (o: OdeljenjeResponse) => {
     if (!confirm(`Deaktivirati odeljenje "${o.label}"?`)) return;
     try {
-      await api.delete(`/odeljenja/${o.id}`);
+      await api.post(`/odeljenja/${o.id}/deaktiviraj`);
       setOdeljenja((prev) => prev.map((x) => (x.id === o.id ? { ...x, aktivan: false } : x)));
     } catch (e) {
       alert(e instanceof ApiError ? e.message : 'Greska pri deaktivaciji');
+    }
+  };
+
+  const handleObrisi = async (o: OdeljenjeResponse) => {
+    if (!confirm(
+      `Obrisati odeljenje "${o.label}"? Ako odeljenje ima vezane podatke (planovi, izvestaji, raspored), ` +
+      `brisanje ce biti odbijeno — koristi deaktivaciju umesto toga.`
+    )) return;
+    try {
+      await api.delete(`/odeljenja/${o.id}`);
+      setOdeljenja((prev) => prev.filter((x) => x.id !== o.id));
+    } catch (e) {
+      alert(e instanceof ApiError ? e.message : 'Greska pri brisanju');
     }
   };
 
@@ -321,6 +335,15 @@ export function OdeljenjaPage() {
                     <ShieldOff className="w-4 h-4" />
                   </Button>
                 )}
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => handleObrisi(o)}
+                  title="Obrisi"
+                  className="text-red-600 hover:text-red-700"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
               </div>
             </article>
           ))}

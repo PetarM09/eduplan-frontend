@@ -17,6 +17,7 @@ import {
   Library,
   ClipboardCheck,
   Settings,
+  History,
   type LucideIcon,
 } from 'lucide-react';
 import { useAuth, type Uloga } from '@/context/AuthContext';
@@ -51,6 +52,7 @@ const STAVKE_ADMIN: MenuItem[] = [
   { path: '/predmeti', icon: BookOpen, label: 'Predmeti', uloge: ['KOORDINATOR', 'ADMIN', 'DIREKTOR'] },
   { path: '/odeljenja', icon: School, label: 'Odeljenja', uloge: ['KOORDINATOR', 'ADMIN', 'DIREKTOR'] },
   { path: '/skola/postavke', icon: Settings, label: 'Postavke skole', uloge: ['KOORDINATOR', 'DIREKTOR'] },
+  { path: '/raspored/verzije', icon: History, label: 'Verzije rasporeda', uloge: ['KOORDINATOR', 'DIREKTOR', 'ADMIN'] },
 ];
 
 function imaPristup(item: MenuItem, uloga: Uloga | undefined): boolean {

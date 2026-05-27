@@ -20,6 +20,7 @@ import { PPDashboardPage } from '@/app/components/dashboard/PPDashboardPage';
 import { PPIzvestajiPage } from '@/app/components/dashboard/PPIzvestajiPage';
 import { RotacijaPage } from '@/app/components/dashboard/RotacijaPage';
 import { PostavkeSkolePage } from '@/app/components/dashboard/PostavkeSkolePage';
+import { VerzijeRasporedaPage } from '@/app/components/dashboard/VerzijeRasporedaPage';
 
 /** Preusmerava ulogovanog korisnika na njegovu pocetnu rutu. */
 function HomeRedirect() {
@@ -62,6 +63,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <RasporedPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/raspored/verzije"
+        element={
+          <ProtectedRoute allowedRoles={['KOORDINATOR', 'DIREKTOR', 'ADMIN']}>
+            <VerzijeRasporedaPage />
           </ProtectedRoute>
         }
       />
