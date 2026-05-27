@@ -331,8 +331,11 @@ export interface StatistikaResponse {
 export interface DetekcijaVezbiResponse {
   odeljenjeId: string;
   odeljenjeLabel: string;
+  ukupnoStavki: number;
+  ukupnoTerminaUkupno: number;
   profesori: ProfesorVezbi[];
   termini: TerminVezbi[];
+  sviTermini: TerminVezbi[];
 }
 
 export interface ProfesorVezbi {

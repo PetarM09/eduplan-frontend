@@ -77,7 +77,9 @@ function ListaRotacija({
   onOtvori: (id: string) => void;
 }) {
   const { user } = useAuth();
-  const mojRezim = user?.uloga === 'NASTAVNIK';
+  const nastavnikRezim = user?.uloga === 'NASTAVNIK';
+  const mozePraviti = user?.uloga === 'KOORDINATOR';
+  const mozeBrisati = user?.uloga === 'KOORDINATOR';
   const [rotacije, setRotacije] = useState<RotacijaResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -86,7 +88,7 @@ function ListaRotacija({
     setLoading(true);
     setError(null);
     try {
-      const path = mojRezim ? '/rotacija/moje' : '/rotacija';
+      const path = nastavnikRezim ? '/rotacija/moje' : '/rotacija';
       const data = await api.get<RotacijaResponse[]>(path);
       setRotacije(data);
     } catch (e) {
@@ -98,7 +100,7 @@ function ListaRotacija({
 
   useEffect(() => {
     ucitaj();
-  }, [mojRezim]);
+  }, [nastavnikRezim]);
 
   const obrisi = async (id: string) => {
     if (!confirm('Obrisati rotaciju sa svim dodelama?')) return;
@@ -110,13 +112,17 @@ function ListaRotacija({
     }
   };
 
+  const opis = nastavnikRezim
+    ? 'Rotacije u odeljenjima u kojima predajes vezbe (kreira koordinator skole)'
+    : 'Rotacioni raspored grupa ucenika za casove vezbi (auto-detekcija iz rasporeda)';
+
   return (
     <>
       <PageHeader
-        title={mojRezim ? 'Moje rotacije' : 'Rotacije'}
-        description="Rotacioni raspored grupa ucenika za casove vezbi (auto-detekcija iz rasporeda)"
+        title={nastavnikRezim ? 'Rotacije u kojima predajem vezbe' : 'Rotacije'}
+        description={opis}
         action={
-          user?.uloga === 'NASTAVNIK' && (
+          mozePraviti && (
             <Button size="lg" onClick={onKreiraj}>
               <Plus className="w-4 h-4" /> Nova rotacija
             </Button>
@@ -138,7 +144,11 @@ function ListaRotacija({
         </div>
       ) : rotacije.length === 0 ? (
         <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center text-gray-500">
-          Jos nema rotacija. {user?.uloga === 'NASTAVNIK' && 'Klikni "Nova rotacija" da kreiras prvu.'}
+          {nastavnikRezim
+            ? 'Trenutno nisi ukljucen ni u jednu rotaciju. Koordinator skole pravi rotacije i bira profesore.'
+            : mozePraviti
+              ? 'Jos nema rotacija. Klikni "Nova rotacija" da kreiras prvu.'
+              : 'Jos nema rotacija.'}
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
@@ -146,12 +156,12 @@ function ListaRotacija({
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <Th>Naziv</Th>
-                {!mojRezim && <Th>Nastavnik</Th>}
+                <Th>Kreirao</Th>
                 <Th>Odeljenje</Th>
                 <Th>Sk. godina</Th>
                 <Th>Grupe / nedelje</Th>
                 <Th>Predmeti</Th>
-                <Th className="text-right">Akcije</Th>
+                {mozeBrisati && <Th className="text-right">Akcije</Th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -163,15 +173,15 @@ function ListaRotacija({
                       {r.naziv}
                     </div>
                   </Td>
-                  {!mojRezim && <Td>{r.nastavnikIme}</Td>}
+                  <Td>{r.nastavnikIme}</Td>
                   <Td>{r.odeljenjeLabel}</Td>
                   <Td>{r.skolskaGodina}</Td>
                   <Td>
                     {r.brojGrupa} grupa × {r.brojNedelja} ned.
                   </Td>
                   <Td className="text-xs text-gray-500">{r.predmeti.length}</Td>
-                  <Td className="text-right" onClick={(e) => e.stopPropagation()}>
-                    {user?.uloga === 'NASTAVNIK' && r.nastavnikId === user.id && (
+                  {mozeBrisati && (
+                    <Td className="text-right" onClick={(e) => e.stopPropagation()}>
                       <Button
                         size="sm"
                         variant="ghost"
@@ -181,8 +191,8 @@ function ListaRotacija({
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </Button>
-                    )}
-                  </Td>
+                    </Td>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -419,16 +429,16 @@ function NoviRotacijaWizard({
                 Profesori vezbi — {detekcija.odeljenjeLabel}
               </h2>
               <p className="text-sm text-gray-500">
-                Detektovano {detekcija.termini.length} termina vezbi, {detekcija.profesori.length} profesora.
-                Suma casova po predmetima mora biti jednaka detektovanom broju casova.
+                Iz rasporeda: <strong>{detekcija.ukupnoStavki}</strong> stavki kroz{' '}
+                <strong>{detekcija.ukupnoTerminaUkupno}</strong> termina. Detektovano{' '}
+                <strong>{detekcija.termini.length}</strong> termina vezbi (sa 2+ profesora),{' '}
+                <strong>{detekcija.profesori.length}</strong> profesora ukljuceno.
               </p>
             </div>
           </div>
 
           {detekcija.profesori.length === 0 ? (
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-800">
-              U ovom odeljenju nema termina sa 2+ profesora — nema casova vezbi za rotaciju.
-            </div>
+            <DebugRaspored detekcija={detekcija} />
           ) : (
             <div className="space-y-3">
               {detekcija.profesori.map((p) => {
@@ -561,6 +571,66 @@ function NoviRotacijaWizard({
         </div>
       )}
     </>
+  );
+}
+
+function DebugRaspored({ detekcija }: { detekcija: DetekcijaVezbiResponse }) {
+  if (detekcija.ukupnoStavki === 0) {
+    return (
+      <div className="space-y-3">
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-800">
+          <p className="font-medium">Za ovo odeljenje raspored ne sadrzi nijednu stavku.</p>
+          <p className="mt-1">
+            Moguci razlozi: aktivna verzija rasporeda ne sadrzi ovo odeljenje, ili XML nije uspeo
+            da povezivanje na ovo odeljenje. Proveri uvoz rasporeda.
+          </p>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div className="space-y-3">
+      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-800">
+        <p className="font-medium">U ovom odeljenju nema termina sa 2+ profesora.</p>
+        <p className="mt-1">
+          Vezbe se detektuju kada vise profesora ima cas u istom terminu istog odeljenja. Sirovo
+          stanje rasporeda za ovo odeljenje:
+        </p>
+      </div>
+      <div className="overflow-x-auto rounded-lg border border-gray-200">
+        <table className="w-full text-sm">
+          <thead className="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase">Dan</th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase">Cas</th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase">Profesori</th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase">Broj</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {detekcija.sviTermini.map((t, i) => {
+              const vezba = t.profesoriIds.length >= 2;
+              return (
+                <tr key={i} className={vezba ? 'bg-emerald-50/40' : ''}>
+                  <td className="px-3 py-1.5 text-gray-700">{DAN_LABEL[t.dan]}</td>
+                  <td className="px-3 py-1.5 text-gray-700">{t.cas}.</td>
+                  <td className="px-3 py-1.5 text-gray-700">{t.profesoriImena.join(', ')}</td>
+                  <td className="px-3 py-1.5">
+                    <span
+                      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                        vezba ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600'
+                      }`}
+                    >
+                      {t.profesoriIds.length}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }
 
