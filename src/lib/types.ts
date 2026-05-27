@@ -339,15 +339,16 @@ export interface DetekcijaVezbiResponse {
 }
 
 export interface ProfesorVezbi {
-  profesorId: string;
+  profesorId: string | null;
   profesorIme: string;
+  uSistemu: boolean;
   brojCasovaVezbi: number;
 }
 
 export interface TerminVezbi {
   dan: Dan;
   cas: number;
-  profesoriIds: string[];
+  profesoriIds: (string | null)[];
   profesoriImena: string[];
 }
 

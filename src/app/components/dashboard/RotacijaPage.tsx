@@ -265,9 +265,11 @@ function NoviRotacijaWizard({
     try {
       const d = await api.get<DetekcijaVezbiResponse>(`/rotacija/vezbe/${odeljenjeId}`);
       setDetekcija(d);
-      // Inicijalno: jedan red po profesoru sa svim njegovim casovima
+      // Inicijalno: jedan red po profesoru SA mapiranim profesorom (uSistemu) sa svim njegovim casovima.
       setPredmeti(
-        d.profesori.map((p) => ({ profesorId: p.profesorId, naziv: '', casovaNedeljno: p.brojCasovaVezbi }))
+        d.profesori
+          .filter((p) => p.uSistemu && p.profesorId)
+          .map((p) => ({ profesorId: p.profesorId as string, naziv: '', casovaNedeljno: p.brojCasovaVezbi }))
       );
       setKorak(2);
     } catch (e) {
@@ -276,6 +278,11 @@ function NoviRotacijaWizard({
       setDetekcijaLoading(false);
     }
   };
+
+  const profesoriVanSistema = useMemo(
+    () => detekcija?.profesori.filter((p) => !p.uSistemu) ?? [],
+    [detekcija]
+  );
 
   const sumePoProfesoru = useMemo(() => {
     const m: Record<string, number> = {};
@@ -287,8 +294,11 @@ function NoviRotacijaWizard({
 
   const sumeOK = useMemo(() => {
     if (!detekcija) return false;
+    // Sumu proveravamo samo za mapirane profesore — nemapirani su vec blokirani
     return detekcija.profesori.every(
-      (p) => (sumePoProfesoru[p.profesorId] ?? 0) === p.brojCasovaVezbi
+      (p) => !p.uSistemu || !p.profesorId
+        ? true
+        : (sumePoProfesoru[p.profesorId] ?? 0) === p.brojCasovaVezbi
     );
   }, [detekcija, sumePoProfesoru]);
 
@@ -441,67 +451,106 @@ function NoviRotacijaWizard({
             <DebugRaspored detekcija={detekcija} />
           ) : (
             <div className="space-y-3">
+              {profesoriVanSistema.length > 0 && (
+                <div className="bg-amber-50 border border-amber-300 rounded-lg p-4 text-sm text-amber-900">
+                  <p className="font-semibold">Nemapirani profesori ({profesoriVanSistema.length})</p>
+                  <p className="mt-1 mb-2">
+                    Sledeci profesori imaju vezbe u rasporedu, ali jos nisu dodati kao korisnici u sistem.
+                    Dodaj ih u sekciji "Korisnici" pre nego sto kreiras rotaciju:
+                  </p>
+                  <ul className="list-disc list-inside space-y-0.5">
+                    {profesoriVanSistema.map((p) => (
+                      <li key={p.profesorIme}>
+                        <strong>{p.profesorIme}</strong> ({p.brojCasovaVezbi} casova vezbi)
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
               {detekcija.profesori.map((p) => {
-                const suma = sumePoProfesoru[p.profesorId] ?? 0;
-                const ok = suma === p.brojCasovaVezbi;
-                const predmetiProfesora = predmeti
-                  .map((pred, idx) => ({ ...pred, idx }))
-                  .filter((x) => x.profesorId === p.profesorId);
+                const inactive = !p.uSistemu || !p.profesorId;
+                const suma = inactive ? 0 : (sumePoProfesoru[p.profesorId as string] ?? 0);
+                const ok = !inactive && suma === p.brojCasovaVezbi;
+                const predmetiProfesora = inactive
+                  ? []
+                  : predmeti
+                      .map((pred, idx) => ({ ...pred, idx }))
+                      .filter((x) => x.profesorId === p.profesorId);
                 return (
                   <div
-                    key={p.profesorId}
+                    key={p.profesorIme}
                     className={`rounded-xl border p-4 ${
-                      ok ? 'border-gray-200' : 'border-amber-300 bg-amber-50/30'
+                      inactive
+                        ? 'border-amber-300 bg-amber-50/40 opacity-90'
+                        : ok
+                          ? 'border-gray-200'
+                          : 'border-amber-300 bg-amber-50/30'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-3">
-                      <div>
-                        <p className="font-medium text-gray-900">{p.profesorIme}</p>
-                        <p className="text-xs text-gray-500">
-                          Iz rasporeda: <strong>{p.brojCasovaVezbi}</strong> casova vezbi
-                        </p>
-                      </div>
-                      <span
-                        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          ok ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
-                        }`}
-                      >
-                        Suma: {suma} / {p.brojCasovaVezbi}
-                      </span>
-                    </div>
-                    <div className="space-y-2">
-                      {predmetiProfesora.map((pred) => (
-                        <div key={pred.idx} className="grid grid-cols-[1fr_120px_40px] gap-2 items-center">
-                          <Input
-                            value={pred.naziv}
-                            onChange={(e) => azurirajPredmet(pred.idx, 'naziv', e.target.value)}
-                            placeholder="Naziv predmeta"
-                          />
-                          <Input
-                            type="number"
-                            min={1}
-                            max={20}
-                            value={pred.casovaNedeljno}
-                            onChange={(e) => azurirajPredmet(pred.idx, 'casovaNedeljno', Number(e.target.value) || 0)}
-                            title="Casova nedeljno"
-                          />
-                          <button
-                            onClick={() => obrisiPredmet(pred.idx)}
-                            disabled={predmetiProfesora.length === 1}
-                            className="h-9 w-9 rounded-lg text-red-600 hover:bg-red-50 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center"
-                            title="Obrisi predmet"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                      <div className="flex items-center gap-2">
+                        <div>
+                          <p className="font-medium text-gray-900">{p.profesorIme}</p>
+                          <p className="text-xs text-gray-500">
+                            Iz rasporeda: <strong>{p.brojCasovaVezbi}</strong> casova vezbi
+                          </p>
                         </div>
-                      ))}
-                      <button
-                        onClick={() => dodajPredmet(p.profesorId)}
-                        className="text-sm text-blue-600 hover:text-blue-700 inline-flex items-center gap-1"
-                      >
-                        <Plus className="w-3.5 h-3.5" /> Jos jedan predmet
-                      </button>
+                        {!p.uSistemu && (
+                          <span className="inline-flex items-center rounded-full bg-amber-200 text-amber-900 px-2 py-0.5 text-xs font-semibold">
+                            Nije u sistemu
+                          </span>
+                        )}
+                      </div>
+                      {!inactive && (
+                        <span
+                          className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                            ok ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+                          }`}
+                        >
+                          Suma: {suma} / {p.brojCasovaVezbi}
+                        </span>
+                      )}
                     </div>
+                    {inactive ? (
+                      <p className="text-xs text-amber-800">
+                        Profesor mora biti dodat kao korisnik u sistemu (uloga NASTAVNIK) pre nego sto se
+                        ukljuci u rotaciju. Posle dodavanja, vrati se ovde i klikni "Nazad" pa "Dalje".
+                      </p>
+                    ) : (
+                      <div className="space-y-2">
+                        {predmetiProfesora.map((pred) => (
+                          <div key={pred.idx} className="grid grid-cols-[1fr_120px_40px] gap-2 items-center">
+                            <Input
+                              value={pred.naziv}
+                              onChange={(e) => azurirajPredmet(pred.idx, 'naziv', e.target.value)}
+                              placeholder="Naziv predmeta"
+                            />
+                            <Input
+                              type="number"
+                              min={1}
+                              max={20}
+                              value={pred.casovaNedeljno}
+                              onChange={(e) => azurirajPredmet(pred.idx, 'casovaNedeljno', Number(e.target.value) || 0)}
+                              title="Casova nedeljno"
+                            />
+                            <button
+                              onClick={() => obrisiPredmet(pred.idx)}
+                              disabled={predmetiProfesora.length === 1}
+                              className="h-9 w-9 rounded-lg text-red-600 hover:bg-red-50 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center"
+                              title="Obrisi predmet"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ))}
+                        <button
+                          onClick={() => dodajPredmet(p.profesorId as string)}
+                          className="text-sm text-blue-600 hover:text-blue-700 inline-flex items-center gap-1"
+                        >
+                          <Plus className="w-3.5 h-3.5" /> Jos jedan predmet
+                        </button>
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -512,7 +561,10 @@ function NoviRotacijaWizard({
             <Button variant="outline" onClick={() => setKorak(1)}>
               <ArrowLeft className="w-4 h-4" /> Nazad
             </Button>
-            <Button onClick={() => setKorak(3)} disabled={!sumeOK || !sviNaziviUneti}>
+            <Button
+              onClick={() => setKorak(3)}
+              disabled={!sumeOK || !sviNaziviUneti || profesoriVanSistema.length > 0}
+            >
               <ArrowRight className="w-4 h-4" /> Dalje
             </Button>
           </div>
