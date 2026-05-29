@@ -1,7 +1,3 @@
-/**
- * TypeScript ogledalo backend DTO-a. Sva imena polja se podudaraju sa
- * Java record-ima u backend-u (npr. {@code KorisnikResponse}, {@code PredmetResponse}).
- */
 
 import type { Uloga } from '@/context/AuthContext';
 export type { Uloga };

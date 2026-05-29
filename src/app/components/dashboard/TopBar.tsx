@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 
-/** Citljiv label za enum ulogu (prikaz u UI). */
 function ulogaLabel(uloga: string | undefined): string {
   switch (uloga) {
     case 'SUPER_ADMIN':

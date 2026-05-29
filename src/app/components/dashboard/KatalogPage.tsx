@@ -43,11 +43,6 @@ import type {
   TemaResponse,
 } from '@/lib/types';
 
-/**
- * Katalog je hijerarhijski: Predmet → Tema → Nastavna jedinica + Ishodi.
- * Sve se kreira automatski kroz godisnji/operativni plan (findOrCreate pattern u backend-u),
- * pa je ova stranica primarno read-only pregled "biblioteke znanja" skole.
- */
 export function KatalogPage() {
   const { user } = useAuth();
   const [predmeti, setPredmeti] = useState<PredmetResponse[]>([]);

@@ -29,10 +29,6 @@ interface MenuItem {
   uloge?: Uloga[]; // undefined znaci dostupno svima ulogovanim
 }
 
-/**
- * Stavke menija se filtriraju po ulozi korisnika. Sidebar prirodno prilagodjava
- * sadrzaj za nastavnika, koordinatora/direktora, PP sluzbu i super admin-a.
- */
 const STAVKE_GLAVNO: MenuItem[] = [
   { path: '/super-dashboard', icon: Shield, label: 'Skole', uloge: ['SUPER_ADMIN'] },
   { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', uloge: ['NASTAVNIK'] },

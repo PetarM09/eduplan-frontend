@@ -11,7 +11,6 @@ export interface User {
   skolaId: string | null;
 }
 
-/** Backend /auth/login odgovor (TokenPair record). */
 interface TokenPair {
   accessToken: string;
   accessTokenExpiresAt: string;

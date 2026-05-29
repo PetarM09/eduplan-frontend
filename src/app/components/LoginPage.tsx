@@ -13,7 +13,6 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 
-/** Vraca pocetnu rutu zavisno od uloge korisnika. */
 function pocetnaPoUlogi(uloga: string): string {
   switch (uloga) {
     case 'SUPER_ADMIN':

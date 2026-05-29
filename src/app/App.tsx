@@ -22,7 +22,6 @@ import { RotacijaPage } from '@/app/components/dashboard/RotacijaPage';
 import { PostavkeSkolePage } from '@/app/components/dashboard/PostavkeSkolePage';
 import { VerzijeRasporedaPage } from '@/app/components/dashboard/VerzijeRasporedaPage';
 
-/** Preusmerava ulogovanog korisnika na njegovu pocetnu rutu. */
 function HomeRedirect() {
   const { user, isAuthenticated, isLoading } = useAuth();
   if (isLoading) return null;

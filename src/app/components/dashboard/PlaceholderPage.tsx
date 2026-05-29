@@ -8,10 +8,6 @@ interface PlaceholderPageProps {
   icon?: LucideIcon;
 }
 
-/**
- * Privremena stranica koja sluzi da odgovori na rutu dok se prava implementacija
- * ne uradi. Prikazuje listu backend endpoint-a koji su vec dostupni za tu funkciju.
- */
 export function PlaceholderPage({ title, description, endpoints, icon }: PlaceholderPageProps) {
   const Icon = icon ?? Hammer;
   return (

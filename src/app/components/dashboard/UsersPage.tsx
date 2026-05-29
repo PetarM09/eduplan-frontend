@@ -23,7 +23,6 @@ import { Plus, Search, ShieldOff, Mail, AlertCircle, Loader2 } from 'lucide-reac
 import { api, ApiError } from '@/lib/api';
 import type { KorisnikResponse, KreirajKorisnikaRequest, Uloga } from '@/lib/types';
 
-/** Citljiv label + boja chip-a za svaku ulogu. */
 const ULOGA_META: Record<Uloga, { label: string; chipBg: string; chipText: string }> = {
   SUPER_ADMIN: { label: 'Super admin', chipBg: 'bg-purple-100', chipText: 'text-purple-700' },
   KOORDINATOR: { label: 'Koordinator', chipBg: 'bg-red-100', chipText: 'text-red-700' },

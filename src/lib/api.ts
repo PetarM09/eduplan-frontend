@@ -1,8 +1,3 @@
-/**
- * Lagani HTTP klijent oko native fetch-a. Razumije Spring Boot {@code ApiResponse<T>}
- * wrapper (auto-unwrap data), JWT Bearer header, 401 → automatski refresh + retry,
- * binary download (Word/PDF/Excel).
- */
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080/api/v1';
 

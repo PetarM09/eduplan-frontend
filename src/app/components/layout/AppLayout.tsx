@@ -7,7 +7,6 @@ interface AppLayoutProps {
   children: ReactNode;
 }
 
-/** Standardni layout za zasticene stranice — Sidebar levo, TopBar gore, sadrzaj desno. */
 export function AppLayout({ children }: AppLayoutProps) {
   const { user } = useAuth();
   // SUPER_ADMIN paleta — tamna sa narandzastim nagibom (command-center stil)
@@ -35,7 +34,6 @@ interface PageHeaderProps {
   action?: ReactNode;
 }
 
-/** Header sekcija stranice — naslov + opis + akcija (npr. dugme "Dodaj"). */
 export function PageHeader({ title, description, action }: PageHeaderProps) {
   const { user } = useAuth();
   const sa = user?.uloga === 'SUPER_ADMIN';

@@ -2,10 +2,6 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, GraduationCap, Mail, ShieldQuestion, UserCog } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
 
-/**
- * Self-service reset lozinke nije podrzan u backend-u (admin skole je centralna tacka
- * za sve naloge). Stranica usmerava korisnika na koordinatora.
- */
 export function ForgotPasswordPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-gray-50 via-blue-50/30 to-indigo-50/50">
