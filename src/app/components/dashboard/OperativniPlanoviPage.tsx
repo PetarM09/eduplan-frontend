@@ -110,7 +110,7 @@ export function OperativniPlanoviPage() {
             : 'Mesecni operativni plan po predmetu i odeljenju. Word i PDF se automatski generisu.'
         }
         action={
-          user?.uloga === 'NASTAVNIK' && (
+          (user?.uloga === 'NASTAVNIK' || user?.uloga === 'KOORDINATOR') && (
             <Link to="/planovi/operativni/novi">
               <Button size="lg">
                 <Plus className="w-4 h-4" /> Novi plan
@@ -195,7 +195,7 @@ export function OperativniPlanoviPage() {
                             <Trash2 className="w-3.5 h-3.5" />
                           </Button>
                         )}
-                        {user?.uloga === 'NASTAVNIK' && p.nastavnikId === user.id && (
+                        {(user?.uloga === 'NASTAVNIK' || user?.uloga === 'KOORDINATOR') && p.nastavnikId === user.id && (
                           <>
                             <Button size="sm" variant="ghost" onClick={() => kloniraj(p.id)} title="Kloniraj u drugu godinu">
                               <Copy className="w-3.5 h-3.5" />

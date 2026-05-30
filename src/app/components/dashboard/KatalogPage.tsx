@@ -179,7 +179,7 @@ export function KatalogPage() {
     }
   };
 
-  const mozeUreditiIshode = user?.uloga === 'NASTAVNIK';
+  const mozeUreditiIshode = user?.uloga === 'NASTAVNIK' || user?.uloga === 'KOORDINATOR';
   const mozeBrisati = user?.uloga === 'KOORDINATOR';
 
   const obrisiTemu = async (t: TemaResponse) => {

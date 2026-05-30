@@ -71,12 +71,13 @@ export function OdeljenjaPage() {
     setLoading(true);
     setError(null);
     try {
-      const [o, n] = await Promise.all([
+      const [o, n, k] = await Promise.all([
         api.get<OdeljenjeResponse[]>('/odeljenja'),
         api.get<KorisnikResponse[]>('/korisnici/po-ulozi/NASTAVNIK'),
+        api.get<KorisnikResponse[]>('/korisnici/po-ulozi/KOORDINATOR'),
       ]);
       setOdeljenja(o);
-      setNastavnici(n);
+      setNastavnici([...n, ...k].sort((a, b) => a.prezime.localeCompare(b.prezime)));
     } catch (e) {
       setError(e instanceof ApiError ? e.message : 'Greska pri ucitavanju');
     } finally {

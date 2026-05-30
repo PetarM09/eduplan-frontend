@@ -183,7 +183,7 @@ export function PPIzvestajiPage() {
   }, [sviRezim, filterSkolskaGodina, filterPeriod, filterStatus]);
 
   useEffect(() => {
-    if (user?.uloga !== 'NASTAVNIK') return;
+    if (user?.uloga !== 'NASTAVNIK' && user?.uloga !== 'KOORDINATOR') return;
     api
       .get<OdeljenjeResponse[]>('/odeljenja')
       .then((sve) => setMojaOdeljenja(sve.filter((o) => o.staresinaId === user.id)))
@@ -283,7 +283,7 @@ export function PPIzvestajiPage() {
         title={sviRezim ? 'PP izvestaji (svi staresine)' : 'Moji PP izvestaji'}
         description="Tromesecje / polugodiste / kraj godine — izvestaj staresine o odeljenju"
         action={
-          user?.uloga === 'NASTAVNIK' &&
+          (user?.uloga === 'NASTAVNIK' || user?.uloga === 'KOORDINATOR') &&
           mojaOdeljenja.length > 0 && (
             <Button size="lg" onClick={otvoriNovi}>
               <Plus className="w-4 h-4" /> Novi izvestaj
@@ -416,7 +416,7 @@ export function PPIzvestajiPage() {
                         <Button size="sm" variant="ghost" onClick={() => otvoriEdit(iz)}>
                           Pregled
                         </Button>
-                        {user?.uloga === 'NASTAVNIK' && mojIzvestaj && iz.status !== 'PRIHVACEN' && iz.status !== 'PODNET' && (
+                        {(user?.uloga === 'NASTAVNIK' || user?.uloga === 'KOORDINATOR') && mojIzvestaj && iz.status !== 'PRIHVACEN' && iz.status !== 'PODNET' && (
                           <Button size="sm" onClick={() => podnesi(iz.id)}>
                             <Send className="w-3.5 h-3.5" /> Podnesi
                           </Button>

@@ -85,7 +85,7 @@ export function GodisnjiPlanoviPage() {
             : 'Globalni plan rada po predmetu. Word i PDF se automatski generisu pri cuvanju.'
         }
         action={
-          user?.uloga === 'NASTAVNIK' && (
+          (user?.uloga === 'NASTAVNIK' || user?.uloga === 'KOORDINATOR') && (
             <Link to="/planovi/godisnji/novi">
               <Button size="lg">
                 <Plus className="w-4 h-4" /> Novi plan
@@ -170,7 +170,7 @@ export function GodisnjiPlanoviPage() {
                             <Trash2 className="w-3.5 h-3.5" />
                           </Button>
                         )}
-                        {user?.uloga === 'NASTAVNIK' && p.status === 'NACRT' && p.nastavnikId === user.id && (
+                        {(user?.uloga === 'NASTAVNIK' || user?.uloga === 'KOORDINATOR') && p.status === 'NACRT' && p.nastavnikId === user.id && (
                           <Button size="sm" onClick={() => podnesi(p.id)} title="Podnesi">
                             <Send className="w-3.5 h-3.5" /> Podnesi
                           </Button>

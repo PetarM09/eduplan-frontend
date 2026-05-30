@@ -134,7 +134,7 @@ export default function App() {
       <Route
         path="/planovi/godisnji/novi"
         element={
-          <ProtectedRoute allowedRoles={['NASTAVNIK']}>
+          <ProtectedRoute allowedRoles={['NASTAVNIK', 'KOORDINATOR']}>
             <GodisnjiPlanEditorPage />
           </ProtectedRoute>
         }
@@ -158,7 +158,7 @@ export default function App() {
       <Route
         path="/planovi/operativni/novi"
         element={
-          <ProtectedRoute allowedRoles={['NASTAVNIK']}>
+          <ProtectedRoute allowedRoles={['NASTAVNIK', 'KOORDINATOR']}>
             <OperativniPlanEditorPage />
           </ProtectedRoute>
         }
