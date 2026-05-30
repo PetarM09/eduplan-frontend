@@ -313,13 +313,17 @@ export function KatalogPage() {
                               Obrada {t.casObrada} • Utvrd. {t.casUtvrd} • Ostalo {t.casOstalo}
                             </div>
                           </div>
-                          {isActive && <ChevronRight className="w-4 h-4 text-blue-600 mt-1.5" />}
+                          {isActive && (
+                            <ChevronRight
+                              className={`w-4 h-4 text-blue-600 mt-1.5 ${mozeBrisati ? 'group-hover:hidden' : ''}`}
+                            />
+                          )}
                         </button>
                         {mozeBrisati && (
                           <button
                             onClick={(e) => { e.stopPropagation(); obrisiTemu(t); }}
                             title="Obrisi temu (sa svim jedinicama i ishodima)"
-                            className="absolute top-2 right-2 hidden group-hover:flex w-7 h-7 rounded-md text-red-600 hover:bg-red-50 items-center justify-center"
+                            className="absolute top-1/2 -translate-y-1/2 right-3 hidden group-hover:flex w-7 h-7 rounded-md text-red-600 hover:bg-red-50 items-center justify-center"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
