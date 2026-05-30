@@ -20,6 +20,7 @@ import {
   Loader2,
   Plus,
   Send,
+  Trash2,
   XCircle,
 } from 'lucide-react';
 import { api, ApiError } from '@/lib/api';
@@ -266,6 +267,16 @@ export function PPIzvestajiPage() {
     }
   };
 
+  const obrisi = async (id: string) => {
+    if (!confirm('Obrisati PP izvestaj? Operacija je trajna.')) return;
+    try {
+      await api.delete(`/pp/izvestaj/${id}`);
+      setIzvestaji((prev) => prev.filter((p) => p.id !== id));
+    } catch (e) {
+      alert(e instanceof ApiError ? e.message : 'Greska pri brisanju');
+    }
+  };
+
   return (
     <AppLayout>
       <PageHeader
@@ -419,6 +430,17 @@ export function PPIzvestajiPage() {
                               <CheckCircle2 className="w-3.5 h-3.5" /> Prihvati
                             </Button>
                           </>
+                        )}
+                        {user?.uloga === 'KOORDINATOR' && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => obrisi(iz.id)}
+                            title="Obrisi izvestaj"
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </Button>
                         )}
                       </div>
                     </Td>

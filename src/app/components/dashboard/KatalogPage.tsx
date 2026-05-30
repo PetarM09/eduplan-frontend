@@ -32,6 +32,7 @@ import {
   Search,
   Sparkles,
   Target,
+  Trash2,
 } from 'lucide-react';
 import { api, ApiError } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
@@ -179,6 +180,38 @@ export function KatalogPage() {
   };
 
   const mozeUreditiIshode = user?.uloga === 'NASTAVNIK';
+  const mozeBrisati = user?.uloga === 'KOORDINATOR';
+
+  const obrisiTemu = async (t: TemaResponse) => {
+    if (!confirm(`Obrisati temu "${t.naziv}"? Svi nastavni jedinice i ishodi te teme bice obrisani.`)) return;
+    try {
+      await api.delete(`/katalog/teme/${t.id}`);
+      setTeme((prev) => prev.filter((x) => x.id !== t.id));
+      if (temaId === t.id) setTemaId(null);
+    } catch (e) {
+      alert(e instanceof ApiError ? e.message : 'Greska pri brisanju teme');
+    }
+  };
+
+  const obrisiJedinicu = async (j: NastavnaJedinicaResponse) => {
+    if (!confirm(`Obrisati nastavnu jedinicu "${j.naziv}"?`)) return;
+    try {
+      await api.delete(`/katalog/jedinice/${j.id}`);
+      setJedinice((prev) => prev.filter((x) => x.id !== j.id));
+    } catch (e) {
+      alert(e instanceof ApiError ? e.message : 'Greska pri brisanju jedinice');
+    }
+  };
+
+  const obrisiIshod = async (i: IshodResponse) => {
+    if (!confirm('Obrisati ishod?')) return;
+    try {
+      await api.delete(`/katalog/ishodi/${i.id}`);
+      setIshodi((prev) => prev.filter((x) => x.id !== i.id));
+    } catch (e) {
+      alert(e instanceof ApiError ? e.message : 'Greska pri brisanju ishoda');
+    }
+  };
 
   return (
     <AppLayout>
@@ -258,7 +291,7 @@ export function KatalogPage() {
                   {filtriraneTeme.map((t) => {
                     const isActive = t.id === temaId;
                     return (
-                      <li key={t.id}>
+                      <li key={t.id} className="group relative">
                         <button
                           onClick={() => setTemaId(t.id)}
                           className={`w-full text-left px-4 py-3 transition-colors flex items-start gap-3 ${
@@ -282,6 +315,15 @@ export function KatalogPage() {
                           </div>
                           {isActive && <ChevronRight className="w-4 h-4 text-blue-600 mt-1.5" />}
                         </button>
+                        {mozeBrisati && (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); obrisiTemu(t); }}
+                            title="Obrisi temu (sa svim jedinicama i ishodima)"
+                            className="absolute top-2 right-2 hidden group-hover:flex w-7 h-7 rounded-md text-red-600 hover:bg-red-50 items-center justify-center"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
                       </li>
                     );
                   })}
@@ -316,11 +358,20 @@ export function KatalogPage() {
                   ) : (
                     <ol className="divide-y divide-gray-100">
                       {jedinice.map((j) => (
-                        <li key={j.id} className="px-4 py-3 flex items-start gap-3">
+                        <li key={j.id} className="px-4 py-3 flex items-start gap-3 group">
                           <span className="flex-shrink-0 w-7 h-7 rounded-lg bg-indigo-50 text-indigo-700 text-xs font-semibold flex items-center justify-center">
                             {j.redniBroj ?? '—'}
                           </span>
-                          <span className="text-sm text-gray-900">{j.naziv}</span>
+                          <span className="flex-1 text-sm text-gray-900">{j.naziv}</span>
+                          {mozeBrisati && (
+                            <button
+                              onClick={() => obrisiJedinicu(j)}
+                              title="Obrisi jedinicu"
+                              className="hidden group-hover:flex w-7 h-7 rounded-md text-red-600 hover:bg-red-50 items-center justify-center"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          )}
                         </li>
                       ))}
                     </ol>
@@ -348,11 +399,20 @@ export function KatalogPage() {
                   ) : (
                     <ul className="divide-y divide-gray-100">
                       {ishodi.map((i, idx) => (
-                        <li key={i.id} className="px-4 py-3 flex items-start gap-3">
+                        <li key={i.id} className="px-4 py-3 flex items-start gap-3 group">
                           <span className="flex-shrink-0 w-7 h-7 rounded-lg bg-green-50 text-green-700 text-xs font-semibold flex items-center justify-center">
                             {idx + 1}
                           </span>
-                          <span className="text-sm text-gray-900 leading-relaxed">{i.opis}</span>
+                          <span className="flex-1 text-sm text-gray-900 leading-relaxed">{i.opis}</span>
+                          {mozeBrisati && (
+                            <button
+                              onClick={() => obrisiIshod(i)}
+                              title="Obrisi ishod"
+                              className="hidden group-hover:flex w-7 h-7 rounded-md text-red-600 hover:bg-red-50 items-center justify-center"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          )}
                         </li>
                       ))}
                     </ul>

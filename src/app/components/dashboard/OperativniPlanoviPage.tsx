@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AppLayout, PageHeader } from '@/app/components/layout/AppLayout';
 import { Button } from '@/app/components/ui/button';
-import { AlertCircle, ClipboardList, Copy, Download, Loader2, Plus, Send } from 'lucide-react';
+import { AlertCircle, ClipboardList, Copy, Download, Loader2, Plus, Send, Trash2 } from 'lucide-react';
 import { api, ApiError } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import type { OperativniPlanResponse, PlanStatus } from '@/lib/types';
@@ -51,6 +51,16 @@ export function OperativniPlanoviPage() {
       setPlanovi((prev) => prev.map((p) => (p.id === id ? azurirano : p)));
     } catch (e) {
       alert(e instanceof ApiError ? e.message : 'Greska pri podnosenju');
+    }
+  };
+
+  const obrisi = async (id: string) => {
+    if (!confirm('Obrisati operativni plan? Operacija je trajna.')) return;
+    try {
+      await api.delete(`/planovi/operativni/${id}`);
+      setPlanovi((prev) => prev.filter((p) => p.id !== id));
+    } catch (e) {
+      alert(e instanceof ApiError ? e.message : 'Greska pri brisanju');
     }
   };
 
@@ -172,6 +182,17 @@ export function OperativniPlanoviPage() {
                         {p.imaPdf && (
                           <Button size="sm" variant="outline" onClick={() => skiniFajl(p.id, 'pdf')}>
                             <Download className="w-3.5 h-3.5" /> .pdf
+                          </Button>
+                        )}
+                        {user?.uloga === 'KOORDINATOR' && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => obrisi(p.id)}
+                            title="Obrisi plan"
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
                           </Button>
                         )}
                         {user?.uloga === 'NASTAVNIK' && p.nastavnikId === user.id && (
