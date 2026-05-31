@@ -6,12 +6,15 @@ import {
   CheckCircle2,
   Clock,
   History,
+  Link2,
   Loader2,
   Power,
   Trash2,
+  UserPlus,
 } from 'lucide-react';
 import { api, ApiError } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
+import type { KorisnikResponse } from '@/lib/types';
 
 interface VerzijaResponse {
   id: string;
@@ -23,6 +26,11 @@ interface VerzijaResponse {
   createdAt: string;
 }
 
+interface NemapiraniProfesor {
+  nastavnikLabel: string;
+  brojStavki: number;
+}
+
 export function VerzijeRasporedaPage() {
   const { user } = useAuth();
   const mozeAktivirati = user?.uloga === 'KOORDINATOR' || user?.uloga === 'ADMIN';
@@ -32,6 +40,11 @@ export function VerzijeRasporedaPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
+
+  const [nemapirani, setNemapirani] = useState<NemapiraniProfesor[]>([]);
+  const [nastavniciDostupni, setNastavniciDostupni] = useState<KorisnikResponse[]>([]);
+  const [izbor, setIzbor] = useState<Record<string, string>>({});
+  const [mapBusy, setMapBusy] = useState<string | null>(null);
 
   const ucitaj = async () => {
     setLoading(true);
@@ -46,9 +59,47 @@ export function VerzijeRasporedaPage() {
     }
   };
 
+  const ucitajNemapirane = async () => {
+    if (user?.uloga !== 'KOORDINATOR') return;
+    try {
+      const [nem, n, k] = await Promise.all([
+        api.get<NemapiraniProfesor[]>('/raspored/nemapirani-profesori'),
+        api.get<KorisnikResponse[]>('/korisnici/po-ulozi/NASTAVNIK'),
+        api.get<KorisnikResponse[]>('/korisnici/po-ulozi/KOORDINATOR'),
+      ]);
+      setNemapirani(nem);
+      setNastavniciDostupni([...n, ...k].sort((a, b) => a.prezime.localeCompare(b.prezime)));
+    } catch {
+      // tiho — sekcija je sekundarna
+    }
+  };
+
   useEffect(() => {
     ucitaj();
+    ucitajNemapirane();
   }, []);
+
+  const mapiraj = async (label: string) => {
+    const korisnikId = izbor[label];
+    if (!korisnikId) {
+      alert('Izaberi korisnika iz padajuceg menija');
+      return;
+    }
+    setMapBusy(label);
+    try {
+      await api.post('/raspored/mapiraj-profesora', { nastavnikLabel: label, korisnikId });
+      setNemapirani((prev) => prev.filter((x) => x.nastavnikLabel !== label));
+      setIzbor((prev) => {
+        const copy = { ...prev };
+        delete copy[label];
+        return copy;
+      });
+    } catch (e) {
+      alert(e instanceof ApiError ? e.message : 'Greska pri mapiranju');
+    } finally {
+      setMapBusy(null);
+    }
+  };
 
   const aktiviraj = async (id: string) => {
     setBusy(id);
@@ -82,6 +133,61 @@ export function VerzijeRasporedaPage() {
         title="Verzije rasporeda"
         description="Sve uvezene XML verzije rasporeda. Aktivna verzija se koristi za moj raspored, zamene i rotacije."
       />
+
+      {user?.uloga === 'KOORDINATOR' && nemapirani.length > 0 && (
+        <div className="bg-white rounded-2xl border border-amber-200">
+          <header className="p-4 border-b border-amber-200 bg-amber-50/50 flex items-center gap-2">
+            <Link2 className="w-5 h-5 text-amber-600" />
+            <h2 className="font-semibold text-gray-900">Nemapirani profesori iz rasporeda</h2>
+            <span className="ml-auto text-xs text-amber-700">{nemapirani.length} stavki</span>
+          </header>
+          <div className="p-4 space-y-2">
+            <p className="text-xs text-gray-500 mb-2">
+              Ovo su imena iz XML rasporeda koja nisu povezana sa korisnickim nalogom. Izaberi
+              postojeceg korisnika za svako ime i klikni "Mapiraj" da povezes sve casove tog
+              profesora. Pri dodavanju novog korisnika sa istim imenom auto-mapiranje radi
+              automatski.
+            </p>
+            {nemapirani.map((nm) => (
+              <div
+                key={nm.nastavnikLabel}
+                className="grid grid-cols-[1fr_auto_auto] gap-2 items-center px-3 py-2 rounded-lg border border-gray-200"
+              >
+                <div>
+                  <div className="font-medium text-gray-900">{nm.nastavnikLabel}</div>
+                  <div className="text-xs text-gray-500">{nm.brojStavki} casova u rasporedu</div>
+                </div>
+                <select
+                  value={izbor[nm.nastavnikLabel] ?? ''}
+                  onChange={(e) =>
+                    setIzbor((prev) => ({ ...prev, [nm.nastavnikLabel]: e.target.value }))
+                  }
+                  className="h-9 px-2 rounded-md border border-gray-300 text-sm min-w-[220px]"
+                >
+                  <option value="">— izaberi korisnika —</option>
+                  {nastavniciDostupni.map((k) => (
+                    <option key={k.id} value={k.id}>
+                      {k.prezime} {k.ime} ({k.uloga === 'KOORDINATOR' ? 'koord.' : 'nastavnik'})
+                    </option>
+                  ))}
+                </select>
+                <Button
+                  size="sm"
+                  onClick={() => mapiraj(nm.nastavnikLabel)}
+                  disabled={mapBusy === nm.nastavnikLabel || !izbor[nm.nastavnikLabel]}
+                >
+                  {mapBusy === nm.nastavnikLabel ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <UserPlus className="w-3.5 h-3.5" />
+                  )}
+                  Mapiraj
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {loading ? (
         <div className="bg-white rounded-2xl border border-gray-200 p-12 flex items-center justify-center text-gray-500">
