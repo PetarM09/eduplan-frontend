@@ -181,6 +181,7 @@ export function KatalogPage() {
 
   const mozeUreditiIshode = user?.uloga === 'NASTAVNIK' || user?.uloga === 'KOORDINATOR';
   const mozeBrisati = user?.uloga === 'KOORDINATOR';
+  const mozeMenjatiPadajuce = user?.uloga === 'KOORDINATOR' || user?.uloga === 'PP_SLUZBA';
 
   const obrisiTemu = async (t: TemaResponse) => {
     if (!confirm(`Obrisati temu "${t.naziv}"? Svi nastavni jedinice i ishodi te teme bice obrisani.`)) return;
@@ -435,12 +436,30 @@ export function KatalogPage() {
           opis="Vrednosti koje koristis u operativnom planu (tip casa)"
           ikona={Sparkles}
           stavke={tipoviCasa}
+          mozeMenjati={mozeMenjatiPadajuce}
+          onDodaj={async (naziv) => {
+            const nov = await api.post<PadajuciMeniResponse>('/katalog/tipovi-casa', { naziv });
+            setTipoviCasa((prev) => [...prev, nov]);
+          }}
+          onObrisi={async (id) => {
+            await api.delete(`/katalog/tipovi-casa/${id}`);
+            setTipoviCasa((prev) => prev.filter((x) => x.id !== id));
+          }}
         />
         <PadajuciSekcija
           naslov="Metode rada"
           opis="Pedagoske metode izbora u operativnom planu"
           ikona={Cog}
           stavke={metodeRada}
+          mozeMenjati={mozeMenjatiPadajuce}
+          onDodaj={async (naziv) => {
+            const nov = await api.post<PadajuciMeniResponse>('/katalog/metode-rada', { naziv });
+            setMetodeRada((prev) => [...prev, nov]);
+          }}
+          onObrisi={async (id) => {
+            await api.delete(`/katalog/metode-rada/${id}`);
+            setMetodeRada((prev) => prev.filter((x) => x.id !== id));
+          }}
         />
       </div>
 
@@ -491,14 +510,46 @@ function PadajuciSekcija({
   opis,
   ikona: Icon,
   stavke,
+  mozeMenjati,
+  onDodaj,
+  onObrisi,
 }: {
   naslov: string;
   opis: string;
   ikona: React.ComponentType<{ className?: string }>;
   stavke: PadajuciMeniResponse[];
+  mozeMenjati: boolean;
+  onDodaj: (naziv: string) => Promise<void>;
+  onObrisi: (id: string) => Promise<void>;
 }) {
   const sistemski = stavke.filter((s) => s.sistemski);
   const skolski = stavke.filter((s) => !s.sistemski);
+  const [noviNaziv, setNoviNaziv] = useState('');
+  const [snimanje, setSnimanje] = useState(false);
+
+  const dodaj = async () => {
+    const trim = noviNaziv.trim();
+    if (trim.length < 1) return;
+    setSnimanje(true);
+    try {
+      await onDodaj(trim);
+      setNoviNaziv('');
+    } catch (e) {
+      alert(e instanceof ApiError ? e.message : 'Greska');
+    } finally {
+      setSnimanje(false);
+    }
+  };
+
+  const obrisi = async (id: string, naziv: string) => {
+    if (!confirm(`Obrisati "${naziv}"?`)) return;
+    try {
+      await onObrisi(id);
+    } catch (e) {
+      alert(e instanceof ApiError ? e.message : 'Greska');
+    }
+  };
+
   return (
     <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
       <header className="p-4 border-b border-gray-200">
@@ -509,46 +560,71 @@ function PadajuciSekcija({
         </div>
         <p className="text-xs text-gray-500">{opis}</p>
       </header>
-      {stavke.length === 0 ? (
-        <p className="p-6 text-sm text-gray-500 text-center">Lista je prazna.</p>
-      ) : (
-        <div className="p-4 space-y-3">
-          {sistemski.length > 0 && (
-            <div>
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">
-                Sistemski
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {sistemski.map((s) => (
-                  <span
-                    key={s.id}
-                    className="inline-flex items-center rounded-full bg-amber-50 text-amber-700 px-2.5 py-1 text-xs"
-                  >
-                    {s.naziv}
-                  </span>
-                ))}
-              </div>
+      <div className="p-4 space-y-3">
+        {sistemski.length > 0 && (
+          <div>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">
+              Sistemski
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {sistemski.map((s) => (
+                <span
+                  key={s.id}
+                  className="inline-flex items-center rounded-full bg-amber-50 text-amber-700 px-2.5 py-1 text-xs"
+                >
+                  {s.naziv}
+                </span>
+              ))}
             </div>
-          )}
-          {skolski.length > 0 && (
-            <div>
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">
-                Skolski
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {skolski.map((s) => (
-                  <span
-                    key={s.id}
-                    className="inline-flex items-center rounded-full bg-blue-50 text-blue-700 px-2.5 py-1 text-xs"
-                  >
-                    {s.naziv}
-                  </span>
-                ))}
-              </div>
+          </div>
+        )}
+        {skolski.length > 0 && (
+          <div>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">
+              Skolski
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {skolski.map((s) => (
+                <span
+                  key={s.id}
+                  className="group inline-flex items-center gap-1 rounded-full bg-blue-50 text-blue-700 px-2.5 py-1 text-xs"
+                >
+                  {s.naziv}
+                  {mozeMenjati && (
+                    <button
+                      onClick={() => obrisi(s.id, s.naziv)}
+                      title="Obrisi"
+                      className="hidden group-hover:inline-flex w-4 h-4 rounded-full text-red-600 hover:bg-red-100 items-center justify-center"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  )}
+                </span>
+              ))}
             </div>
-          )}
-        </div>
-      )}
+          </div>
+        )}
+        {mozeMenjati && (
+          <div className="pt-2 border-t border-gray-100 flex items-center gap-2">
+            <Input
+              value={noviNaziv}
+              onChange={(e) => setNoviNaziv(e.target.value)}
+              placeholder={`Nova stavka u "${naslov.toLowerCase()}"`}
+              className="h-9"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') dodaj();
+              }}
+            />
+            <Button size="sm" onClick={dodaj} disabled={snimanje || noviNaziv.trim().length < 1}>
+              {snimanje ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
+              Dodaj
+            </Button>
+          </div>
+        )}
+        {stavke.length === 0 && !mozeMenjati && (
+          <p className="text-sm text-gray-500 text-center py-2">Lista je prazna.</p>
+        )}
+      </div>
     </div>
   );
 }
