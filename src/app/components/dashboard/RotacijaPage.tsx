@@ -206,7 +206,8 @@ function ListaRotacija({
 // ============= WIZARD =============
 
 interface UnosPredmet {
-  profesorId: string;
+  profesorId: string | null;
+  profesorLabel: string;
   naziv: string;
   casovaNedeljno: number;
 }
@@ -266,12 +267,15 @@ function NoviRotacijaWizard({
     try {
       const d = await api.get<DetekcijaVezbiResponse>(`/rotacija/vezbe/${odeljenjeId}`);
       setDetekcija(d);
-      // Inicijalno: jedan red po profesoru SA mapiranim profesorom (uSistemu) sa svim njegovim casovima.
+      // Inicijalno: jedan red po SVAKOM profesoru (mapiranom ili ne) sa punim brojem casova.
       // Po default svi su ukljuceni (skup iskljucenih je prazan).
       setPredmeti(
-        d.profesori
-          .filter((p) => p.uSistemu && p.profesorId)
-          .map((p) => ({ profesorId: p.profesorId as string, naziv: '', casovaNedeljno: p.brojCasovaVezbi }))
+        d.profesori.map((p) => ({
+          profesorId: p.profesorId ?? null,
+          profesorLabel: p.profesorIme,
+          naziv: '',
+          casovaNedeljno: p.brojCasovaVezbi,
+        }))
       );
       setIskljuceni(new Set());
       setKorak(2);
@@ -282,12 +286,6 @@ function NoviRotacijaWizard({
     }
   };
 
-  // Mapirani + nemapirani profesori iz rasporeda
-  const profesoriVanSistema = useMemo(
-    () => detekcija?.profesori.filter((p) => !p.uSistemu && !iskljuceni.has(p.profesorIme)) ?? [],
-    [detekcija, iskljuceni]
-  );
-
   const toggleIskljucen = (p: { profesorId: string | null; profesorIme: string; brojCasovaVezbi: number }) => {
     setIskljuceni((prev) => {
       const novi = new Set(prev);
@@ -295,48 +293,45 @@ function NoviRotacijaWizard({
       const beseUkljucen = !novi.has(kljuc);
       if (beseUkljucen) {
         novi.add(kljuc);
-        // Ukloni sve predmete tog profesora iz forme
-        if (p.profesorId) {
-          setPredmeti((prev2) => prev2.filter((pred) => pred.profesorId !== p.profesorId));
-        }
+        setPredmeti((prev2) => prev2.filter((pred) => pred.profesorLabel !== p.profesorIme));
       } else {
         novi.delete(kljuc);
-        // Vrati default jedan predmet sa punim brojem casova
-        if (p.profesorId) {
-          setPredmeti((prev2) => [
-            ...prev2,
-            { profesorId: p.profesorId as string, naziv: '', casovaNedeljno: p.brojCasovaVezbi },
-          ]);
-        }
+        setPredmeti((prev2) => [
+          ...prev2,
+          {
+            profesorId: p.profesorId ?? null,
+            profesorLabel: p.profesorIme,
+            naziv: '',
+            casovaNedeljno: p.brojCasovaVezbi,
+          },
+        ]);
       }
       return novi;
     });
   };
 
-  const sumePoProfesoru = useMemo(() => {
+  const sumePoLabelu = useMemo(() => {
     const m: Record<string, number> = {};
     predmeti.forEach((p) => {
-      m[p.profesorId] = (m[p.profesorId] ?? 0) + (p.casovaNedeljno || 0);
+      m[p.profesorLabel] = (m[p.profesorLabel] ?? 0) + (p.casovaNedeljno || 0);
     });
     return m;
   }, [predmeti]);
 
   const sumeOK = useMemo(() => {
     if (!detekcija) return false;
-    // Sumu proveravamo samo za ukljucene mapirane profesore.
     return detekcija.profesori.every((p) => {
-      if (!p.uSistemu || !p.profesorId) return true; // nemapiran ne mora biti ukljucen
-      if (iskljuceni.has(p.profesorIme)) return true; // iskljucen — preskoci sumu
-      return (sumePoProfesoru[p.profesorId] ?? 0) === p.brojCasovaVezbi;
+      if (iskljuceni.has(p.profesorIme)) return true;
+      return (sumePoLabelu[p.profesorIme] ?? 0) === p.brojCasovaVezbi;
     });
-  }, [detekcija, sumePoProfesoru, iskljuceni]);
+  }, [detekcija, sumePoLabelu, iskljuceni]);
 
   const sviNaziviUneti = useMemo(() => predmeti.every((p) => p.naziv.trim().length > 0), [predmeti]);
 
   const barJedanUkljucen = useMemo(() => predmeti.length > 0, [predmeti]);
 
-  const dodajPredmet = (profesorId: string) => {
-    setPredmeti((prev) => [...prev, { profesorId, naziv: '', casovaNedeljno: 1 }]);
+  const dodajPredmet = (profesorLabel: string, profesorId: string | null) => {
+    setPredmeti((prev) => [...prev, { profesorId, profesorLabel, naziv: '', casovaNedeljno: 1 }]);
   };
 
   const obrisiPredmet = (idx: number) => {
@@ -369,6 +364,7 @@ function NoviRotacijaWizard({
         brojNedelja,
         predmeti: predmeti.map((p) => ({
           profesorId: p.profesorId,
+          profesorLabel: p.profesorLabel,
           naziv: p.naziv.trim(),
           casovaNedeljno: p.casovaNedeljno,
         })),
@@ -482,63 +478,42 @@ function NoviRotacijaWizard({
             <DebugRaspored detekcija={detekcija} />
           ) : (
             <div className="space-y-3">
-              {profesoriVanSistema.length > 0 && (
-                <div className="bg-amber-50 border border-amber-300 rounded-lg p-4 text-sm text-amber-900">
-                  <p className="font-semibold">Nemapirani profesori ({profesoriVanSistema.length})</p>
-                  <p className="mt-1 mb-2">
-                    Sledeci profesori imaju vezbe u rasporedu, ali jos nisu dodati kao korisnici u sistem.
-                    Dodaj ih u sekciji "Korisnici" pre kreiranja rotacije, ili ih iskljuci ako pravis
-                    posebnu rotaciju samo za odredjene profesore:
-                  </p>
-                  <ul className="list-disc list-inside space-y-0.5">
-                    {profesoriVanSistema.map((p) => (
-                      <li key={p.profesorIme}>
-                        <strong>{p.profesorIme}</strong> ({p.brojCasovaVezbi} casova vezbi)
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-blue-800">
-                Checkbox pored imena profesora omogucava da iskljucis profesora iz OVE rotacije —
-                korisno kada pravis posebne rotacije za 2 i 3 grupe. Iskljuceni profesori i dalje
-                drze svoje casove u rasporedu, samo se ne uracunavaju u dodele grupa ove rotacije.
+                Profesori koji nisu u sistemu se i dalje mogu ukljuciti — rotacija ce raditi po
+                imenu iz rasporeda. Kad takav profesor bude dodat kao korisnik (rucno ili kroz
+                mapiranje u "Verzije rasporeda"), automatski se povezuje sa svojim rotacijama.
+                Checkbox iskljucuje profesora iz OVE rotacije.
               </div>
               {detekcija.profesori.map((p) => {
-                const nemaNaloga = !p.uSistemu || !p.profesorId;
                 const iskljucen = iskljuceni.has(p.profesorIme);
-                const inactive = nemaNaloga || iskljucen;
-                const suma = nemaNaloga ? 0 : (sumePoProfesoru[p.profesorId as string] ?? 0);
-                const ok = !nemaNaloga && suma === p.brojCasovaVezbi;
-                const predmetiProfesora = nemaNaloga
+                const inactive = iskljucen;
+                const suma = sumePoLabelu[p.profesorIme] ?? 0;
+                const ok = suma === p.brojCasovaVezbi;
+                const predmetiProfesora = iskljucen
                   ? []
                   : predmeti
                       .map((pred, idx) => ({ ...pred, idx }))
-                      .filter((x) => x.profesorId === p.profesorId);
+                      .filter((x) => x.profesorLabel === p.profesorIme);
                 return (
                   <div
                     key={p.profesorIme}
                     className={`rounded-xl border p-4 ${
-                      nemaNaloga
-                        ? 'border-amber-300 bg-amber-50/40'
-                        : iskljucen
-                          ? 'border-gray-200 bg-gray-50 opacity-70'
-                          : ok
-                            ? 'border-gray-200'
-                            : 'border-amber-300 bg-amber-50/30'
+                      iskljucen
+                        ? 'border-gray-200 bg-gray-50 opacity-70'
+                        : ok
+                          ? 'border-gray-200'
+                          : 'border-amber-300 bg-amber-50/30'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-3">
-                        {!nemaNaloga && (
-                          <input
-                            type="checkbox"
-                            checked={!iskljucen}
-                            onChange={() => toggleIskljucen(p)}
-                            className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                            title="Ukljuci u rotaciju"
-                          />
-                        )}
+                        <input
+                          type="checkbox"
+                          checked={!iskljucen}
+                          onChange={() => toggleIskljucen(p)}
+                          className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                          title="Ukljuci u rotaciju"
+                        />
                         <div>
                           <p className={`font-medium ${iskljucen ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
                             {p.profesorIme}
@@ -568,12 +543,7 @@ function NoviRotacijaWizard({
                         </span>
                       )}
                     </div>
-                    {nemaNaloga ? (
-                      <p className="text-xs text-amber-800">
-                        Profesor mora biti dodat kao korisnik u sistemu (uloga NASTAVNIK) pre nego sto se
-                        ukljuci u rotaciju. Alternativno, ostavi ga iskljucenog ako pravis posebnu rotaciju.
-                      </p>
-                    ) : iskljucen ? (
+                    {iskljucen ? (
                       <p className="text-xs text-gray-500">
                         Profesor je iskljucen iz ove rotacije. Njegovi termini se nece uracunati u dodele grupa.
                       </p>
@@ -605,7 +575,7 @@ function NoviRotacijaWizard({
                           </div>
                         ))}
                         <button
-                          onClick={() => dodajPredmet(p.profesorId as string)}
+                          onClick={() => dodajPredmet(p.profesorIme, p.profesorId)}
                           className="text-sm text-blue-600 hover:text-blue-700 inline-flex items-center gap-1"
                         >
                           <Plus className="w-3.5 h-3.5" /> Jos jedan predmet
@@ -624,7 +594,7 @@ function NoviRotacijaWizard({
             </Button>
             <Button
               onClick={() => setKorak(3)}
-              disabled={!sumeOK || !sviNaziviUneti || profesoriVanSistema.length > 0 || !barJedanUkljucen}
+              disabled={!sumeOK || !sviNaziviUneti || !barJedanUkljucen}
             >
               <ArrowRight className="w-4 h-4" /> Dalje
             </Button>

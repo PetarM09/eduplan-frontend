@@ -392,7 +392,7 @@ export interface KreirajRotacijuRequest {
   skolskaGodina: string;
   brojGrupa: number;
   brojNedelja: number;
-  predmeti: { profesorId: string; naziv: string; casovaNedeljno: number }[];
+  predmeti: { profesorId: string | null; profesorLabel: string; naziv: string; casovaNedeljno: number }[];
 }
 
 // =============== RASPORED ===============
