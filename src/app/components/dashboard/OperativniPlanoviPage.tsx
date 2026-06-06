@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AppLayout, PageHeader } from '@/app/components/layout/AppLayout';
 import { Button } from '@/app/components/ui/button';
-import { AlertCircle, ClipboardList, Copy, Download, Loader2, Plus, Send, Trash2 } from 'lucide-react';
+import { AlertCircle, ClipboardList, Copy, Download, Loader2, Pencil, Plus, Send, Trash2 } from 'lucide-react';
 import { api, ApiError } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import type { OperativniPlanResponse, PlanStatus } from '@/lib/types';
@@ -200,10 +200,17 @@ export function OperativniPlanoviPage() {
                             <Button size="sm" variant="ghost" onClick={() => kloniraj(p.id)} title="Kloniraj u drugu godinu">
                               <Copy className="w-3.5 h-3.5" />
                             </Button>
-                            {p.status === 'NACRT' && (
-                              <Button size="sm" onClick={() => podnesi(p.id)}>
-                                <Send className="w-3.5 h-3.5" /> Podnesi
-                              </Button>
+                            {(p.status === 'NACRT' || p.status === 'VRACENO_NA_DORADU') && (
+                              <>
+                                <Link to={`/planovi/operativni/${p.id}`}>
+                                  <Button size="sm" variant="outline" title="Izmeni nacrt">
+                                    <Pencil className="w-3.5 h-3.5" /> Izmeni
+                                  </Button>
+                                </Link>
+                                <Button size="sm" onClick={() => podnesi(p.id)} title="Podnesi plan">
+                                  <Send className="w-3.5 h-3.5" /> Podnesi
+                                </Button>
+                              </>
                             )}
                           </>
                         )}

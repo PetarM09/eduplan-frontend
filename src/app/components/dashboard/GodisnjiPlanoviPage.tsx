@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AppLayout, PageHeader } from '@/app/components/layout/AppLayout';
 import { Button } from '@/app/components/ui/button';
-import { AlertCircle, Download, FileText, Loader2, Plus, Send, Trash2 } from 'lucide-react';
+import { AlertCircle, Download, FileText, Loader2, Pencil, Plus, Send, Trash2 } from 'lucide-react';
 import { api, ApiError } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import type { GodisnjiPlanResponse, PlanStatus } from '@/lib/types';
@@ -170,11 +170,20 @@ export function GodisnjiPlanoviPage() {
                             <Trash2 className="w-3.5 h-3.5" />
                           </Button>
                         )}
-                        {(user?.uloga === 'NASTAVNIK' || user?.uloga === 'KOORDINATOR') && p.status === 'NACRT' && p.nastavnikId === user.id && (
-                          <Button size="sm" onClick={() => podnesi(p.id)} title="Podnesi">
-                            <Send className="w-3.5 h-3.5" /> Podnesi
-                          </Button>
-                        )}
+                        {(user?.uloga === 'NASTAVNIK' || user?.uloga === 'KOORDINATOR') &&
+                          (p.status === 'NACRT' || p.status === 'VRACENO_NA_DORADU') &&
+                          p.nastavnikId === user.id && (
+                            <>
+                              <Link to={`/planovi/godisnji/${p.id}`}>
+                                <Button size="sm" variant="outline" title="Izmeni nacrt">
+                                  <Pencil className="w-3.5 h-3.5" /> Izmeni
+                                </Button>
+                              </Link>
+                              <Button size="sm" onClick={() => podnesi(p.id)} title="Podnesi plan">
+                                <Send className="w-3.5 h-3.5" /> Podnesi
+                              </Button>
+                            </>
+                          )}
                       </div>
                     </Td>
                   </tr>
