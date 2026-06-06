@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AppLayout, PageHeader } from '@/app/components/layout/AppLayout';
 import { Button } from '@/app/components/ui/button';
-import { AlertCircle, Download, FileText, Loader2, Pencil, Plus, Send, Trash2 } from 'lucide-react';
+import { AlertCircle, Check, Download, FileText, Loader2, Pencil, Plus, Send, Trash2, XCircle } from 'lucide-react';
 import { api, ApiError } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import type { GodisnjiPlanResponse, PlanStatus } from '@/lib/types';
@@ -46,6 +46,31 @@ export function GodisnjiPlanoviPage() {
       setPlanovi((prev) => prev.map((p) => (p.id === id ? azurirano : p)));
     } catch (e) {
       alert(e instanceof ApiError ? e.message : 'Greska pri podnosenju');
+    }
+  };
+
+  const odobri = async (id: string) => {
+    if (!confirm('Odobriti plan? Plan ce biti arhiviran kao zvanicno prihvacen.')) return;
+    try {
+      const azurirano = await api.post<GodisnjiPlanResponse>(`/planovi/godisnji/${id}/odobri`);
+      setPlanovi((prev) => prev.map((p) => (p.id === id ? azurirano : p)));
+    } catch (e) {
+      alert(e instanceof ApiError ? e.message : 'Greska pri odobravanju');
+    }
+  };
+
+  const odbij = async (id: string) => {
+    const razlog = prompt('Razlog vracanja na doradu (bice prosledjen nastavniku):');
+    if (razlog === null) return;
+    if (!razlog.trim()) {
+      alert('Razlog je obavezan');
+      return;
+    }
+    try {
+      const azurirano = await api.post<GodisnjiPlanResponse>(`/planovi/godisnji/${id}/odbij`, { razlog });
+      setPlanovi((prev) => prev.map((p) => (p.id === id ? azurirano : p)));
+    } catch (e) {
+      alert(e instanceof ApiError ? e.message : 'Greska pri vracanju na doradu');
     }
   };
 
@@ -145,6 +170,11 @@ export function GodisnjiPlanoviPage() {
                       <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${sm.bg} ${sm.text}`}>
                         {sm.label}
                       </span>
+                      {p.status === 'VRACENO_NA_DORADU' && p.razlogVracanja && (
+                        <div className="mt-1 text-xs text-amber-700 max-w-xs whitespace-normal" title={p.razlogVracanja}>
+                          <span className="font-medium">Razlog:</span> {p.razlogVracanja}
+                        </div>
+                      )}
                     </Td>
                     <Td className="text-xs text-gray-500">{p.teme?.length ?? 0} tema</Td>
                     <Td className="text-right">
@@ -159,6 +189,19 @@ export function GodisnjiPlanoviPage() {
                             <Download className="w-3.5 h-3.5" /> .pdf
                           </Button>
                         )}
+                        {(user?.uloga === 'PP_SLUZBA' || user?.uloga === 'KOORDINATOR') &&
+                          p.status === 'PODNET' && (
+                            <>
+                              <Button size="sm" onClick={() => odobri(p.id)} title="Odobri (arhivira plan)"
+                                className="bg-green-600 hover:bg-green-700">
+                                <Check className="w-3.5 h-3.5" /> Odobri
+                              </Button>
+                              <Button size="sm" variant="outline" onClick={() => odbij(p.id)} title="Vrati na doradu"
+                                className="text-amber-700 border-amber-300 hover:bg-amber-50">
+                                <XCircle className="w-3.5 h-3.5" /> Odbij
+                              </Button>
+                            </>
+                          )}
                         {user?.uloga === 'KOORDINATOR' && (
                           <Button
                             size="sm"

@@ -150,6 +150,9 @@ export interface GodisnjiPlanResponse {
   napomene: string | null;
   status: PlanStatus;
   podnetAt: string | null;
+  razlogVracanja: string | null;
+  odobrenAt: string | null;
+  vracenAt: string | null;
   imaWord: boolean;
   imaPdf: boolean;
   teme: GodisnjiPlanTemaResponse[];
@@ -217,6 +220,9 @@ export interface OperativniPlanResponse {
   napomene: string | null;
   status: PlanStatus;
   podnetAt: string | null;
+  razlogVracanja: string | null;
+  odobrenAt: string | null;
+  vracenAt: string | null;
   imaWord: boolean;
   imaPdf: boolean;
   stavke: OpStavkaResponse[];
