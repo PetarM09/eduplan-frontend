@@ -23,6 +23,7 @@ interface VerzijaResponse {
   datumOd: string | null;
   aktivan: boolean;
   brojStavki: number;
+  brojProfesora: number;
   createdAt: string;
 }
 
@@ -213,7 +214,8 @@ export function VerzijeRasporedaPage() {
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Naziv</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Sk. godina</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Datum od</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Stavki</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Profesora</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Casova</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
                 <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Akcije</th>
               </tr>
@@ -233,6 +235,7 @@ export function VerzijeRasporedaPage() {
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-700">{v.skolskaGodina ?? '—'}</td>
                   <td className="px-6 py-4 text-sm text-gray-700">{v.datumOd ?? '—'}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{v.brojProfesora}</td>
                   <td className="px-6 py-4 text-sm text-gray-700">{v.brojStavki}</td>
                   <td className="px-6 py-4">
                     {v.aktivan ? (
