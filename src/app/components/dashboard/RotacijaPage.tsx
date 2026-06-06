@@ -3,6 +3,7 @@ import { AppLayout, PageHeader } from '@/app/components/layout/AppLayout';
 import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
+import { SkolskaGodinaSelect } from '@/app/components/ui/SkolskaGodinaSelect';
 import {
   AlertCircle,
   ArrowLeft,
@@ -414,12 +415,7 @@ function NoviRotacijaWizard({
             </div>
             <div>
               <Label htmlFor="sk">Skolska godina</Label>
-              <Input
-                id="sk"
-                value={skolskaGodina}
-                onChange={(e) => setSkolskaGodina(e.target.value)}
-                placeholder="2025/2026"
-              />
+              <SkolskaGodinaSelect id="sk" value={skolskaGodina} onChange={setSkolskaGodina} />
             </div>
             <div className="md:col-span-2">
               <Label htmlFor="od">Odeljenje</Label>

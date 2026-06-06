@@ -117,7 +117,11 @@ export function SuperAdminPage() {
     ucitaj();
   }, []);
 
-  const aktivnih = useMemo(() => skole.filter((s) => s.aktivan).length, [skole]);
+  const neaktivnih = useMemo(() => {
+    const danas = new Date().toISOString().slice(0, 10);
+    return skole.filter((s) => !s.aktivan || (!!s.vaziDo && s.vaziDo < danas)).length;
+  }, [skole]);
+  const aktivnih = skole.length - neaktivnih;
 
   const dodajSkolu = async () => {
     setSkolaError(null);
@@ -348,7 +352,7 @@ export function SuperAdminPage() {
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
         <StatBox label="Ukupno skola" value={skole.length} accent="text-white" />
         <StatBox label="Aktivnih" value={aktivnih} accent="text-emerald-400" />
-        <StatBox label="Neaktivnih" value={skole.length - aktivnih} accent="text-slate-400" />
+        <StatBox label="Neaktivnih" value={neaktivnih} accent="text-slate-400" />
       </div>
 
       {loading ? (

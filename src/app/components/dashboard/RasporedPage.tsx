@@ -6,6 +6,7 @@ import { TopBar } from './TopBar';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
+import { SkolskaGodinaSelect } from '../ui/SkolskaGodinaSelect';
 import { 
   Calendar, 
   Upload, 
@@ -246,13 +247,10 @@ export function RasporedPage() {
                   <form onSubmit={handleImport} className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="skolskaGodina">Školska godina</Label>
-                      <Input
+                      <SkolskaGodinaSelect
                         id="skolskaGodina"
                         value={skolskaGodina}
-                        onChange={(e) => setSkolskaGodina(e.target.value)}
-                        placeholder="npr. 2024/2025"
-                        required
-                        pattern="\d{4}/\d{4}"
+                        onChange={setSkolskaGodina}
                         className="rounded-xl"
                       />
                     </div>

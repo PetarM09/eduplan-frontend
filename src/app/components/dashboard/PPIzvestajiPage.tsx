@@ -3,6 +3,7 @@ import { AppLayout, PageHeader } from '@/app/components/layout/AppLayout';
 import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
+import { SkolskaGodinaSelect } from '@/app/components/ui/SkolskaGodinaSelect';
 import { Textarea } from '@/app/components/ui/textarea';
 import {
   Dialog,
@@ -296,13 +297,14 @@ export function PPIzvestajiPage() {
       <div className="bg-white rounded-2xl border border-gray-200 p-4 flex flex-wrap items-end gap-3">
         <div>
           <Label htmlFor="f-godina">Skolska godina</Label>
-          <Input
-            id="f-godina"
-            value={filterSkolskaGodina}
-            onChange={(e) => setFilterSkolskaGodina(e.target.value)}
-            placeholder="2025/2026"
-            className="w-32"
-          />
+          <div className="w-36">
+            <SkolskaGodinaSelect
+              id="f-godina"
+              value={filterSkolskaGodina}
+              onChange={setFilterSkolskaGodina}
+              includeSveOpcija
+            />
+          </div>
         </div>
         {sviRezim && (
           <>
@@ -581,10 +583,9 @@ function PPModal({
             </div>
             <div>
               <Label>Skolska godina</Label>
-              <Input
+              <SkolskaGodinaSelect
                 value={skolskaGodina}
-                onChange={(e) => setSkolskaGodina(e.target.value)}
-                placeholder="2025/2026"
+                onChange={setSkolskaGodina}
                 disabled={!!editIzv || readonly}
               />
             </div>

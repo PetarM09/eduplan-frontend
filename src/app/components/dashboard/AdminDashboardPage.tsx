@@ -5,8 +5,10 @@ import { BookOpen, Users, School, UserX, FileText, ClipboardList, Loader2, Alert
 import { api, ApiError } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import type {
+  GodisnjiPlanResponse,
   KorisnikResponse,
   OdeljenjeResponse,
+  OperativniPlanResponse,
   PredmetResponse,
   ZamenaResponse,
 } from '@/lib/types';
@@ -18,6 +20,10 @@ interface Stats {
   odeljenja: number;
   zameneDanas: number;
   predlozeneZamene: number;
+  godisnjiPodnetih: number;
+  godisnjiOdobrenih: number;
+  operativniPodnetih: number;
+  operativniOdobrenih: number;
 }
 
 export function AdminDashboardPage() {
@@ -32,11 +38,13 @@ export function AdminDashboardPage() {
       setError(null);
       try {
         const danas = new Date().toISOString().slice(0, 10);
-        const [korisnici, predmeti, odeljenja, zameneDanas] = await Promise.all([
+        const [korisnici, predmeti, odeljenja, zameneDanas, godisnji, operativni] = await Promise.all([
           api.get<KorisnikResponse[]>('/korisnici'),
           api.get<PredmetResponse[]>('/predmeti/svi'),
           api.get<OdeljenjeResponse[]>('/odeljenja'),
           api.get<ZamenaResponse[]>('/zamene/danas', { params: { datum: danas } }),
+          api.get<GodisnjiPlanResponse[]>('/planovi/godisnji/svi').catch(() => []),
+          api.get<OperativniPlanResponse[]>('/planovi/operativni/svi').catch(() => []),
         ]);
         setStats({
           korisnika: korisnici.length,
@@ -45,6 +53,10 @@ export function AdminDashboardPage() {
           odeljenja: odeljenja.filter((o) => o.aktivan).length,
           zameneDanas: zameneDanas.length,
           predlozeneZamene: zameneDanas.filter((z) => z.status === 'PREDLOZENA').length,
+          godisnjiPodnetih: godisnji.filter((p) => p.status === 'PODNET').length,
+          godisnjiOdobrenih: godisnji.filter((p) => p.status === 'ARHIVIRAN').length,
+          operativniPodnetih: operativni.filter((p) => p.status === 'PODNET').length,
+          operativniOdobrenih: operativni.filter((p) => p.status === 'ARHIVIRAN').length,
         });
       } catch (e) {
         setError(e instanceof ApiError ? e.message : 'Greska pri ucitavanju statistike');
@@ -108,8 +120,22 @@ export function AdminDashboardPage() {
                   : 'sve obradjene'
               }
             />
-            <StatCard label="Godisnji planovi" value="—" icon={FileText} accent="green" to="/planovi/godisnji" hint="U izradi" />
-            <StatCard label="Operativni planovi" value="—" icon={ClipboardList} accent="purple" to="/planovi/operativni" hint="U izradi" />
+            <StatCard
+              label="Godisnji planovi (poslati)"
+              value={stats.godisnjiPodnetih}
+              icon={FileText}
+              accent="green"
+              to="/planovi/godisnji"
+              hint={`${stats.godisnjiOdobrenih} odobrenih`}
+            />
+            <StatCard
+              label="Operativni planovi (poslati)"
+              value={stats.operativniPodnetih}
+              icon={ClipboardList}
+              accent="purple"
+              to="/planovi/operativni"
+              hint={`${stats.operativniOdobrenih} odobrenih`}
+            />
           </div>
         </>
       ) : null}

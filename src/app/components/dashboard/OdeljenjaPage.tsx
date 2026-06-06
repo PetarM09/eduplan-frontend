@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/app/components/ui/select';
+import { SkolskaGodinaSelect } from '@/app/components/ui/SkolskaGodinaSelect';
 import {
   AlertCircle,
   Loader2,
@@ -207,11 +208,10 @@ export function OdeljenjaPage() {
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="godina">Skolska godina</Label>
-                  <Input
+                  <SkolskaGodinaSelect
                     id="godina"
                     value={forma.skolskaGodina}
-                    onChange={(e) => setForma({ ...forma, skolskaGodina: e.target.value })}
-                    placeholder="2024/2025"
+                    onChange={(v) => setForma({ ...forma, skolskaGodina: v })}
                   />
                 </div>
                 <div className="space-y-1.5">

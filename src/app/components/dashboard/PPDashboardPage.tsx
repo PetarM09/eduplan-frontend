@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { AppLayout, PageHeader } from '@/app/components/layout/AppLayout';
 import { Button } from '@/app/components/ui/button';
+import { SkolskaGodinaSelect } from '@/app/components/ui/SkolskaGodinaSelect';
 import {
   AlertCircle,
   BarChart3,
@@ -117,13 +118,9 @@ export function PPDashboardPage() {
         description="Pregled planova, izvestaja i statistike za skolsku godinu"
         action={
           <div className="flex items-center gap-2">
-            <input
-              type="text"
-              value={skolskaGodina}
-              onChange={(e) => setSkolskaGodina(e.target.value)}
-              placeholder="2025/2026"
-              className="h-10 px-3 rounded-lg border border-gray-300 text-sm w-28"
-            />
+            <div className="w-36">
+              <SkolskaGodinaSelect value={skolskaGodina} onChange={setSkolskaGodina} />
+            </div>
             <Button onClick={skiniExcel} variant="outline">
               <Download className="w-4 h-4" /> Excel
             </Button>

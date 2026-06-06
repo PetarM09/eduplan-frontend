@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/app/components/ui/select';
+import { SkolskaGodinaSelect } from '@/app/components/ui/SkolskaGodinaSelect';
 import {
   AlertCircle,
   ArrowLeft,
@@ -304,7 +305,7 @@ export function GodisnjiPlanEditorPage() {
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="godina">Skolska godina</Label>
-            <Input id="godina" value={skolskaGodina} onChange={(e) => setSkolskaGodina(e.target.value)} placeholder="2024/2025" />
+            <SkolskaGodinaSelect id="godina" value={skolskaGodina} onChange={setSkolskaGodina} />
           </div>
         </div>
 
