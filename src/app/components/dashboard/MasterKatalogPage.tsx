@@ -239,74 +239,87 @@ export function MasterKatalogPage() {
       />
 
       {loading ? (
-        <div className="bg-white rounded-2xl border border-gray-200 p-12 flex items-center justify-center text-gray-500">
+        <div className="bg-slate-800/60 backdrop-blur rounded-2xl border border-slate-700 p-12 flex items-center justify-center text-slate-300">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam katalog...
         </div>
       ) : error ? (
-        <div className="bg-red-50 border border-red-200 rounded-2xl p-6 flex items-center gap-2 text-red-700">
+        <div className="bg-amber-900/20 border border-amber-500/40 rounded-2xl p-6 flex items-center gap-2 text-amber-200">
           <AlertCircle className="w-5 h-5" />
           <span>{error}</span>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* Tipovi skole */}
-          <div className="bg-white rounded-2xl border border-gray-200">
-            <header className="p-4 border-b border-gray-200 flex items-center gap-2">
-              <GraduationCap className="w-5 h-5 text-indigo-500" />
-              <h2 className="font-semibold text-gray-900">Tipovi skole</h2>
-              <button onClick={dodajTip} className="ml-auto h-8 px-3 rounded-lg bg-indigo-600 text-white text-xs hover:bg-indigo-500 flex items-center gap-1">
+          <div className="bg-slate-800/60 backdrop-blur rounded-2xl border border-slate-700">
+            <header className="p-4 border-b border-slate-700 flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center">
+                <GraduationCap className="w-4 h-4" />
+              </div>
+              <h2 className="font-semibold text-white">Tipovi skole</h2>
+              <button onClick={dodajTip}
+                className="ml-auto h-8 px-3 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 text-white text-xs font-medium shadow shadow-orange-500/20 hover:from-orange-400 hover:to-amber-500 transition-all flex items-center gap-1">
                 <Plus className="w-3.5 h-3.5" /> Novi
               </button>
             </header>
-            <ul className="divide-y divide-gray-100">
+            <ul className="divide-y divide-slate-700/60">
               {tipovi.map((t) => (
                 <li key={t.id}
-                  className={`px-4 py-3 cursor-pointer hover:bg-gray-50 ${izabraniTipId === t.id ? 'bg-indigo-50' : ''}`}
+                  className={`px-4 py-3 cursor-pointer transition-colors ${
+                    izabraniTipId === t.id
+                      ? 'bg-orange-500/10 border-l-2 border-l-orange-400'
+                      : 'hover:bg-slate-700/40'
+                  }`}
                   onClick={() => setIzabraniTipId(t.id)}>
                   <div className="flex items-center gap-2">
                     <div className="flex-1">
-                      <div className="font-medium text-gray-900">{t.naziv}</div>
-                      <div className="text-xs text-gray-500">{t.kod} · {t.ukupnoRazreda} razreda · {t.brojProfila} profil(a)</div>
+                      <div className="font-medium text-white">{t.naziv}</div>
+                      <div className="text-xs text-slate-400">{t.kod} · {t.ukupnoRazreda} razreda · {t.brojProfila} profil(a)</div>
                     </div>
                     <button onClick={(e) => { e.stopPropagation(); obrisiTip(t); }}
-                      className="text-gray-400 hover:text-red-600" title="Obrisi">
+                      className="text-slate-500 hover:text-red-400" title="Obrisi">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </li>
               ))}
               {tipovi.length === 0 && (
-                <li className="px-4 py-8 text-center text-gray-400 text-sm">Nema tipova skole</li>
+                <li className="px-4 py-8 text-center text-slate-500 text-sm">Nema tipova skole</li>
               )}
             </ul>
           </div>
 
           {/* Profili */}
-          <div className="bg-white rounded-2xl border border-gray-200">
-            <header className="p-4 border-b border-gray-200 flex items-center gap-2">
-              <Layers className="w-5 h-5 text-purple-500" />
-              <h2 className="font-semibold text-gray-900">Obrazovni profili</h2>
+          <div className="bg-slate-800/60 backdrop-blur rounded-2xl border border-slate-700">
+            <header className="p-4 border-b border-slate-700 flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center">
+                <Layers className="w-4 h-4" />
+              </div>
+              <h2 className="font-semibold text-white">Obrazovni profili</h2>
               <button onClick={dodajProfil} disabled={!izabraniTipId}
-                className="ml-auto h-8 px-3 rounded-lg bg-purple-600 text-white text-xs hover:bg-purple-500 disabled:bg-gray-300 flex items-center gap-1">
+                className="ml-auto h-8 px-3 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 text-white text-xs font-medium shadow shadow-orange-500/20 hover:from-orange-400 hover:to-amber-500 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1">
                 <Plus className="w-3.5 h-3.5" /> Novi
               </button>
             </header>
-            <ul className="divide-y divide-gray-100">
+            <ul className="divide-y divide-slate-700/60">
               {izabraniTipId ? (
                 profili.length === 0 ? (
-                  <li className="px-4 py-8 text-center text-gray-400 text-sm">Nema profila za ovaj tip</li>
+                  <li className="px-4 py-8 text-center text-slate-500 text-sm">Nema profila za ovaj tip</li>
                 ) : (
                   profili.map((p) => (
                     <li key={p.id}
-                      className={`px-4 py-3 cursor-pointer hover:bg-gray-50 ${izabraniProfilId === p.id ? 'bg-purple-50' : ''}`}
+                      className={`px-4 py-3 cursor-pointer transition-colors ${
+                        izabraniProfilId === p.id
+                          ? 'bg-orange-500/10 border-l-2 border-l-orange-400'
+                          : 'hover:bg-slate-700/40'
+                      }`}
                       onClick={() => setIzabraniProfilId(p.id)}>
                       <div className="flex items-center gap-2">
                         <div className="flex-1">
-                          <div className="font-medium text-gray-900">{p.naziv}</div>
-                          <div className="text-xs text-gray-500">{p.kod} · {p.brojPredmeta} predmet(a)</div>
+                          <div className="font-medium text-white">{p.naziv}</div>
+                          <div className="text-xs text-slate-400">{p.kod} · {p.brojPredmeta} predmet(a)</div>
                         </div>
                         <button onClick={(e) => { e.stopPropagation(); obrisiProfil(p); }}
-                          className="text-gray-400 hover:text-red-600" title="Obrisi">
+                          className="text-slate-500 hover:text-red-400" title="Obrisi">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -314,49 +327,53 @@ export function MasterKatalogPage() {
                   ))
                 )
               ) : (
-                <li className="px-4 py-8 text-center text-gray-400 text-sm">Izaberi tip skole</li>
+                <li className="px-4 py-8 text-center text-slate-500 text-sm">Izaberi tip skole</li>
               )}
             </ul>
           </div>
 
           {/* Predmeti */}
-          <div className="bg-white rounded-2xl border border-gray-200">
-            <header className="p-4 border-b border-gray-200 flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-emerald-500" />
-              <h2 className="font-semibold text-gray-900">Predmeti</h2>
+          <div className="bg-slate-800/60 backdrop-blur rounded-2xl border border-slate-700">
+            <header className="p-4 border-b border-slate-700 flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center">
+                <BookOpen className="w-4 h-4" />
+              </div>
+              <h2 className="font-semibold text-white">Predmeti</h2>
               {izabraniProfil && (
-                <span className="ml-auto text-xs text-gray-500">{izabraniProfil.naziv}</span>
+                <span className="ml-auto text-xs text-slate-400 truncate max-w-[180px]" title={izabraniProfil.naziv}>
+                  {izabraniProfil.naziv}
+                </span>
               )}
             </header>
             {izabraniProfilId ? (
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-slate-700/60">
                 {Array.from({ length: ukupnoRazreda }, (_, i) => i + 1).map((razred) => {
                   const grupa = predmeti.filter((p) => p.razred === razred);
                   return (
                     <div key={razred} className="p-4">
                       <div className="flex items-center gap-2 mb-2">
-                        <h3 className="text-sm font-semibold text-gray-700">{razred}. razred</h3>
-                        <span className="text-xs text-gray-400">({grupa.length})</span>
+                        <h3 className="text-sm font-semibold text-orange-300">{razred}. razred</h3>
+                        <span className="text-xs text-slate-500">({grupa.length})</span>
                         <button onClick={() => dodajPredmet(razred)}
-                          className="ml-auto h-7 px-2 rounded-md bg-emerald-600 text-white text-xs hover:bg-emerald-500 flex items-center gap-1">
+                          className="ml-auto h-7 px-2 rounded-md bg-orange-500/20 text-orange-300 text-xs hover:bg-orange-500/30 transition-colors flex items-center gap-1">
                           <Plus className="w-3 h-3" /> Predmet
                         </button>
                       </div>
                       {grupa.length === 0 ? (
-                        <p className="text-xs text-gray-400 pl-2">Nema predmeta</p>
+                        <p className="text-xs text-slate-500 pl-2">Nema predmeta</p>
                       ) : (
                         <ul className="space-y-1">
                           {grupa.map((p) => (
-                            <li key={p.id} className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-gray-50">
+                            <li key={p.id} className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-slate-700/40 transition-colors">
                               <div className="flex-1">
-                                <div className="text-sm text-gray-900">{p.naziv}</div>
-                                <div className="text-xs text-gray-500">
-                                  <span className="font-mono">{p.fondTeorija}+{p.fondVezbe}+{p.fondBlok}</span>
+                                <div className="text-sm text-white">{p.naziv}</div>
+                                <div className="text-xs text-slate-400">
+                                  <span className="font-mono text-orange-300">{p.fondTeorija}+{p.fondVezbe}+{p.fondBlok}</span>
                                   {' '} (T+V+B nedeljno)
                                 </div>
                               </div>
                               <button onClick={() => obrisiPredmet(p)}
-                                className="text-gray-400 hover:text-red-600" title="Obrisi">
+                                className="text-slate-500 hover:text-red-400" title="Obrisi">
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
                             </li>
@@ -368,7 +385,7 @@ export function MasterKatalogPage() {
                 })}
               </div>
             ) : (
-              <div className="px-4 py-8 text-center text-gray-400 text-sm">Izaberi profil</div>
+              <div className="px-4 py-8 text-center text-slate-500 text-sm">Izaberi profil</div>
             )}
           </div>
         </div>
