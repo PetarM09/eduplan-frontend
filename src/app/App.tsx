@@ -21,6 +21,7 @@ import { PPIzvestajiPage } from '@/app/components/dashboard/PPIzvestajiPage';
 import { RotacijaPage } from '@/app/components/dashboard/RotacijaPage';
 import { PostavkeSkolePage } from '@/app/components/dashboard/PostavkeSkolePage';
 import { VerzijeRasporedaPage } from '@/app/components/dashboard/VerzijeRasporedaPage';
+import { MasterKatalogPage } from '@/app/components/dashboard/MasterKatalogPage';
 
 function HomeRedirect() {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -192,6 +193,14 @@ export default function App() {
         element={
           <ProtectedRoute allowedRoles={['SUPER_ADMIN']}>
             <SuperAdminPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/master-katalog"
+        element={
+          <ProtectedRoute allowedRoles={['SUPER_ADMIN']}>
+            <MasterKatalogPage />
           </ProtectedRoute>
         }
       />

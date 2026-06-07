@@ -31,6 +31,7 @@ interface MenuItem {
 
 const STAVKE_GLAVNO: MenuItem[] = [
   { path: '/super-dashboard', icon: Shield, label: 'Skole', uloge: ['SUPER_ADMIN'] },
+  { path: '/master-katalog', icon: GraduationCap, label: 'Master katalog', uloge: ['SUPER_ADMIN'] },
   { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', uloge: ['NASTAVNIK'] },
   { path: '/admin-dashboard', icon: Shield, label: 'Dashboard', uloge: ['KOORDINATOR', 'ADMIN', 'DIREKTOR'] },
   { path: '/pp/dashboard', icon: BarChart3, label: 'PP Dashboard', uloge: ['PP_SLUZBA'] },
