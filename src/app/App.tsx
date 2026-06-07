@@ -22,6 +22,7 @@ import { RotacijaPage } from '@/app/components/dashboard/RotacijaPage';
 import { PostavkeSkolePage } from '@/app/components/dashboard/PostavkeSkolePage';
 import { VerzijeRasporedaPage } from '@/app/components/dashboard/VerzijeRasporedaPage';
 import { MasterKatalogPage } from '@/app/components/dashboard/MasterKatalogPage';
+import { SkolaOnboardingPage } from '@/app/components/dashboard/SkolaOnboardingPage';
 
 function HomeRedirect() {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -201,6 +202,14 @@ export default function App() {
         element={
           <ProtectedRoute allowedRoles={['SUPER_ADMIN']}>
             <MasterKatalogPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/skola-onboarding"
+        element={
+          <ProtectedRoute allowedRoles={['KOORDINATOR']}>
+            <SkolaOnboardingPage />
           </ProtectedRoute>
         }
       />

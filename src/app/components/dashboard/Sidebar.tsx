@@ -45,6 +45,7 @@ const STAVKE_GLAVNO: MenuItem[] = [
 ];
 
 const STAVKE_ADMIN: MenuItem[] = [
+  { path: '/skola-onboarding', icon: GraduationCap, label: 'Onboarding wizard', uloge: ['KOORDINATOR'] },
   { path: '/korisnici', icon: Users, label: 'Korisnici', uloge: ['KOORDINATOR', 'DIREKTOR'] },
   { path: '/predmeti', icon: BookOpen, label: 'Predmeti', uloge: ['KOORDINATOR', 'ADMIN', 'DIREKTOR'] },
   { path: '/odeljenja', icon: School, label: 'Odeljenja', uloge: ['KOORDINATOR', 'ADMIN', 'DIREKTOR'] },
