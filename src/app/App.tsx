@@ -23,6 +23,8 @@ import { PostavkeSkolePage } from '@/app/components/dashboard/PostavkeSkolePage'
 import { VerzijeRasporedaPage } from '@/app/components/dashboard/VerzijeRasporedaPage';
 import { MasterKatalogPage } from '@/app/components/dashboard/MasterKatalogPage';
 import { SkolaOnboardingPage } from '@/app/components/dashboard/SkolaOnboardingPage';
+import { PozivnicePage } from '@/app/components/dashboard/PozivnicePage';
+import { PozivnicaAktivacijaPage } from '@/app/components/PozivnicaAktivacijaPage';
 
 function HomeRedirect() {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -46,6 +48,7 @@ export default function App() {
       {/* Javne rute */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/pozivnica/:token" element={<PozivnicaAktivacijaPage />} />
 
       {/* Pocetni redirect na osnovu uloge */}
       <Route path="/" element={<HomeRedirect />} />
@@ -210,6 +213,14 @@ export default function App() {
         element={
           <ProtectedRoute allowedRoles={['KOORDINATOR']}>
             <SkolaOnboardingPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/pozivnice"
+        element={
+          <ProtectedRoute allowedRoles={['KOORDINATOR']}>
+            <PozivnicePage />
           </ProtectedRoute>
         }
       />
