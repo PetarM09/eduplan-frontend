@@ -1,15 +1,16 @@
 import { Link } from 'react-router-dom';
-import { ArrowLeft, GraduationCap, Mail, ShieldQuestion, UserCog } from 'lucide-react';
+import { ArrowLeft, Mail, ShieldQuestion, UserCog } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
+import logoIcon from '@/assets/logo-icon.svg';
 
 export function ForgotPasswordPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-brand-50/30 to-brand-50/50">
+    <div className="dark min-h-screen flex items-center justify-center p-4 bg-brand-950 bg-gradient-to-br from-brand-950 via-brand-50/30 to-brand-50/50">
       <div className="w-full max-w-md">
         <div className="flex justify-center mb-8">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-600 to-brand-600 flex items-center justify-center shadow-xl shadow-brand-600/25">
-              <GraduationCap className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 rounded-2xl bg-brand-900 flex items-center justify-center shadow-xl shadow-brand-900/25 overflow-hidden">
+              <img src={logoIcon} alt="BehindClasses" className="w-9 h-9" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-foreground">BehindClasses</h1>
@@ -17,7 +18,7 @@ export function ForgotPasswordPage() {
           </div>
         </div>
 
-        <div className="bg-card rounded-2xl border border-border shadow-xl p-8 space-y-6">
+        <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-8 space-y-6">
           <div className="text-center">
             <div className="mx-auto w-16 h-16 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center mb-4">
               <ShieldQuestion className="w-8 h-8" />

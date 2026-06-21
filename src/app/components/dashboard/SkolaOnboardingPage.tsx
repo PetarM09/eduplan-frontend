@@ -202,7 +202,7 @@ export function SkolaOnboardingPage() {
     return (
       <AppLayout>
         <PageHeader title="Onboarding wizard" description="Ucitavam katalog..." />
-        <div className="bg-card rounded-2xl border border-border p-12 flex items-center justify-center text-muted-foreground">
+        <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-12 flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam...
         </div>
       </AppLayout>
@@ -224,7 +224,7 @@ export function SkolaOnboardingPage() {
           title="Onboarding zavrsen"
           description="Predmeti i odeljenja su kreirani u tvojoj skoli."
         />
-        <div className="bg-card rounded-2xl border border-emerald-200 p-8 space-y-4">
+        <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-emerald-200 p-8 space-y-4">
           <div className="flex items-center gap-3">
             <CheckCircle2 className="w-10 h-10 text-emerald-500" />
             <div>
@@ -268,7 +268,7 @@ export function SkolaOnboardingPage() {
       />
 
       {/* Step indicator */}
-      <div className="bg-card rounded-2xl border border-border p-4 flex items-center gap-2 overflow-x-auto">
+      <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-4 flex items-center gap-2 overflow-x-auto">
         {KORACI.map((label, i) => (
           <div key={label} className="flex items-center gap-2">
             <div className={`flex items-center gap-2 ${i === korak ? 'text-brand-600' : i < korak ? 'text-emerald-600' : 'text-muted-foreground'}`}>
@@ -284,7 +284,7 @@ export function SkolaOnboardingPage() {
         ))}
       </div>
 
-      <div className="bg-card rounded-2xl border border-border p-6">
+      <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-6">
         {korak === 0 && (
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-foreground font-semibold">

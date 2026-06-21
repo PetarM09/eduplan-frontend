@@ -13,7 +13,7 @@ export function PlaceholderPage({ title, description, endpoints, icon }: Placeho
   return (
     <AppLayout>
       <PageHeader title={title} description={description} />
-      <div className="bg-card rounded-2xl border border-border p-12 text-center">
+      <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-12 text-center">
         <div className="w-16 h-16 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center mx-auto mb-4">
           <Icon className="w-8 h-8" />
         </div>

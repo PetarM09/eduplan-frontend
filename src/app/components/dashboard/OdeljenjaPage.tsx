@@ -251,7 +251,7 @@ export function OdeljenjaPage() {
       />
 
       {/* Filteri */}
-      <div className="bg-card rounded-2xl border border-border p-4 flex flex-col lg:flex-row gap-3">
+      <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-4 flex flex-col lg:flex-row gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
@@ -275,7 +275,7 @@ export function OdeljenjaPage() {
 
       {/* Lista */}
       {loading ? (
-        <div className="bg-card rounded-2xl border border-border p-12 flex items-center justify-center text-muted-foreground">
+        <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-12 flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam odeljenja...
         </div>
       ) : error ? (
@@ -285,7 +285,7 @@ export function OdeljenjaPage() {
           <Button size="sm" variant="outline" onClick={ucitaj} className="ml-auto">Pokusaj ponovo</Button>
         </div>
       ) : filtrirani.length === 0 ? (
-        <div className="bg-card rounded-2xl border border-border p-12 text-center text-muted-foreground">
+        <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-12 text-center text-muted-foreground">
           Nema odeljenja. Klikni "Dodaj odeljenje" da kreiras prvo.
         </div>
       ) : (
@@ -293,7 +293,7 @@ export function OdeljenjaPage() {
           {filtrirani.map((o) => (
             <article
               key={o.id}
-              className={`bg-card rounded-2xl border p-5 ${
+              className={`bg-card rounded-2xl shadow-md shadow-gray-200/50 border p-5 ${
                 o.aktivan ? 'border-border' : 'border-border opacity-60'
               }`}
             >

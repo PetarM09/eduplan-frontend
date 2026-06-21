@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { api } from '@/lib/api';
-import { Sidebar } from './Sidebar';
-import { TopBar } from './TopBar';
+import { AppLayout, PageHeader } from '@/app/components/layout/AppLayout';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -226,32 +225,22 @@ export function ZamenePage() {
   const isEduAdmin = ['ADMIN', 'DIREKTOR', 'KOORDINATOR'].includes(user?.uloga || '');
 
   return (
-    <div className="flex h-screen bg-muted overflow-hidden">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-y-auto">
-        <TopBar />
-        <main className="p-8 space-y-8 max-w-7xl mx-auto w-full">
-          {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <h2 className="text-3xl font-extrabold text-foreground tracking-tight flex items-center gap-3">
-                <UserX className="w-8 h-8 text-brand-600" />
-                Dnevne Zamene Nastavnika
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Prijava odsustva, automatizovan predlog zamenika i praćenje odobravanja.
-              </p>
-            </div>
-            {user?.uloga === 'NASTAVNIK' && (
-              <Button
-                onClick={() => setShowAbsenceForm(true)}
-                className="bg-brand-600 hover:bg-brand-700 text-white rounded-xl shadow-lg shadow-brand-600/10 flex items-center gap-2 h-11"
-              >
-                <Plus className="w-5 h-5" />
-                Prijavi odsustvo
-              </Button>
-            )}
-          </div>
+    <AppLayout>
+      <PageHeader
+        title="Dnevne Zamene Nastavnika"
+        description="Prijava odsustva, automatizovan predlog zamenika i praćenje odobravanja."
+        action={
+          user?.uloga === 'NASTAVNIK' ? (
+            <Button
+              onClick={() => setShowAbsenceForm(true)}
+              className="rounded-xl shadow-lg shadow-primary/20 flex items-center gap-2 h-11"
+            >
+              <Plus className="w-5 h-5" />
+              Prijavi odsustvo
+            </Button>
+          ) : undefined
+        }
+      />
 
           {/* Success / Error Messages */}
           {successMessage && (
@@ -278,7 +267,7 @@ export function ZamenePage() {
           <div className="grid grid-cols-1 gap-8">
             {/* Admin/Director/Coordinator View - Today's Replacements */}
             {['ADMIN', 'DIREKTOR', 'KOORDINATOR', 'PP_SLUZBA'].includes(user?.uloga || '') && (
-              <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border overflow-hidden p-6 space-y-6">
+              <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border overflow-hidden p-6 space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
                   <h3 className="text-lg font-bold text-foreground">Zamene na dan</h3>
                   <div className="flex items-center gap-2">
@@ -430,7 +419,7 @@ export function ZamenePage() {
             {user?.uloga === 'NASTAVNIK' && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* My Absences */}
-                <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-6 space-y-6">
+                <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-6 space-y-6">
                   <h3 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-border pb-3">
                     <UserX className="w-5 h-5 text-rose-500" />
                     Moja odsustva (Prijavljeno)
@@ -483,7 +472,7 @@ export function ZamenePage() {
                 </div>
 
                 {/* My Assignments as Substitute */}
-                <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-6 space-y-6">
+                <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-6 space-y-6">
                   <h3 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-border pb-3">
                     <UserCheck className="w-5 h-5 text-emerald-500" />
                     Moja zaduženja (Zamene)
@@ -660,8 +649,6 @@ export function ZamenePage() {
               </div>
             </div>
           )}
-        </main>
-      </div>
-    </div>
+    </AppLayout>
   );
 }

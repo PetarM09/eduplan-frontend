@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { api } from '@/lib/api';
-import { Sidebar } from './Sidebar';
-import { TopBar } from './TopBar';
+import { AppLayout, PageHeader } from '@/app/components/layout/AppLayout';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -126,35 +125,25 @@ export function RasporedPage() {
   const isEduAdmin = user?.uloga === 'KOORDINATOR' || user?.uloga === 'ADMIN';
 
   return (
-    <div className="flex h-screen bg-muted overflow-hidden">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-y-auto">
-        <TopBar />
-        <main className="p-8 space-y-8 max-w-7xl mx-auto w-full">
-          {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <h2 className="text-3xl font-extrabold text-foreground tracking-tight flex items-center gap-3">
-                <Calendar className="w-8 h-8 text-brand-600" />
-                Raspored časova
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Pregled Vaših časova u aktivnom rasporedu nastave.
-              </p>
-            </div>
-            {isEduAdmin && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">
-                <Sparkles className="w-3.5 h-3.5" />
-                Administracija aktivna
-              </span>
-            )}
-          </div>
+    <AppLayout>
+      <PageHeader
+        title="Raspored časova"
+        description="Pregled Vaših časova u aktivnom rasporedu nastave."
+        action={
+          isEduAdmin ? (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">
+              <Sparkles className="w-3.5 h-3.5" />
+              Administracija aktivna
+            </span>
+          ) : undefined
+        }
+      />
 
           {/* Grid Layout for Grid and Import */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Schedule View */}
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border overflow-hidden">
+              <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border overflow-hidden">
                 <div className="p-6 border-b border-border flex items-center justify-between">
                   <h3 className="text-lg font-bold text-foreground">Moj nedeljni raspored</h3>
                   <Button variant="outline" size="sm" onClick={fetchRaspored} className="text-xs">
@@ -233,7 +222,7 @@ export function RasporedPage() {
             {/* XML Import Panel (Admin/Koordinator only) */}
             {isEduAdmin && (
               <div className="space-y-6">
-                <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-6 space-y-6">
+                <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-6 space-y-6">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600">
                       <Upload className="w-5 h-5" />
@@ -342,8 +331,6 @@ export function RasporedPage() {
               </div>
             )}
           </div>
-        </main>
-      </div>
-    </div>
+    </AppLayout>
   );
 }

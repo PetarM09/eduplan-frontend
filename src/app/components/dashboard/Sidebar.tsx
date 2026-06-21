@@ -78,9 +78,7 @@ export function Sidebar() {
   return (
     <aside className="w-72 bg-sidebar text-sidebar-foreground border-r border-sidebar-border flex flex-col">
       <div className="h-16 px-6 flex items-center gap-3 border-b border-sidebar-border">
-        <div className="w-9 h-9 rounded-xl bg-white/10 ring-1 ring-white/10 flex items-center justify-center overflow-hidden">
-          <img src={logoIcon} alt="BehindClasses" className="w-7 h-7" />
-        </div>
+        <img src={logoIcon} alt="BehindClasses" className="w-11 h-11 rounded-xl shrink-0" />
         <div>
           <h1 className="text-lg font-bold text-white leading-tight">BehindClasses</h1>
           <p className="text-xs text-sidebar-foreground/70">{user?.uloga ?? '—'}</p>
