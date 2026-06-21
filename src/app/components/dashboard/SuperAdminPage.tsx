@@ -37,10 +37,10 @@ const ULOGE_U_SKOLI: Uloga[] = ['KOORDINATOR', 'DIREKTOR', 'ADMIN', 'PP_SLUZBA',
 const ULOGA_BADGE: Record<Uloga, string> = {
   SUPER_ADMIN: 'bg-red-100 text-red-700',
   KOORDINATOR: 'bg-purple-100 text-purple-700',
-  DIREKTOR: 'bg-blue-100 text-blue-700',
-  ADMIN: 'bg-indigo-100 text-indigo-700',
+  DIREKTOR: 'bg-brand-100 text-brand-700',
+  ADMIN: 'bg-brand-100 text-brand-700',
   PP_SLUZBA: 'bg-emerald-100 text-emerald-700',
-  NASTAVNIK: 'bg-gray-100 text-gray-700',
+  NASTAVNIK: 'bg-secondary text-foreground',
 };
 
 interface SkolaResponse {
@@ -296,14 +296,14 @@ export function SuperAdminPage() {
         action={
           <Dialog open={skolaOpen} onOpenChange={setSkolaOpen}>
             <DialogTrigger asChild>
-              <button className="h-12 px-6 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 text-white font-medium shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 hover:from-orange-400 hover:to-amber-500 transition-all flex items-center gap-2">
+              <button className="h-12 px-6 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 text-white font-medium shadow-lg shadow-accent-500/20 hover:shadow-accent-500/40 hover:from-accent-400 hover:to-accent-500 transition-all flex items-center gap-2">
                 <Plus className="w-4 h-4" /> Dodaj skolu
               </button>
             </DialogTrigger>
-            <DialogContent className="bg-slate-900 border-slate-700 text-slate-200">
+            <DialogContent className="bg-brand-00 border-brand-00 text-brand-00">
               <DialogHeader>
                 <DialogTitle className="text-white">Nova skola</DialogTitle>
-                <DialogDescription className="text-slate-400">
+                <DialogDescription className="text-brand-00">
                   Posle kreiranja skole automatski se otvara dialog za njenog koordinatora.
                 </DialogDescription>
               </DialogHeader>
@@ -321,7 +321,7 @@ export function SuperAdminPage() {
                   onChange={(v) => setNovaSkola({ ...novaSkola, vaziDo: v })}
                   placeholder="YYYY-MM-DD"
                 />
-                <p className="text-xs text-slate-400 -mt-2">
+                <p className="text-xs text-brand-00 -mt-2">
                   Kada datum prodje, login svih korisnika skole se automatski blokira.
                   Mail za primanje planova postavlja koordinator skole.
                 </p>
@@ -331,14 +331,14 @@ export function SuperAdminPage() {
                 <button
                   onClick={() => setSkolaOpen(false)}
                   disabled={skolaSubmit}
-                  className="h-10 px-4 rounded-xl border border-slate-600 bg-slate-800 text-slate-300 text-sm font-medium hover:bg-slate-700 hover:text-white transition-colors disabled:opacity-50"
+                  className="h-10 px-4 rounded-xl border border-brand-00 bg-brand-00 text-brand-00 text-sm font-medium hover:bg-brand-00 hover:text-white transition-colors disabled:opacity-50"
                 >
                   Odustani
                 </button>
                 <button
                   onClick={dodajSkolu}
                   disabled={skolaSubmit}
-                  className="h-10 px-4 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 text-white font-medium shadow hover:from-orange-400 hover:to-amber-500 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="h-10 px-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 text-white font-medium shadow hover:from-accent-400 hover:to-accent-500 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {skolaSubmit ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                   Kreiraj skolu
@@ -352,7 +352,7 @@ export function SuperAdminPage() {
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
         <StatBox label="Ukupno skola" value={skole.length} accent="text-white" />
         <StatBox label="Aktivnih" value={aktivnih} accent="text-emerald-400" />
-        <StatBox label="Neaktivnih" value={neaktivnih} accent="text-slate-400" />
+        <StatBox label="Neaktivnih" value={neaktivnih} accent="text-brand-00" />
       </div>
 
       {loading ? (
@@ -360,7 +360,7 @@ export function SuperAdminPage() {
       ) : error ? (
         <ErrorRow message={error} onRetry={ucitaj} />
       ) : skole.length === 0 ? (
-        <div className="bg-slate-800/60 backdrop-blur rounded-2xl border border-slate-700 p-12 text-center text-slate-300">
+        <div className="bg-brand-00/60 backdrop-blur rounded-2xl border border-brand-00 p-12 text-center text-brand-00">
           Nema kreiranih skola. Klikni "Dodaj skolu" da napravis prvu.
         </div>
       ) : (
@@ -373,62 +373,62 @@ export function SuperAdminPage() {
                 key={s.id}
                 className={`rounded-2xl border p-5 backdrop-blur transition-colors ${
                   problematicna
-                    ? 'bg-amber-900/20 border-amber-500/40'
-                    : 'bg-slate-800/60 border-slate-700 hover:border-orange-500/40'
+                    ? 'bg-accent-900/20 border-accent-500/40'
+                    : 'bg-brand-00/60 border-brand-00 hover:border-accent-500/40'
                 }`}
               >
                 <div className="flex items-start justify-between mb-3">
                   <div
                     className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                       problematicna
-                        ? 'bg-amber-500/20 text-amber-300'
-                        : 'bg-orange-500/20 text-orange-400'
+                        ? 'bg-accent-500/20 text-accent-300'
+                        : 'bg-accent-500/20 text-accent-400'
                     }`}
                   >
                     <School className="w-5 h-5" />
                   </div>
                   {!s.aktivan ? (
-                    <span className="text-xs font-medium rounded-full bg-slate-700 text-slate-300 px-2 py-0.5">
+                    <span className="text-xs font-medium rounded-full bg-brand-00 text-brand-00 px-2 py-0.5">
                       Deaktivirana
                     </span>
                   ) : istekla ? (
-                    <span className="text-xs font-medium rounded-full bg-amber-500/20 text-amber-300 px-2 py-0.5">
+                    <span className="text-xs font-medium rounded-full bg-accent-500/20 text-accent-300 px-2 py-0.5">
                       Istekla
                     </span>
                   ) : null}
                 </div>
                 <h3 className="font-semibold text-white text-lg mb-2">{s.naziv}</h3>
-                <div className="space-y-1.5 text-sm text-slate-300 mb-4">
+                <div className="space-y-1.5 text-sm text-brand-00 mb-4">
                   {s.grad && (
                     <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-slate-500" />
+                      <MapPin className="w-4 h-4 text-brand-00" />
                       {s.grad}
                       {s.adresa && `, ${s.adresa}`}
                     </div>
                   )}
                   {s.mailPlanovi && (
                     <div className="flex items-center gap-2 truncate">
-                      <Mail className="w-4 h-4 text-slate-500 flex-shrink-0" />
+                      <Mail className="w-4 h-4 text-brand-00 flex-shrink-0" />
                       <span className="truncate">{s.mailPlanovi}</span>
                     </div>
                   )}
                   <button
                     onClick={() => postaviVaziDo(s.id, s.vaziDo)}
-                    className="w-full flex items-center gap-2 text-left text-slate-300 hover:text-orange-300 transition-colors"
+                    className="w-full flex items-center gap-2 text-left text-brand-00 hover:text-accent-300 transition-colors"
                     title="Klikni da promenis datum"
                   >
-                    <CalendarClock className="w-4 h-4 text-slate-500" />
+                    <CalendarClock className="w-4 h-4 text-brand-00" />
                     {s.vaziDo ? (
                       <span>Vazi do <strong className="text-white">{s.vaziDo}</strong></span>
                     ) : (
-                      <span className="text-slate-500">Bez ogranicenja — postavi datum</span>
+                      <span className="text-brand-00">Bez ogranicenja — postavi datum</span>
                     )}
                   </button>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={() => otvoriKorisnike(s)}
-                    className="h-9 px-3 rounded-lg border border-orange-500/30 bg-orange-500/10 text-orange-200 text-sm font-medium hover:bg-orange-500/20 hover:border-orange-500/50 hover:text-orange-100 transition-colors flex items-center justify-center gap-2"
+                    className="h-9 px-3 rounded-lg border border-accent-500/30 bg-accent-500/10 text-accent-200 text-sm font-medium hover:bg-accent-500/20 hover:border-accent-500/50 hover:text-accent-100 transition-colors flex items-center justify-center gap-2"
                   >
                     <Users className="w-4 h-4" /> Korisnici
                   </button>
@@ -438,14 +438,14 @@ export function SuperAdminPage() {
                       setKoordForma(PRAZAN_KOORDINATOR);
                       setKoordError(null);
                     }}
-                    className="h-9 px-3 rounded-lg border border-orange-500/30 bg-orange-500/10 text-orange-200 text-sm font-medium hover:bg-orange-500/20 hover:border-orange-500/50 hover:text-orange-100 transition-colors flex items-center justify-center gap-2"
+                    className="h-9 px-3 rounded-lg border border-accent-500/30 bg-accent-500/10 text-accent-200 text-sm font-medium hover:bg-accent-500/20 hover:border-accent-500/50 hover:text-accent-100 transition-colors flex items-center justify-center gap-2"
                   >
                     <UserPlus className="w-4 h-4" /> Koordinator
                   </button>
                   {s.aktivan ? (
                     <button
                       onClick={() => deaktivirajSkolu(s.id)}
-                      className="col-span-2 h-9 px-3 rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-300 text-sm font-medium hover:bg-amber-500/20 transition-colors flex items-center justify-center gap-2"
+                      className="col-span-2 h-9 px-3 rounded-lg border border-accent-500/30 bg-accent-500/10 text-accent-300 text-sm font-medium hover:bg-accent-500/20 transition-colors flex items-center justify-center gap-2"
                     >
                       <PowerOff className="w-4 h-4" /> Deaktiviraj skolu
                     </button>
@@ -466,10 +466,10 @@ export function SuperAdminPage() {
 
       {/* Dijalog za korisnike skole */}
       <Dialog open={!!korisniciSkola} onOpenChange={(o) => !o && setKorisniciSkola(null)}>
-        <DialogContent className="bg-slate-900 border-slate-700 text-slate-200 max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="bg-brand-00 border-brand-00 text-brand-00 max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-white">Korisnici: {korisniciSkola?.naziv}</DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogDescription className="text-brand-00">
               Promeni ulogu inline, deaktiviraj umesto brisanja ako korisnik ima vezane podatke.
             </DialogDescription>
           </DialogHeader>
@@ -479,53 +479,53 @@ export function SuperAdminPage() {
           ) : korisniciError ? (
             <ErrorBox message={korisniciError} />
           ) : korisnici.length === 0 ? (
-            <p className="p-6 text-sm text-slate-400 text-center">
+            <p className="p-6 text-sm text-brand-00 text-center">
               Skola jos nema kreiranih korisnika.
             </p>
           ) : (
-            <div className="overflow-x-auto rounded-lg border border-slate-700">
+            <div className="overflow-x-auto rounded-lg border border-brand-00">
               <table className="w-full">
-                <thead className="bg-slate-800/80 border-b border-slate-700">
+                <thead className="bg-brand-00/80 border-b border-brand-00">
                   <tr>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-brand-00 uppercase tracking-wider">
                       Ime i prezime
                     </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-brand-00 uppercase tracking-wider">
                       Username / Email
                     </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-brand-00 uppercase tracking-wider">
                       Uloga
                     </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-brand-00 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-3 py-2 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                    <th className="px-3 py-2 text-right text-xs font-semibold text-brand-00 uppercase tracking-wider">
                       Akcije
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800 bg-slate-900/40">
+                <tbody className="divide-y divide-brand-00 bg-brand-00/40">
                   {korisnici.map((k) => {
                     const radi = akcijaInProgress === k.id;
                     return (
-                      <tr key={k.id} className={`hover:bg-slate-800/60 transition-colors ${k.aktivan ? '' : 'opacity-60'}`}>
+                      <tr key={k.id} className={`hover:bg-brand-00/60 transition-colors ${k.aktivan ? '' : 'opacity-60'}`}>
                         <td className="px-3 py-2 text-sm font-medium text-white">
                           {k.ime} {k.prezime}
                         </td>
-                        <td className="px-3 py-2 text-sm text-slate-300">
+                        <td className="px-3 py-2 text-sm text-brand-00">
                           <div>{k.username}</div>
-                          <div className="text-xs text-slate-500 truncate max-w-[200px]">{k.email}</div>
+                          <div className="text-xs text-brand-00 truncate max-w-[200px]">{k.email}</div>
                         </td>
                         <td className="px-3 py-2 text-sm">
                           <select
                             value={k.uloga}
                             onChange={(e) => promeniUlogu(k.id, e.target.value as Uloga)}
                             disabled={radi}
-                            className={`h-8 px-2 rounded-full border-0 text-xs font-medium cursor-pointer focus:ring-2 focus:ring-offset-1 focus:ring-offset-slate-900 focus:ring-orange-400 ${ULOGA_BADGE[k.uloga]}`}
+                            className={`h-8 px-2 rounded-full border-0 text-xs font-medium cursor-pointer focus:ring-2 focus:ring-offset-1 focus:ring-offset-brand-00 focus:ring-accent-400 ${ULOGA_BADGE[k.uloga]}`}
                             title="Promeni ulogu"
                           >
                             {ULOGE_U_SKOLI.map((u) => (
-                              <option key={u} value={u} className="bg-slate-800 text-white">
+                              <option key={u} value={u} className="bg-brand-00 text-white">
                                 {u}
                               </option>
                             ))}
@@ -537,20 +537,20 @@ export function SuperAdminPage() {
                               <CheckCircle2 className="w-3 h-3" /> Aktivan
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-slate-700 text-slate-300 px-2 py-0.5 text-xs font-medium">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-brand-00 text-brand-00 px-2 py-0.5 text-xs font-medium">
                               <UserX className="w-3 h-3" /> Neaktivan
                             </span>
                           )}
                         </td>
                         <td className="px-3 py-2 text-right">
                           <div className="inline-flex items-center gap-1">
-                            {radi && <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-400" />}
+                            {radi && <Loader2 className="w-3.5 h-3.5 animate-spin text-brand-00" />}
                             {k.aktivan ? (
                               <button
                                 onClick={() => deaktiviraj(k.id)}
                                 disabled={radi}
                                 title="Deaktiviraj"
-                                className="h-8 w-8 rounded-lg text-amber-400 hover:bg-amber-500/15 hover:text-amber-300 transition-colors flex items-center justify-center disabled:opacity-50"
+                                className="h-8 w-8 rounded-lg text-accent-400 hover:bg-accent-500/15 hover:text-accent-300 transition-colors flex items-center justify-center disabled:opacity-50"
                               >
                                 <UserX className="w-3.5 h-3.5" />
                               </button>
@@ -585,7 +585,7 @@ export function SuperAdminPage() {
           <DialogFooter>
             <button
               onClick={() => setKorisniciSkola(null)}
-              className="h-10 px-4 rounded-xl border border-slate-600 bg-slate-800 text-slate-300 text-sm font-medium hover:bg-slate-700 hover:text-white transition-colors"
+              className="h-10 px-4 rounded-xl border border-brand-00 bg-brand-00 text-brand-00 text-sm font-medium hover:bg-brand-00 hover:text-white transition-colors"
             >
               Zatvori
             </button>
@@ -595,10 +595,10 @@ export function SuperAdminPage() {
 
       {/* Dijalog za koordinatora */}
       <Dialog open={!!koordZaSkolu} onOpenChange={(o) => !o && setKoordZaSkolu(null)}>
-        <DialogContent className="bg-slate-900 border-slate-700 text-slate-200">
+        <DialogContent className="bg-brand-00 border-brand-00 text-brand-00">
           <DialogHeader>
             <DialogTitle className="text-white">Koordinator za: {koordZaSkolu?.naziv}</DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogDescription className="text-brand-00">
               Koordinator je administrator skole. On dalje kreira sve ostale naloge
               (DIREKTOR, ADMIN, PP_SLUZBA, NASTAVNIK).
             </DialogDescription>
@@ -615,14 +615,14 @@ export function SuperAdminPage() {
             <button
               onClick={() => setKoordZaSkolu(null)}
               disabled={koordSubmit}
-              className="h-10 px-4 rounded-xl border border-slate-600 bg-slate-800 text-slate-300 text-sm font-medium hover:bg-slate-700 hover:text-white transition-colors disabled:opacity-50"
+              className="h-10 px-4 rounded-xl border border-brand-00 bg-brand-00 text-brand-00 text-sm font-medium hover:bg-brand-00 hover:text-white transition-colors disabled:opacity-50"
             >
               Odustani
             </button>
             <button
               onClick={dodajKoordinatora}
               disabled={koordSubmit}
-              className="h-10 px-4 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 text-white font-medium shadow hover:from-orange-400 hover:to-amber-500 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              className="h-10 px-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 text-white font-medium shadow hover:from-accent-400 hover:to-accent-500 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {koordSubmit ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
               Kreiraj koordinatora
@@ -647,14 +647,14 @@ interface FieldProps {
 function Field({ id, label, value, onChange, type = 'text', placeholder }: FieldProps) {
   return (
     <div className="space-y-1.5">
-      <Label htmlFor={id} className="text-slate-300">{label}</Label>
+      <Label htmlFor={id} className="text-brand-00">{label}</Label>
       <Input
         id={id}
         type={type}
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        className="bg-slate-800/60 border-slate-600 text-white placeholder:text-slate-500 focus-visible:border-orange-500 focus-visible:ring-orange-500/30"
+        className="bg-brand-00/60 border-brand-00 text-white placeholder:text-brand-00 focus-visible:border-accent-500 focus-visible:ring-accent-500/30"
       />
     </div>
   );
@@ -662,8 +662,8 @@ function Field({ id, label, value, onChange, type = 'text', placeholder }: Field
 
 function StatBox({ label, value, accent }: { label: string; value: number; accent?: string }) {
   return (
-    <div className="bg-slate-800/60 backdrop-blur rounded-2xl border border-slate-700 p-4">
-      <div className="text-sm text-slate-400">{label}</div>
+    <div className="bg-brand-00/60 backdrop-blur rounded-2xl border border-brand-00 p-4">
+      <div className="text-sm text-brand-00">{label}</div>
       <div className={`text-2xl font-bold mt-1 ${accent ?? 'text-white'}`}>{value}</div>
     </div>
   );
@@ -683,8 +683,8 @@ function CenteredLoader({ tamna = false }: { tamna?: boolean }) {
     <div
       className={`rounded-2xl border p-12 flex items-center justify-center ${
         tamna
-          ? 'bg-slate-800/60 backdrop-blur border-slate-700 text-slate-300'
-          : 'bg-white border-gray-200 text-gray-500'
+          ? 'bg-brand-00/60 backdrop-blur border-brand-00 text-brand-00'
+          : 'bg-card border-border text-muted-foreground'
       }`}
     >
       <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam...

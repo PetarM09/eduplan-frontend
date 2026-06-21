@@ -36,9 +36,9 @@ interface BootstrapRezultat {
 }
 
 const POREKLO_LABEL: Record<PozvaniKorisnikResponse['poreklo'], { label: string; bg: string }> = {
-  RASPORED: { label: 'XML', bg: 'bg-indigo-100 text-indigo-700' },
+  RASPORED: { label: 'XML', bg: 'bg-brand-100 text-brand-700' },
   EXCEL: { label: 'Excel', bg: 'bg-emerald-100 text-emerald-700' },
-  RUCNO: { label: 'Rucno', bg: 'bg-gray-100 text-gray-600' },
+  RUCNO: { label: 'Rucno', bg: 'bg-secondary text-muted-foreground' },
 };
 
 export function PozivnicePage() {
@@ -203,7 +203,7 @@ export function PozivnicePage() {
       )}
 
       {loading ? (
-        <div className="bg-white rounded-2xl border border-gray-200 p-12 flex items-center justify-center text-gray-500">
+        <div className="bg-card rounded-2xl border border-border p-12 flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam...
         </div>
       ) : error ? (
@@ -212,23 +212,23 @@ export function PozivnicePage() {
           <span>{error}</span>
         </div>
       ) : pozvani.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center text-gray-500">
-          <UserPlus className="w-8 h-8 mx-auto text-gray-300 mb-2" />
+        <div className="bg-card rounded-2xl border border-border p-12 text-center text-muted-foreground">
+          <UserPlus className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
           Nema POZVAN naloga. Kliknite "Bootstrap iz rasporeda" ili uvezite Excel.
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+        <div className="bg-card rounded-2xl border border-border overflow-hidden">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-muted border-b border-border">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Nastavnik</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Email</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Predmeti</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Izvor</th>
-                <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Akcije</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase">Nastavnik</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase">Email</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase">Predmeti</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase">Izvor</th>
+                <th className="px-4 py-3 text-right text-xs font-semibold text-muted-foreground uppercase">Akcije</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-border">
               {pozvani.map((k) => (
                 <PozvaniRed key={k.id} k={k} svipredmeti={predmeti} busy={busy === k.id}
                   onPredmeti={(ids) => sacuvajPredmete(k, ids)}
@@ -266,12 +266,12 @@ function PozvaniRed({ k, svipredmeti, busy, onPredmeti, onEmail, onPosalji }: {
   };
 
   return (
-    <tr className="hover:bg-gray-50/50">
+    <tr className="hover:bg-secondary/50">
       <td className="px-4 py-3 align-top">
-        <div className="font-medium text-gray-900">{k.ime} {k.prezime}</div>
-        <div className="text-xs text-gray-500">@{k.username}</div>
+        <div className="font-medium text-foreground">{k.ime} {k.prezime}</div>
+        <div className="text-xs text-muted-foreground">@{k.username}</div>
         {odeljenja.length > 0 && (
-          <div className="mt-1 flex items-center gap-1 text-xs text-gray-500">
+          <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
             <Calendar className="w-3 h-3" />
             {odeljenja.join(', ')}
           </div>
@@ -293,24 +293,24 @@ function PozvaniRed({ k, svipredmeti, busy, onPredmeti, onEmail, onPosalji }: {
       </td>
       <td className="px-4 py-3 align-top">
         <button onClick={() => setOtvoreniPredmeti((o) => !o)}
-          className="text-sm text-blue-600 hover:underline">
+          className="text-sm text-brand-600 hover:underline">
           {k.predmetiNazivi.length === 0 ? 'Nijedan — dodaj' : k.predmetiNazivi.join(', ')}
         </button>
         {otvoreniPredmeti && (
-          <div className="mt-2 max-h-60 overflow-y-auto p-2 border border-gray-200 rounded-lg space-y-1">
+          <div className="mt-2 max-h-60 overflow-y-auto p-2 border border-border rounded-lg space-y-1">
             {svipredmeti.map((p) => (
               <label key={p.id} className="flex items-center gap-2 text-xs cursor-pointer">
                 <input
                   type="checkbox"
                   checked={k.predmetiIds.includes(p.id)}
                   onChange={() => togglePredmet(p.id)}
-                  className="w-4 h-4 accent-blue-600"
+                  className="w-4 h-4 accent-brand-600"
                 />
                 <span>{p.naziv} {p.razred ? `(${p.razred}.)` : ''}</span>
               </label>
             ))}
             {svipredmeti.length === 0 && (
-              <p className="text-xs text-gray-500">Nema predmeta u skoli — pokreni onboarding wizard.</p>
+              <p className="text-xs text-muted-foreground">Nema predmeta u skoli — pokreni onboarding wizard.</p>
             )}
           </div>
         )}

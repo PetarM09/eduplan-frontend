@@ -24,3 +24,10 @@ pnpm-debug.log*
 
 # macOS
 .DS_Store
+CLAUDE.local.md
+.claude/settings.local.json
+
+# Claude Code kit (lokalno, ne ide na git)
+.claude/
+CLAUDE.md
+CLAUDE.local.md.example

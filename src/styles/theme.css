@@ -1,105 +1,126 @@
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * EduPlan / BehindClasses design tokens.
+ * Brand = academic navy (logo #0e2443). Accent = gold (logo #f8c007).
+ * Navy carries structure + primary actions; gold is the single accent
+ * (active states, highlights, key emphasis). Status colors stay distinct.
+ */
+
 :root {
-  /* Modern Professional Color Palette */
   --font-size: 16px;
-  
-  /* Brand Colors - Deep Blue/Indigo Professional Theme */
-  --brand-primary: #0F172A;
-  --brand-secondary: #1E40AF;
-  --brand-accent: #06B6D4;
-  --brand-success: #10B981;
-  --brand-warning: #F59E0B;
-  --brand-danger: #EF4444;
-  
-  /* Neutral Palette */
-  --gray-50: #F8FAFC;
-  --gray-100: #F1F5F9;
-  --gray-200: #E2E8F0;
-  --gray-300: #CBD5E1;
-  --gray-400: #94A3B8;
-  --gray-500: #64748B;
-  --gray-600: #475569;
-  --gray-700: #334155;
-  --gray-800: #1E293B;
-  --gray-900: #0F172A;
-  
-  /* Shadcn Variables */
-  --background: #FFFFFF;
-  --foreground: #0F172A;
-  --card: #FFFFFF;
-  --card-foreground: #0F172A;
-  --popover: #FFFFFF;
-  --popover-foreground: #0F172A;
-  --primary: #1E40AF;
-  --primary-foreground: #FFFFFF;
-  --secondary: #F1F5F9;
-  --secondary-foreground: #0F172A;
-  --muted: #F1F5F9;
-  --muted-foreground: #64748B;
-  --accent: #06B6D4;
-  --accent-foreground: #FFFFFF;
-  --destructive: #EF4444;
-  --destructive-foreground: #FFFFFF;
-  --border: #E2E8F0;
-  --input: #E2E8F0;
-  --input-background: #F8FAFC;
-  --switch-background: #CBD5E1;
-  --ring: #1E40AF;
-  
+
+  /* Semantic — light theme */
+  --background: #f6f8fc;
+  --foreground: #0e2443;
+  --card: #ffffff;
+  --card-foreground: #0e2443;
+  --popover: #ffffff;
+  --popover-foreground: #0e2443;
+  --primary: #0e2443;
+  --primary-foreground: #ffffff;
+  --secondary: #eef3fa;
+  --secondary-foreground: #0e2443;
+  --muted: #f1f5f9;
+  --muted-foreground: #5b6b82;
+  --accent: #f8c007;
+  --accent-foreground: #0e2443;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --info: #2f6fc0;
+  --border: #e3e8ef;
+  --input: #e3e8ef;
+  --input-background: #f8fafc;
+  --switch-background: #cbd5e1;
+  --ring: #1b3c66;
+
   --font-weight-medium: 600;
   --font-weight-normal: 400;
-  
-  --chart-1: #1E40AF;
-  --chart-2: #06B6D4;
-  --chart-3: #10B981;
-  --chart-4: #F59E0B;
-  --chart-5: #EF4444;
-  
+
+  --chart-1: #0e2443;
+  --chart-2: #f8c007;
+  --chart-3: #10b981;
+  --chart-4: #3b82f6;
+  --chart-5: #ef4444;
+
   --radius: 0.75rem;
-  
-  --sidebar: #FFFFFF;
-  --sidebar-foreground: #0F172A;
-  --sidebar-primary: #1E40AF;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #F8FAFC;
-  --sidebar-accent-foreground: #0F172A;
-  --sidebar-border: #E2E8F0;
-  --sidebar-ring: #1E40AF;
+
+  /* Sidebar — navy shell, gold active */
+  --sidebar: #0e2443;
+  --sidebar-foreground: #c3d0e4;
+  --sidebar-primary: #f8c007;
+  --sidebar-primary-foreground: #0e2443;
+  --sidebar-accent: #142e51;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #1b3c66;
+  --sidebar-ring: #f8c007;
 }
 
 .dark {
-  --background: #0F172A;
-  --foreground: #F8FAFC;
-  --card: #1E293B;
-  --card-foreground: #F8FAFC;
-  --popover: #1E293B;
-  --popover-foreground: #F8FAFC;
-  --primary: #3B82F6;
-  --primary-foreground: #FFFFFF;
-  --secondary: #334155;
-  --secondary-foreground: #F8FAFC;
-  --muted: #334155;
-  --muted-foreground: #94A3B8;
-  --accent: #06B6D4;
-  --accent-foreground: #FFFFFF;
-  --destructive: #F87171;
-  --destructive-foreground: #0F172A;
-  --border: #334155;
-  --input: #334155;
-  --ring: #3B82F6;
-  
-  --sidebar: #1E293B;
-  --sidebar-foreground: #F8FAFC;
-  --sidebar-primary: #3B82F6;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #334155;
-  --sidebar-accent-foreground: #F8FAFC;
-  --sidebar-border: #334155;
-  --sidebar-ring: #3B82F6;
+  --background: #081627;
+  --foreground: #e6edf6;
+  --card: #0e2443;
+  --card-foreground: #e6edf6;
+  --popover: #0e2443;
+  --popover-foreground: #e6edf6;
+  --primary: #4f86c6;
+  --primary-foreground: #06101f;
+  --secondary: #142e51;
+  --secondary-foreground: #e6edf6;
+  --muted: #142e51;
+  --muted-foreground: #93a4bd;
+  --accent: #f8c007;
+  --accent-foreground: #0e2443;
+  --destructive: #f87171;
+  --destructive-foreground: #06101f;
+  --success: #34d399;
+  --warning: #fbbf24;
+  --info: #60a5fa;
+  --border: #1b3c66;
+  --input: #1b3c66;
+  --input-background: #0e2443;
+  --switch-background: #1b3c66;
+  --ring: #4f86c6;
+
+  --sidebar: #0a1c34;
+  --sidebar-foreground: #c3d0e4;
+  --sidebar-primary: #f8c007;
+  --sidebar-primary-foreground: #0e2443;
+  --sidebar-accent: #142e51;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #14315a;
+  --sidebar-ring: #f8c007;
 }
 
 @theme inline {
+  /* Brand navy scale (anchored on logo #0e2443 at 900) */
+  --color-brand-50: #eef3fa;
+  --color-brand-100: #d8e3f1;
+  --color-brand-200: #b3c6e0;
+  --color-brand-300: #84a1c9;
+  --color-brand-400: #5278ab;
+  --color-brand-500: #335f94;
+  --color-brand-600: #244c7d;
+  --color-brand-700: #1b3c66;
+  --color-brand-800: #142e51;
+  --color-brand-900: #0e2443;
+  --color-brand-950: #081627;
+
+  /* Accent gold scale (anchored on logo #f8c007 at 400) */
+  --color-accent-50: #fff9e6;
+  --color-accent-100: #fdefb8;
+  --color-accent-200: #fbe085;
+  --color-accent-300: #f9cf4a;
+  --color-accent-400: #f8c007;
+  --color-accent-500: #dba600;
+  --color-accent-600: #b07f00;
+  --color-accent-700: #855e00;
+  --color-accent-800: #5e4200;
+  --color-accent-900: #3f2c00;
+
+  /* Semantic aliases */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -116,6 +137,9 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-input-background: var(--input-background);
@@ -197,7 +221,6 @@
     line-height: 1.5;
   }
 
-  /* Custom Animations */
   @keyframes fadeIn {
     from {
       opacity: 0;
@@ -276,8 +299,8 @@
   }
 
   .dark .glass {
-    background: rgba(30, 41, 59, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(14, 36, 67, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   /* Hover Lift Effect */
@@ -287,7 +310,7 @@
 
   .hover-lift:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 12px 24px -10px rgba(14, 36, 67, 0.18);
   }
 
   /* Smooth Transitions */

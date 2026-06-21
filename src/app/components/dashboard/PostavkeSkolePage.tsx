@@ -91,7 +91,7 @@ export function PostavkeSkolePage() {
       />
 
       {loading ? (
-        <div className="bg-white rounded-2xl border border-gray-200 p-12 flex items-center justify-center text-gray-500">
+        <div className="bg-card rounded-2xl border border-border p-12 flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam...
         </div>
       ) : error ? (
@@ -104,31 +104,31 @@ export function PostavkeSkolePage() {
         </div>
       ) : skola ? (
         <>
-          <div className="bg-white rounded-2xl border border-gray-200 p-6">
+          <div className="bg-card rounded-2xl border border-border p-6">
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center">
                 <School className="w-6 h-6" />
               </div>
               <div className="flex-1">
-                <h2 className="text-xl font-bold text-gray-900">{skola.naziv}</h2>
-                <div className="text-sm text-gray-600 mt-1 space-y-1">
+                <h2 className="text-xl font-bold text-foreground">{skola.naziv}</h2>
+                <div className="text-sm text-muted-foreground mt-1 space-y-1">
                   {(skola.grad || skola.adresa) && (
                     <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-gray-400" />
+                      <MapPin className="w-4 h-4 text-muted-foreground" />
                       {[skola.grad, skola.adresa].filter(Boolean).join(', ')}
                     </div>
                   )}
                   <div className="flex items-center gap-2">
-                    <CalendarClock className="w-4 h-4 text-gray-400" />
+                    <CalendarClock className="w-4 h-4 text-muted-foreground" />
                     {skola.vaziDo
                       ? <>Vazi do <strong>{skola.vaziDo}</strong></>
-                      : <span className="text-gray-500">Bez vremenskog ogranicenja</span>}
+                      : <span className="text-muted-foreground">Bez vremenskog ogranicenja</span>}
                   </div>
                 </div>
               </div>
               <span
                 className={`text-xs font-medium rounded-full px-2.5 py-1 ${
-                  skola.aktivan ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600'
+                  skola.aktivan ? 'bg-emerald-100 text-emerald-700' : 'bg-secondary text-muted-foreground'
                 }`}
               >
                 {skola.aktivan ? 'Aktivna' : 'Deaktivirana'}
@@ -136,12 +136,12 @@ export function PostavkeSkolePage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
+          <div className="bg-card rounded-2xl border border-border p-6 space-y-4">
             <div className="flex items-center gap-2">
-              <Mail className="w-5 h-5 text-blue-600" />
-              <h3 className="font-semibold text-gray-900">Mail za primanje planova</h3>
+              <Mail className="w-5 h-5 text-brand-600" />
+              <h3 className="font-semibold text-foreground">Mail za primanje planova</h3>
             </div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-muted-foreground">
               Kada nastavnik podnese plan, generisani Word i PDF se salju na ovu adresu.
               Ostavi prazno da onemogucis automatsko slanje.
             </p>

@@ -28,8 +28,8 @@ const ULOGA_META: Record<Uloga, { label: string; chipBg: string; chipText: strin
   KOORDINATOR: { label: 'Koordinator', chipBg: 'bg-red-100', chipText: 'text-red-700' },
   DIREKTOR: { label: 'Direktor', chipBg: 'bg-orange-100', chipText: 'text-orange-700' },
   ADMIN: { label: 'Administrator', chipBg: 'bg-amber-100', chipText: 'text-amber-700' },
-  PP_SLUZBA: { label: 'PP sluzba', chipBg: 'bg-indigo-100', chipText: 'text-indigo-700' },
-  NASTAVNIK: { label: 'Nastavnik', chipBg: 'bg-blue-100', chipText: 'text-blue-700' },
+  PP_SLUZBA: { label: 'PP sluzba', chipBg: 'bg-brand-100', chipText: 'text-brand-700' },
+  NASTAVNIK: { label: 'Nastavnik', chipBg: 'bg-brand-100', chipText: 'text-brand-700' },
 };
 
 // Uloge koje koordinator moze da kreira (SUPER_ADMIN i KOORDINATOR su rezervisani)
@@ -212,15 +212,15 @@ export function UsersPage() {
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
               <StatBox label="Ukupno" value={stats.ukupno} />
               <StatBox label="Aktivni" value={stats.aktivni} accent="text-green-600" />
-              <StatBox label="Nastavnika" value={stats.nastavnici} accent="text-blue-600" />
+              <StatBox label="Nastavnika" value={stats.nastavnici} accent="text-brand-600" />
               <StatBox label="Direktora/Admin" value={stats.direktori} accent="text-orange-600" />
-              <StatBox label="PP sluzba" value={stats.pp} accent="text-indigo-600" />
+              <StatBox label="PP sluzba" value={stats.pp} accent="text-brand-600" />
             </div>
 
             {/* Filteri */}
-            <div className="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col lg:flex-row gap-3">
+            <div className="bg-card rounded-2xl border border-border p-4 flex flex-col lg:flex-row gap-3">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   placeholder="Pretrazi po imenu, email-u ili korisnickom imenu"
                   value={pretraga}
@@ -252,9 +252,9 @@ export function UsersPage() {
             </div>
 
             {/* Lista */}
-            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+            <div className="bg-card rounded-2xl border border-border overflow-hidden">
               {loading ? (
-                <div className="p-12 flex items-center justify-center text-gray-500">
+                <div className="p-12 flex items-center justify-center text-muted-foreground">
                   <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam korisnike...
                 </div>
               ) : error ? (
@@ -266,39 +266,39 @@ export function UsersPage() {
                   </Button>
                 </div>
               ) : filtrirani.length === 0 ? (
-                <div className="p-12 text-center text-gray-500">Nema rezultata za zadane filtere.</div>
+                <div className="p-12 text-center text-muted-foreground">Nema rezultata za zadane filtere.</div>
               ) : (
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
+                  <thead className="bg-muted border-b border-border">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Korisnik</th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Uloga</th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Akcije</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Korisnik</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Uloga</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-3 text-right text-xs font-semibold text-muted-foreground uppercase tracking-wider">Akcije</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-border">
                     {filtrirani.map((k) => {
                       const meta = ULOGA_META[k.uloga];
                       return (
-                        <tr key={k.id} className="hover:bg-gray-50 transition-colors">
+                        <tr key={k.id} className="hover:bg-secondary transition-colors">
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center text-sm font-semibold">
+                              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 text-white flex items-center justify-center text-sm font-semibold">
                                 {inicijali(k.ime, k.prezime)}
                               </div>
                               <div>
-                                <div className="font-medium text-gray-900">
+                                <div className="font-medium text-foreground">
                                   {k.ime} {k.prezime}
                                 </div>
-                                <div className="text-xs text-gray-500">@{k.username}</div>
+                                <div className="text-xs text-muted-foreground">@{k.username}</div>
                               </div>
                             </div>
                           </td>
                           <td className="px-6 py-4">
-                            <div className="flex items-center gap-2 text-sm text-gray-700">
-                              <Mail className="w-4 h-4 text-gray-400" />
+                            <div className="flex items-center gap-2 text-sm text-foreground">
+                              <Mail className="w-4 h-4 text-muted-foreground" />
                               {k.email}
                             </div>
                           </td>
@@ -314,8 +314,8 @@ export function UsersPage() {
                                 Aktivan
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1.5 text-sm text-gray-500">
-                                <span className="w-2 h-2 bg-gray-400 rounded-full" />
+                              <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
+                                <span className="w-2 h-2 bg-muted-foreground rounded-full" />
                                 Deaktiviran
                               </span>
                             )}
@@ -350,9 +350,9 @@ export function UsersPage() {
 
 function StatBox({ label, value, accent }: { label: string; value: number; accent?: string }) {
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-4">
-      <div className="text-sm text-gray-500">{label}</div>
-      <div className={`text-2xl font-bold mt-1 ${accent ?? 'text-gray-900'}`}>{value}</div>
+    <div className="bg-card rounded-2xl border border-border p-4">
+      <div className="text-sm text-muted-foreground">{label}</div>
+      <div className={`text-2xl font-bold mt-1 ${accent ?? 'text-foreground'}`}>{value}</div>
     </div>
   );
 }

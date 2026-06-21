@@ -57,7 +57,7 @@ export function ProfessorDashboardPage() {
       />
 
       {loading ? (
-        <div className="bg-white rounded-2xl border border-gray-200 p-12 flex items-center justify-center text-gray-500">
+        <div className="bg-card rounded-2xl border border-border p-12 flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam podatke...
         </div>
       ) : error ? (
@@ -71,7 +71,7 @@ export function ProfessorDashboardPage() {
             label="Casovi u nedelji"
             value={stats.casovaUNedelji}
             icon={Calendar}
-            accent="blue"
+            accent="brand"
             to="/raspored"
             hint={stats.casovaUNedelji === 0 ? 'Raspored nije uvezen' : undefined}
           />
@@ -79,14 +79,14 @@ export function ProfessorDashboardPage() {
             label="Predstojece zamene"
             value={stats.predstojeceZamene}
             icon={UserX}
-            accent="orange"
+            accent="warning"
             to="/zamene"
             hint={
               stats.zamenaKaoZamenik > 0 ? `${stats.zamenaKaoZamenik} kao zamenik` : undefined
             }
           />
-          <StatCard label="Godisnji planovi" value="—" icon={FileText} accent="green" to="/planovi/godisnji" hint="U izradi" />
-          <StatCard label="Operativni planovi" value="—" icon={ClipboardList} accent="purple" to="/planovi/operativni" hint="U izradi" />
+          <StatCard label="Godisnji planovi" value="—" icon={FileText} accent="success" to="/planovi/godisnji" hint="U izradi" />
+          <StatCard label="Operativni planovi" value="—" icon={ClipboardList} accent="accent" to="/planovi/operativni" hint="U izradi" />
         </div>
       ) : null}
     </AppLayout>

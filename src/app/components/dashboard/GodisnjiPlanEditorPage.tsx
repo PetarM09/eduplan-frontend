@@ -242,7 +242,7 @@ export function GodisnjiPlanEditorPage() {
   if (bootstrap) {
     return (
       <AppLayout>
-        <div className="bg-white rounded-2xl border border-gray-200 p-12 flex items-center justify-center text-gray-500">
+        <div className="bg-card rounded-2xl border border-border p-12 flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam...
         </div>
       </AppLayout>
@@ -274,8 +274,8 @@ export function GodisnjiPlanEditorPage() {
       )}
 
       {/* Osnovni podaci */}
-      <section className="bg-white rounded-2xl border border-gray-200 p-6 space-y-5">
-        <h2 className="font-semibold text-gray-900">Osnovni podaci</h2>
+      <section className="bg-card rounded-2xl border border-border p-6 space-y-5">
+        <h2 className="font-semibold text-foreground">Osnovni podaci</h2>
         <div className="grid lg:grid-cols-3 gap-4">
           <div className="space-y-1.5">
             <Label htmlFor="predmet">Predmet</Label>
@@ -312,7 +312,7 @@ export function GodisnjiPlanEditorPage() {
         <div className="space-y-1.5">
           <Label>Odeljenja u kojima se realizuje plan</Label>
           {odeljenja.length === 0 ? (
-            <p className="text-sm text-gray-500">Nema odeljenja — prvo ih kreiraj u sekciji "Odeljenja".</p>
+            <p className="text-sm text-muted-foreground">Nema odeljenja — prvo ih kreiraj u sekciji "Odeljenja".</p>
           ) : (
             <div className="flex flex-wrap gap-2">
               {odeljenja.map((o) => {
@@ -324,8 +324,8 @@ export function GodisnjiPlanEditorPage() {
                     onClick={() => toggleOdeljenje(o.id)}
                     className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium border transition-colors ${
                       checked
-                        ? 'bg-blue-600 text-white border-blue-600'
-                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                        ? 'bg-brand-600 text-white border-brand-600'
+                        : 'bg-card text-foreground border-input hover:bg-secondary'
                     }`}
                   >
                     <School className="w-3.5 h-3.5" />
@@ -387,9 +387,9 @@ export function GodisnjiPlanEditorPage() {
       </section>
 
       {/* Tabela tema */}
-      <section className="bg-white rounded-2xl border border-gray-200 p-6 space-y-5">
+      <section className="bg-card rounded-2xl border border-border p-6 space-y-5">
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold text-gray-900">Teme</h2>
+          <h2 className="font-semibold text-foreground">Teme</h2>
           <Button size="sm" variant="outline" onClick={dodajStavku}>
             <Plus className="w-4 h-4" /> Dodaj temu
           </Button>
@@ -397,9 +397,9 @@ export function GodisnjiPlanEditorPage() {
 
         <div className="space-y-4">
           {stavke.map((s, idx) => (
-            <article key={idx} className="border border-gray-200 rounded-xl p-4 space-y-4">
+            <article key={idx} className="border border-border rounded-xl p-4 space-y-4">
               <div className="flex items-center gap-3">
-                <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-blue-100 text-blue-700 text-sm font-bold flex items-center justify-center">
+                <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-brand-100 text-brand-700 text-sm font-bold flex items-center justify-center">
                   {s.redniBroj}
                 </span>
                 <Input
@@ -415,27 +415,27 @@ export function GodisnjiPlanEditorPage() {
 
               <div className="grid grid-cols-4 gap-3">
                 <div className="space-y-1">
-                  <Label className="text-xs text-gray-500">Obrada</Label>
+                  <Label className="text-xs text-muted-foreground">Obrada</Label>
                   <Input type="number" min={0} value={s.casObrada} onChange={(e) => azurirajStavku(idx, { casObrada: Number(e.target.value) })} />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs text-gray-500">Utvrdjivanje</Label>
+                  <Label className="text-xs text-muted-foreground">Utvrdjivanje</Label>
                   <Input type="number" min={0} value={s.casUtvrd} onChange={(e) => azurirajStavku(idx, { casUtvrd: Number(e.target.value) })} />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs text-gray-500">Ostalo</Label>
+                  <Label className="text-xs text-muted-foreground">Ostalo</Label>
                   <Input type="number" min={0} value={s.casOstalo} onChange={(e) => azurirajStavku(idx, { casOstalo: Number(e.target.value) })} />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs text-gray-500">Ukupno</Label>
-                  <div className="h-10 px-3 flex items-center bg-gray-50 rounded-xl border border-gray-200 text-sm font-medium">
+                  <Label className="text-xs text-muted-foreground">Ukupno</Label>
+                  <div className="h-10 px-3 flex items-center bg-muted rounded-xl border border-border text-sm font-medium">
                     {ukupnoCasovaStavke(s)}
                   </div>
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <Label className="text-xs text-gray-500">Meseci u kojima se predaje</Label>
+                <Label className="text-xs text-muted-foreground">Meseci u kojima se predaje</Label>
                 <div className="flex flex-wrap gap-1.5">
                   {MESECI_KEYS.map((m) => {
                     const checked = s.meseci.has(m);
@@ -446,8 +446,8 @@ export function GodisnjiPlanEditorPage() {
                         onClick={() => toggleMesec(idx, m)}
                         className={`min-w-10 px-2 py-1 rounded-lg text-xs font-semibold border transition-colors ${
                           checked
-                            ? 'bg-blue-600 text-white border-blue-600'
-                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                            ? 'bg-brand-600 text-white border-brand-600'
+                            : 'bg-card text-foreground border-input hover:bg-secondary'
                         }`}
                       >
                         {m}
@@ -458,7 +458,7 @@ export function GodisnjiPlanEditorPage() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor={`ishodi-${idx}`} className="text-xs text-gray-500">
+                <Label htmlFor={`ishodi-${idx}`} className="text-xs text-muted-foreground">
                   Ishodi (jedan po redu — bice automatski upisani u katalog teme)
                 </Label>
                 <Textarea
@@ -474,7 +474,7 @@ export function GodisnjiPlanEditorPage() {
         </div>
 
         {stavke.length === 0 && (
-          <p className="text-sm text-gray-500 text-center py-6">Klikni "Dodaj temu" za prvi unos.</p>
+          <p className="text-sm text-muted-foreground text-center py-6">Klikni "Dodaj temu" za prvi unos.</p>
         )}
       </section>
 
