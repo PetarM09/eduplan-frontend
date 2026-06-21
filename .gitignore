@@ -31,3 +31,7 @@ CLAUDE.local.md
 .claude/
 CLAUDE.md
 CLAUDE.local.md.example
+
+# Interna dizajn dokumentacija (lokalno, ne ide na git)
+DESIGN.md
+MOBILE_REDESIGN_TASKS.md
