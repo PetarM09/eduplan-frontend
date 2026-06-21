@@ -45,12 +45,25 @@ export function TopBar() {
     navigate('/login', { replace: true });
   };
 
+  // SUPER_ADMIN traka prati tamnu "command center" podlogu tih ekrana.
+  const sa = user?.uloga === 'SUPER_ADMIN';
+  const barClass = sa ? 'bg-brand-900 border-brand-800' : 'bg-card border-border';
+  const iconBtnClass = sa
+    ? 'text-brand-200 hover:bg-white/10 hover:text-white'
+    : 'text-muted-foreground hover:bg-secondary hover:text-foreground';
+  const triggerHover = sa ? 'hover:bg-white/10' : 'hover:bg-secondary';
+  const nameClass = sa ? 'text-white' : 'text-foreground';
+  const subClass = sa ? 'text-brand-200' : 'text-muted-foreground';
+  const chevronClass = sa
+    ? 'text-brand-300 group-hover:text-white'
+    : 'text-muted-foreground group-hover:text-foreground';
+
   return (
-    <header className="h-16 border-b border-border bg-card px-8 flex items-center justify-end gap-2">
+    <header className={`h-16 border-b px-8 flex items-center justify-end gap-2 ${barClass}`}>
       <button
         onClick={toggleTheme}
         aria-label={theme === 'dark' ? 'Svetla tema' : 'Tamna tema'}
-        className="w-10 h-10 rounded-xl flex items-center justify-center text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
+        className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${iconBtnClass}`}
       >
         {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
       </button>
@@ -58,16 +71,16 @@ export function TopBar() {
       <div className="relative" ref={ref}>
         <button
           onClick={() => setOpen((o) => !o)}
-          className="flex items-center gap-3 px-3 h-10 rounded-xl transition-colors group hover:bg-secondary"
+          className={`flex items-center gap-3 px-3 h-10 rounded-xl transition-colors group ${triggerHover}`}
         >
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
             <User className="w-5 h-5 text-primary-foreground" />
           </div>
           <div className="text-left hidden xl:block">
-            <div className="text-sm font-medium text-foreground">{user?.username ?? '—'}</div>
-            <div className="text-xs text-muted-foreground">{ulogaLabel(user?.uloga)}</div>
+            <div className={`text-sm font-medium ${nameClass}`}>{user?.username ?? '—'}</div>
+            <div className={`text-xs ${subClass}`}>{ulogaLabel(user?.uloga)}</div>
           </div>
-          <ChevronDown className="w-4 h-4 transition-colors hidden xl:block text-muted-foreground group-hover:text-foreground" />
+          <ChevronDown className={`w-4 h-4 transition-colors hidden xl:block ${chevronClass}`} />
         </button>
 
         {open && (

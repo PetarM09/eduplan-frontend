@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
-import { ArrowLeft, GraduationCap, Mail, ShieldQuestion, UserCog } from 'lucide-react';
+import { ArrowLeft, Mail, ShieldQuestion, UserCog } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
+import logoIcon from '@/assets/logo-icon.svg';
 
 export function ForgotPasswordPage() {
   return (
@@ -8,8 +9,8 @@ export function ForgotPasswordPage() {
       <div className="w-full max-w-md">
         <div className="flex justify-center mb-8">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-600 to-brand-600 flex items-center justify-center shadow-xl shadow-brand-600/25">
-              <GraduationCap className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 rounded-2xl bg-brand-900 flex items-center justify-center shadow-xl shadow-brand-900/25 overflow-hidden">
+              <img src={logoIcon} alt="BehindClasses" className="w-9 h-9" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-foreground">BehindClasses</h1>
