@@ -202,7 +202,7 @@ export function SkolaOnboardingPage() {
     return (
       <AppLayout>
         <PageHeader title="Onboarding wizard" description="Ucitavam katalog..." />
-        <div className="bg-white rounded-2xl border border-gray-200 p-12 flex items-center justify-center text-gray-500">
+        <div className="bg-card rounded-2xl border border-border p-12 flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam...
         </div>
       </AppLayout>
@@ -224,21 +224,21 @@ export function SkolaOnboardingPage() {
           title="Onboarding zavrsen"
           description="Predmeti i odeljenja su kreirani u tvojoj skoli."
         />
-        <div className="bg-white rounded-2xl border border-emerald-200 p-8 space-y-4">
+        <div className="bg-card rounded-2xl border border-emerald-200 p-8 space-y-4">
           <div className="flex items-center gap-3">
             <CheckCircle2 className="w-10 h-10 text-emerald-500" />
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">Skola spremna</h2>
-              <p className="text-sm text-gray-600">
+              <h2 className="text-xl font-semibold text-foreground">Skola spremna</h2>
+              <p className="text-sm text-muted-foreground">
                 Sve sto je sledece je dodavanje nastavnika kroz uvoz XML rasporeda ili pojedinacno.
               </p>
             </div>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <StatTile label="Novih predmeta" value={rezultat.novihPredmeta} accent="text-emerald-600" />
-            <StatTile label="Preskocenih predmeta" value={rezultat.preskocenihPredmeta} accent="text-gray-500" />
-            <StatTile label="Novih odeljenja" value={rezultat.novihOdeljenja} accent="text-blue-600" />
-            <StatTile label="Preskocenih odeljenja" value={rezultat.preskocenihOdeljenja} accent="text-gray-500" />
+            <StatTile label="Preskocenih predmeta" value={rezultat.preskocenihPredmeta} accent="text-muted-foreground" />
+            <StatTile label="Novih odeljenja" value={rezultat.novihOdeljenja} accent="text-brand-600" />
+            <StatTile label="Preskocenih odeljenja" value={rezultat.preskocenihOdeljenja} accent="text-muted-foreground" />
           </div>
           {rezultat.upozorenja.length > 0 && (
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 space-y-1">
@@ -268,27 +268,27 @@ export function SkolaOnboardingPage() {
       />
 
       {/* Step indicator */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-4 flex items-center gap-2 overflow-x-auto">
+      <div className="bg-card rounded-2xl border border-border p-4 flex items-center gap-2 overflow-x-auto">
         {KORACI.map((label, i) => (
           <div key={label} className="flex items-center gap-2">
-            <div className={`flex items-center gap-2 ${i === korak ? 'text-blue-600' : i < korak ? 'text-emerald-600' : 'text-gray-400'}`}>
+            <div className={`flex items-center gap-2 ${i === korak ? 'text-brand-600' : i < korak ? 'text-emerald-600' : 'text-muted-foreground'}`}>
               <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold ${
-                i === korak ? 'bg-blue-100' : i < korak ? 'bg-emerald-100' : 'bg-gray-100'
+                i === korak ? 'bg-brand-100' : i < korak ? 'bg-emerald-100' : 'bg-secondary'
               }`}>
                 {i < korak ? <Check className="w-3.5 h-3.5" /> : i + 1}
               </div>
               <span className="text-sm font-medium whitespace-nowrap">{label}</span>
             </div>
-            {i < KORACI.length - 1 && <div className="w-8 h-px bg-gray-200" />}
+            {i < KORACI.length - 1 && <div className="w-8 h-px bg-secondary" />}
           </div>
         ))}
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-200 p-6">
+      <div className="bg-card rounded-2xl border border-border p-6">
         {korak === 0 && (
           <div className="space-y-4">
-            <div className="flex items-center gap-2 text-gray-900 font-semibold">
-              <School className="w-5 h-5 text-indigo-500" /> Izaberi tip skole
+            <div className="flex items-center gap-2 text-foreground font-semibold">
+              <School className="w-5 h-5 text-brand-500" /> Izaberi tip skole
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {tipovi.map((t) => {
@@ -298,14 +298,14 @@ export function SkolaOnboardingPage() {
                     key={t.id}
                     onClick={() => setIzabraniTipId(t.id)}
                     className={`text-left p-4 rounded-xl border transition-colors ${
-                      izabran ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'
+                      izabran ? 'border-brand-500 bg-brand-50' : 'border-border hover:border-brand-300 hover:bg-secondary'
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-1">
-                      <GraduationCap className={`w-5 h-5 ${izabran ? 'text-blue-600' : 'text-gray-400'}`} />
-                      <span className="font-medium text-gray-900">{t.naziv}</span>
+                      <GraduationCap className={`w-5 h-5 ${izabran ? 'text-brand-600' : 'text-muted-foreground'}`} />
+                      <span className="font-medium text-foreground">{t.naziv}</span>
                     </div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-muted-foreground">
                       {t.ukupnoRazreda} razreda · {t.brojProfila} dostupnih profila
                     </div>
                   </button>
@@ -317,11 +317,11 @@ export function SkolaOnboardingPage() {
 
         {korak === 1 && (
           <div className="space-y-4">
-            <div className="flex items-center gap-2 text-gray-900 font-semibold">
+            <div className="flex items-center gap-2 text-foreground font-semibold">
               <Layers className="w-5 h-5 text-purple-500" /> Izaberi obrazovne profile
             </div>
             {profili.length === 0 ? (
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-muted-foreground">
                 Nema profila za izabrani tip. Trazi od podrske da se doda profil u master katalog.
               </p>
             ) : (
@@ -332,7 +332,7 @@ export function SkolaOnboardingPage() {
                     <label
                       key={p.id}
                       className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${
-                        izabran ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-purple-300 hover:bg-gray-50'
+                        izabran ? 'border-purple-500 bg-purple-50' : 'border-border hover:border-purple-300 hover:bg-secondary'
                       }`}
                     >
                       <input
@@ -342,9 +342,9 @@ export function SkolaOnboardingPage() {
                         className="mt-1 w-4 h-4 accent-purple-600"
                       />
                       <div className="flex-1">
-                        <div className="font-medium text-gray-900">{p.naziv}</div>
-                        <div className="text-xs text-gray-500">{p.kod} · {p.brojPredmeta} predmet(a)</div>
-                        {p.opis && <div className="text-xs text-gray-600 mt-1">{p.opis}</div>}
+                        <div className="font-medium text-foreground">{p.naziv}</div>
+                        <div className="text-xs text-muted-foreground">{p.kod} · {p.brojPredmeta} predmet(a)</div>
+                        {p.opis && <div className="text-xs text-muted-foreground mt-1">{p.opis}</div>}
                       </div>
                     </label>
                   );
@@ -356,11 +356,11 @@ export function SkolaOnboardingPage() {
 
         {korak === 2 && (
           <div className="space-y-4">
-            <div className="flex items-center gap-2 text-gray-900 font-semibold">
+            <div className="flex items-center gap-2 text-foreground font-semibold">
               <Sparkles className="w-5 h-5 text-emerald-500" /> Razredi i odeljenja
             </div>
-            <p className="text-sm text-gray-600">
-              Za svaki razred unesi oznake odeljenja, razdvojene zarezom (npr. <code className="bg-gray-100 px-1 rounded">A, B, C</code>).
+            <p className="text-sm text-muted-foreground">
+              Za svaki razred unesi oznake odeljenja, razdvojene zarezom (npr. <code className="bg-secondary px-1 rounded">A, B, C</code>).
               Razredi koje ostavis prazne se preskacu.
             </p>
             <div className="space-y-3">
@@ -372,7 +372,7 @@ export function SkolaOnboardingPage() {
               </div>
               {razrediNiz.map((razred) => (
                 <div key={razred} className="grid grid-cols-[80px_1fr] gap-3 items-center">
-                  <Label className="font-medium text-gray-700">{razred}. razred</Label>
+                  <Label className="font-medium text-foreground">{razred}. razred</Label>
                   <Input
                     placeholder="A, B, C"
                     value={razrediOznake[razred] ?? ''}
@@ -388,11 +388,11 @@ export function SkolaOnboardingPage() {
 
         {korak === 3 && (
           <div className="space-y-4">
-            <div className="flex items-center gap-2 text-gray-900 font-semibold">
+            <div className="flex items-center gap-2 text-foreground font-semibold">
               <Check className="w-5 h-5 text-emerald-500" /> Pregled
             </div>
             {pregledLoading ? (
-              <div className="flex items-center gap-2 text-gray-500">
+              <div className="flex items-center gap-2 text-muted-foreground">
                 <Loader2 className="w-4 h-4 animate-spin" /> Ucitavam pregled...
               </div>
             ) : pregled ? (
@@ -416,9 +416,9 @@ export function SkolaOnboardingPage() {
                     </ul>
                   </div>
                 )}
-                <div className="rounded-xl border border-gray-200 overflow-hidden">
+                <div className="rounded-xl border border-border overflow-hidden">
                   <table className="w-full text-sm">
-                    <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
+                    <thead className="bg-muted text-muted-foreground text-xs uppercase">
                       <tr>
                         <th className="text-left px-3 py-2">Razred</th>
                         <th className="text-left px-3 py-2">Predmet</th>
@@ -426,7 +426,7 @@ export function SkolaOnboardingPage() {
                         <th className="text-right px-3 py-2">Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100">
+                    <tbody className="divide-y divide-border">
                       {pregled.predmeti.map((p, idx) => (
                         <tr key={idx} className={p.vecPostoji ? 'bg-amber-50/40' : ''}>
                           <td className="px-3 py-2">{p.razred}.</td>
@@ -446,18 +446,18 @@ export function SkolaOnboardingPage() {
                     </tbody>
                   </table>
                 </div>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   Kliknuti "Pokreni wizard" da se kreiraju predmeti i odeljenja. Postojeci predmeti i
                   odeljenja se preskacu bez prepisivanja.
                 </p>
               </>
             ) : (
-              <p className="text-sm text-gray-500">Nema pregleda</p>
+              <p className="text-sm text-muted-foreground">Nema pregleda</p>
             )}
           </div>
         )}
 
-        <div className="flex justify-between mt-6 pt-4 border-t border-gray-100">
+        <div className="flex justify-between mt-6 pt-4 border-t border-border">
           <Button variant="outline" onClick={nazad} disabled={korak === 0}>
             <ArrowLeft className="w-4 h-4" /> Nazad
           </Button>
@@ -479,18 +479,18 @@ export function SkolaOnboardingPage() {
 
 function StatTile({ label, value, accent }: { label: string; value: number; accent?: string }) {
   return (
-    <div className="rounded-xl border border-gray-200 p-3 bg-white">
-      <div className={`text-2xl font-bold ${accent ?? 'text-gray-900'}`}>{value}</div>
-      <div className="text-xs text-gray-500">{label}</div>
+    <div className="rounded-xl border border-border p-3 bg-card">
+      <div className={`text-2xl font-bold ${accent ?? 'text-foreground'}`}>{value}</div>
+      <div className="text-xs text-muted-foreground">{label}</div>
     </div>
   );
 }
 
 function SummaryBox({ label, value, accent }: { label: string; value: number; accent?: string }) {
   return (
-    <div className="rounded-lg bg-gray-50 border border-gray-200 p-3">
-      <div className="text-xs text-gray-500">{label}</div>
-      <div className={`text-lg font-semibold ${accent ?? 'text-gray-900'}`}>{value}</div>
+    <div className="rounded-lg bg-muted border border-border p-3">
+      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className={`text-lg font-semibold ${accent ?? 'text-foreground'}`}>{value}</div>
     </div>
   );
 }

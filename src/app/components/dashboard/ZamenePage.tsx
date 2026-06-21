@@ -226,7 +226,7 @@ export function ZamenePage() {
   const isEduAdmin = ['ADMIN', 'DIREKTOR', 'KOORDINATOR'].includes(user?.uloga || '');
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-muted overflow-hidden">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-y-auto">
         <TopBar />
@@ -234,18 +234,18 @@ export function ZamenePage() {
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3">
-                <UserX className="w-8 h-8 text-blue-600" />
+              <h2 className="text-3xl font-extrabold text-foreground tracking-tight flex items-center gap-3">
+                <UserX className="w-8 h-8 text-brand-600" />
                 Dnevne Zamene Nastavnika
               </h2>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-muted-foreground">
                 Prijava odsustva, automatizovan predlog zamenika i praćenje odobravanja.
               </p>
             </div>
             {user?.uloga === 'NASTAVNIK' && (
               <Button
                 onClick={() => setShowAbsenceForm(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-lg shadow-blue-600/10 flex items-center gap-2 h-11"
+                className="bg-brand-600 hover:bg-brand-700 text-white rounded-xl shadow-lg shadow-brand-600/10 flex items-center gap-2 h-11"
               >
                 <Plus className="w-5 h-5" />
                 Prijavi odsustvo
@@ -278,59 +278,59 @@ export function ZamenePage() {
           <div className="grid grid-cols-1 gap-8">
             {/* Admin/Director/Coordinator View - Today's Replacements */}
             {['ADMIN', 'DIREKTOR', 'KOORDINATOR', 'PP_SLUZBA'].includes(user?.uloga || '') && (
-              <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden p-6 space-y-6">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
-                  <h3 className="text-lg font-bold text-gray-900">Zamene na dan</h3>
+              <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border overflow-hidden p-6 space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
+                  <h3 className="text-lg font-bold text-foreground">Zamene na dan</h3>
                   <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-gray-400" />
+                    <Calendar className="w-4 h-4 text-muted-foreground" />
                     <Input
                       type="date"
                       value={filterDatum}
                       onChange={(e) => setFilterDatum(e.target.value)}
-                      className="h-10 rounded-xl bg-gray-50 border-gray-200 text-sm font-medium"
+                      className="h-10 rounded-xl bg-muted border-border text-sm font-medium"
                     />
                   </div>
                 </div>
 
                 {isLoading ? (
                   <div className="p-20 flex flex-col items-center justify-center space-y-3">
-                    <div className="w-10 h-10 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-                    <span className="text-sm text-gray-500 font-medium">Učitavanje zamena...</span>
+                    <div className="w-10 h-10 border-4 border-brand-200 border-t-brand-600 rounded-full animate-spin"></div>
+                    <span className="text-sm text-muted-foreground font-medium">Učitavanje zamena...</span>
                   </div>
                 ) : zameneDanas.length === 0 ? (
                   <div className="p-16 text-center space-y-4">
-                    <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mx-auto text-blue-600">
+                    <div className="w-12 h-12 rounded-full bg-brand-50 flex items-center justify-center mx-auto text-brand-600">
                       <UserCheck className="w-6 h-6" />
                     </div>
                     <div>
-                      <p className="font-semibold text-gray-900">Nema evidentiranih zamena za ovaj dan</p>
-                      <p className="text-sm text-gray-500 mt-1">Svi nastavnici su prisutni ili zamene nisu kreirane.</p>
+                      <p className="font-semibold text-foreground">Nema evidentiranih zamena za ovaj dan</p>
+                      <p className="text-sm text-muted-foreground mt-1">Svi nastavnici su prisutni ili zamene nisu kreirane.</p>
                     </div>
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full border-collapse">
                       <thead>
-                        <tr className="bg-gray-50/50 border-b border-gray-100">
-                          <th className="p-4 text-left text-xs font-bold text-gray-400 uppercase">Čas</th>
-                          <th className="p-4 text-left text-xs font-bold text-gray-400 uppercase">Odeljenje</th>
-                          <th className="p-4 text-left text-xs font-bold text-gray-400 uppercase">Predmet</th>
-                          <th className="p-4 text-left text-xs font-bold text-gray-400 uppercase">Odsutni</th>
-                          <th className="p-4 text-left text-xs font-bold text-gray-400 uppercase">Zamenik</th>
-                          <th className="p-4 text-left text-xs font-bold text-gray-400 uppercase">Status</th>
-                          {isEduAdmin && <th className="p-4 text-right text-xs font-bold text-gray-400 uppercase">Akcije</th>}
+                        <tr className="bg-muted/50 border-b border-border">
+                          <th className="p-4 text-left text-xs font-bold text-muted-foreground uppercase">Čas</th>
+                          <th className="p-4 text-left text-xs font-bold text-muted-foreground uppercase">Odeljenje</th>
+                          <th className="p-4 text-left text-xs font-bold text-muted-foreground uppercase">Predmet</th>
+                          <th className="p-4 text-left text-xs font-bold text-muted-foreground uppercase">Odsutni</th>
+                          <th className="p-4 text-left text-xs font-bold text-muted-foreground uppercase">Zamenik</th>
+                          <th className="p-4 text-left text-xs font-bold text-muted-foreground uppercase">Status</th>
+                          {isEduAdmin && <th className="p-4 text-right text-xs font-bold text-muted-foreground uppercase">Akcije</th>}
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-gray-100">
+                      <tbody className="divide-y divide-border">
                         {zameneDanas.map(zamena => (
-                          <tr key={zamena.id} className="hover:bg-gray-50/50 transition-colors">
-                            <td className="p-4 font-semibold text-gray-900">{zamena.cas}. čas</td>
-                            <td className="p-4 font-bold text-blue-700">{zamena.odeljenjeLabel}</td>
-                            <td className="p-4 font-semibold text-gray-800">{zamena.predmetLabel}</td>
-                            <td className="p-4 text-gray-600">{zamena.odsutniIme}</td>
-                            <td className="p-4 text-gray-600">
+                          <tr key={zamena.id} className="hover:bg-secondary/50 transition-colors">
+                            <td className="p-4 font-semibold text-foreground">{zamena.cas}. čas</td>
+                            <td className="p-4 font-bold text-brand-700">{zamena.odeljenjeLabel}</td>
+                            <td className="p-4 font-semibold text-foreground">{zamena.predmetLabel}</td>
+                            <td className="p-4 text-muted-foreground">{zamena.odsutniIme}</td>
+                            <td className="p-4 text-muted-foreground">
                               {zamena.zamenikIme ? (
-                                <span className="inline-flex items-center gap-1 font-semibold text-gray-900">
+                                <span className="inline-flex items-center gap-1 font-semibold text-foreground">
                                   {zamena.zamenikIme}
                                 </span>
                               ) : (
@@ -344,10 +344,10 @@ export function ZamenePage() {
                                 zamena.status === 'ODOBRENA' 
                                   ? 'bg-emerald-50 text-emerald-700 border-emerald-100' 
                                   : zamena.status === 'PREDLOZENA' 
-                                  ? 'bg-blue-50 text-blue-700 border-blue-100'
+                                  ? 'bg-brand-50 text-brand-700 border-brand-100'
                                   : zamena.status === 'ODBIJENA'
                                   ? 'bg-rose-50 text-rose-700 border-rose-100'
-                                  : 'bg-gray-50 text-gray-600 border-gray-100'
+                                  : 'bg-muted text-muted-foreground border-border'
                               }`}>
                                 {zamena.status}
                               </span>
@@ -359,7 +359,7 @@ export function ZamenePage() {
                                     <Button
                                       size="sm"
                                       onClick={() => openZamenikModal(zamena.id)}
-                                      className="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-lg text-xs"
+                                      className="bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200 rounded-lg text-xs"
                                     >
                                       Dodeli zamenika
                                     </Button>
@@ -387,7 +387,7 @@ export function ZamenePage() {
                                       size="sm"
                                       variant="ghost"
                                       onClick={() => handleOtkazi(zamena.id)}
-                                      className="text-gray-400 hover:text-rose-600 rounded-lg text-xs"
+                                      className="text-muted-foreground hover:text-rose-600 rounded-lg text-xs"
                                     >
                                       Otkaži
                                     </Button>
@@ -396,7 +396,7 @@ export function ZamenePage() {
 
                                 {/* inline rejection reason input */}
                                 {showOdbijInputId === zamena.id && (
-                                  <div className="mt-3 p-3 bg-gray-50 rounded-xl border border-gray-200 text-left space-y-2 max-w-xs ml-auto">
+                                  <div className="mt-3 p-3 bg-muted rounded-xl border border-border text-left space-y-2 max-w-xs ml-auto">
                                     <Label htmlFor="razlogOdb">Razlog odbijanja</Label>
                                     <Input
                                       id="razlogOdb"
@@ -430,27 +430,27 @@ export function ZamenePage() {
             {user?.uloga === 'NASTAVNIK' && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* My Absences */}
-                <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 p-6 space-y-6">
-                  <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2 border-b border-gray-100 pb-3">
+                <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-6 space-y-6">
+                  <h3 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-border pb-3">
                     <UserX className="w-5 h-5 text-rose-500" />
                     Moja odsustva (Prijavljeno)
                   </h3>
 
                   {isLoading ? (
                     <div className="py-12 flex justify-center">
-                      <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                      <div className="w-8 h-8 border-3 border-brand-200 border-t-brand-600 rounded-full animate-spin"></div>
                     </div>
                   ) : mojeKaoOdsutni.length === 0 ? (
-                    <p className="text-sm text-gray-500 py-6 text-center">Niste prijavili nijedno odsustvo.</p>
+                    <p className="text-sm text-muted-foreground py-6 text-center">Niste prijavili nijedno odsustvo.</p>
                   ) : (
                     <div className="space-y-4">
                       {mojeKaoOdsutni.map(zamena => (
-                        <div key={zamena.id} className="p-4 rounded-xl border border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div key={zamena.id} className="p-4 rounded-xl border border-border bg-muted/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                           <div>
-                            <p className="text-xs text-gray-400 font-semibold">{zamena.datum} | {zamena.cas}. čas</p>
-                            <p className="font-semibold text-gray-900 mt-0.5">{zamena.predmetLabel} ({zamena.odeljenjeLabel})</p>
+                            <p className="text-xs text-muted-foreground font-semibold">{zamena.datum} | {zamena.cas}. čas</p>
+                            <p className="font-semibold text-foreground mt-0.5">{zamena.predmetLabel} ({zamena.odeljenjeLabel})</p>
                             {zamena.zamenikIme && (
-                              <p className="text-xs text-gray-500 mt-1">Zamenik: <span className="font-medium text-gray-700">{zamena.zamenikIme}</span></p>
+                              <p className="text-xs text-muted-foreground mt-1">Zamenik: <span className="font-medium text-foreground">{zamena.zamenikIme}</span></p>
                             )}
                           </div>
                           <div className="flex items-center gap-2 self-start sm:self-center">
@@ -458,10 +458,10 @@ export function ZamenePage() {
                               zamena.status === 'ODOBRENA' 
                                 ? 'bg-emerald-50 text-emerald-700 border-emerald-100' 
                                 : zamena.status === 'PREDLOZENA' 
-                                ? 'bg-blue-50 text-blue-700 border-blue-100'
+                                ? 'bg-brand-50 text-brand-700 border-brand-100'
                                 : zamena.status === 'ODBIJENA'
                                 ? 'bg-rose-50 text-rose-700 border-rose-100'
-                                : 'bg-gray-50 text-gray-600 border-gray-100'
+                                : 'bg-muted text-muted-foreground border-border'
                             }`}>
                               {zamena.status}
                             </span>
@@ -470,7 +470,7 @@ export function ZamenePage() {
                                 size="sm"
                                 variant="ghost"
                                 onClick={() => handleOtkazi(zamena.id)}
-                                className="text-gray-400 hover:text-rose-600 p-1 h-auto"
+                                className="text-muted-foreground hover:text-rose-600 p-1 h-auto"
                               >
                                 <X className="w-4 h-4" />
                               </Button>
@@ -483,31 +483,31 @@ export function ZamenePage() {
                 </div>
 
                 {/* My Assignments as Substitute */}
-                <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 p-6 space-y-6">
-                  <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2 border-b border-gray-100 pb-3">
+                <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-6 space-y-6">
+                  <h3 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-border pb-3">
                     <UserCheck className="w-5 h-5 text-emerald-500" />
                     Moja zaduženja (Zamene)
                   </h3>
 
                   {isLoading ? (
                     <div className="py-12 flex justify-center">
-                      <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                      <div className="w-8 h-8 border-3 border-brand-200 border-t-brand-600 rounded-full animate-spin"></div>
                     </div>
                   ) : mojeKaoZamenik.length === 0 ? (
-                    <p className="text-sm text-gray-500 py-6 text-center">Nemate dodeljenih zamena.</p>
+                    <p className="text-sm text-muted-foreground py-6 text-center">Nemate dodeljenih zamena.</p>
                   ) : (
                     <div className="space-y-4">
                       {mojeKaoZamenik.map(zamena => (
-                        <div key={zamena.id} className="p-4 rounded-xl border border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div key={zamena.id} className="p-4 rounded-xl border border-border bg-muted/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                           <div>
-                            <p className="text-xs text-gray-400 font-semibold">{zamena.datum} | {zamena.cas}. čas</p>
-                            <p className="font-semibold text-gray-900 mt-0.5">{zamena.predmetLabel} ({zamena.odeljenjeLabel})</p>
-                            <p className="text-xs text-gray-500 mt-1">Zamenjujete kolegu: <span className="font-medium text-gray-700">{zamena.odsutniIme}</span></p>
+                            <p className="text-xs text-muted-foreground font-semibold">{zamena.datum} | {zamena.cas}. čas</p>
+                            <p className="font-semibold text-foreground mt-0.5">{zamena.predmetLabel} ({zamena.odeljenjeLabel})</p>
+                            <p className="text-xs text-muted-foreground mt-1">Zamenjujete kolegu: <span className="font-medium text-foreground">{zamena.odsutniIme}</span></p>
                           </div>
                           <span className={`inline-flex self-start sm:self-center items-center px-2 py-0.5 rounded-full text-xxs font-bold border ${
                             zamena.status === 'ODOBRENA' 
                               ? 'bg-emerald-50 text-emerald-700 border-emerald-100' 
-                              : 'bg-blue-50 text-blue-700 border-blue-100'
+                              : 'bg-brand-50 text-brand-700 border-brand-100'
                           }`}>
                             {zamena.status}
                           </span>
@@ -523,10 +523,10 @@ export function ZamenePage() {
           {/* Modal - Request Absence Form */}
           {showAbsenceForm && (
             <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn">
-              <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-6 border border-gray-100 animate-scaleIn">
-                <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-                  <h4 className="text-lg font-bold text-gray-900">Prijavi odsustvo</h4>
-                  <button onClick={() => setShowAbsenceForm(false)} className="text-gray-400 hover:text-gray-600">
+              <div className="bg-card rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-6 border border-border animate-scaleIn">
+                <div className="flex items-center justify-between border-b border-border pb-3">
+                  <h4 className="text-lg font-bold text-foreground">Prijavi odsustvo</h4>
+                  <button onClick={() => setShowAbsenceForm(false)} className="text-muted-foreground hover:text-muted-foreground">
                     <X className="w-5 h-5" />
                   </button>
                 </div>
@@ -556,8 +556,8 @@ export function ZamenePage() {
                             onClick={() => handleCasToggle(cas)}
                             className={`w-10 h-10 rounded-xl font-bold transition-all border flex items-center justify-center text-sm ${
                               isSelected
-                                ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-600/10'
-                                : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300'
+                                ? 'bg-brand-600 text-white border-brand-600 shadow-md shadow-brand-600/10'
+                                : 'bg-card text-foreground border-border hover:border-input'
                             }`}
                           >
                             {cas}
@@ -581,7 +581,7 @@ export function ZamenePage() {
                   <Button
                     type="submit"
                     disabled={isSubmittingOdsustvo}
-                    className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-lg shadow-blue-600/10"
+                    className="w-full h-11 bg-brand-600 hover:bg-brand-700 text-white rounded-xl shadow-lg shadow-brand-600/10"
                   >
                     {isSubmittingOdsustvo ? 'Slanje...' : 'Prijavi'}
                   </Button>
@@ -593,13 +593,13 @@ export function ZamenePage() {
           {/* Modal - Assign Substitute */}
           {showZamenikModal && (
             <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn">
-              <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-6 border border-gray-100 animate-scaleIn">
-                <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <div className="bg-card rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-6 border border-border animate-scaleIn">
+                <div className="flex items-center justify-between border-b border-border pb-3">
                   <div>
-                    <h4 className="text-lg font-bold text-gray-900">Dodeljivanje zamenika</h4>
-                    <p className="text-xs text-gray-400">Prikaz slobodnih nastavnika u ovom času</p>
+                    <h4 className="text-lg font-bold text-foreground">Dodeljivanje zamenika</h4>
+                    <p className="text-xs text-muted-foreground">Prikaz slobodnih nastavnika u ovom času</p>
                   </div>
-                  <button onClick={() => setShowZamenikModal(false)} className="text-gray-400 hover:text-gray-600">
+                  <button onClick={() => setShowZamenikModal(false)} className="text-muted-foreground hover:text-muted-foreground">
                     <X className="w-5 h-5" />
                   </button>
                 </div>
@@ -620,8 +620,8 @@ export function ZamenePage() {
                     <Label>Slobodni nastavnici (Sortirano po opterećenju u 30 dana)</Label>
                     {isLoadingKandidati ? (
                       <div className="py-8 flex flex-col items-center justify-center space-y-2">
-                        <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-                        <span className="text-xs text-gray-400">Analiza rasporeda slobodnih...</span>
+                        <div className="w-8 h-8 border-3 border-brand-200 border-t-brand-600 rounded-full animate-spin"></div>
+                        <span className="text-xs text-muted-foreground">Analiza rasporeda slobodnih...</span>
                       </div>
                     ) : kandidati.length === 0 ? (
                       <div className="p-6 bg-amber-50 border border-amber-100 rounded-xl flex gap-2 text-xs text-amber-800">
@@ -633,20 +633,20 @@ export function ZamenePage() {
                         {kandidati.map(k => (
                           <div 
                             key={k.korisnikId} 
-                            className="p-3.5 rounded-xl border border-gray-100 bg-gray-50 hover:bg-blue-50/50 hover:border-blue-200 flex items-center justify-between gap-4 transition-all group cursor-pointer"
+                            className="p-3.5 rounded-xl border border-border bg-muted hover:bg-brand-50/50 hover:border-brand-200 flex items-center justify-between gap-4 transition-all group cursor-pointer"
                             onClick={() => handleDodeliZamenika(k.korisnikId)}
                           >
                             <div>
-                              <p className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">
+                              <p className="font-semibold text-foreground group-hover:text-brand-700 transition-colors">
                                 {k.ime} {k.prezime}
                               </p>
-                              <p className="text-xxs text-gray-400">@{k.username}</p>
+                              <p className="text-xxs text-muted-foreground">@{k.username}</p>
                             </div>
                             <div className="text-right">
-                              <span className="text-xxs font-bold text-gray-500 bg-gray-200/60 px-2 py-0.5 rounded-full">
+                              <span className="text-xxs font-bold text-muted-foreground bg-secondary/60 px-2 py-0.5 rounded-full">
                                 {k.brojZamena30d} zamena (30d)
                               </span>
-                              <p className="text-xxs font-bold text-blue-600 mt-1 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5 justify-end">
+                              <p className="text-xxs font-bold text-brand-600 mt-1 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5 justify-end">
                                 Odaberi
                                 <Check className="w-3 h-3" />
                               </p>

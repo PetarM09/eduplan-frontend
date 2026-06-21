@@ -226,7 +226,7 @@ export function OperativniPlanEditorPage() {
   if (bootstrap) {
     return (
       <AppLayout>
-        <div className="bg-white rounded-2xl border border-gray-200 p-12 flex items-center justify-center text-gray-500">
+        <div className="bg-card rounded-2xl border border-border p-12 flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam...
         </div>
       </AppLayout>
@@ -258,8 +258,8 @@ export function OperativniPlanEditorPage() {
       )}
 
       {/* Osnovni podaci */}
-      <section className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
-        <h2 className="font-semibold text-gray-900">Osnovni podaci</h2>
+      <section className="bg-card rounded-2xl border border-border p-6 space-y-4">
+        <h2 className="font-semibold text-foreground">Osnovni podaci</h2>
         <div className="grid lg:grid-cols-4 gap-4">
           <div className="space-y-1.5">
             <Label htmlFor="predmet">Predmet</Label>
@@ -322,9 +322,9 @@ export function OperativniPlanEditorPage() {
       </section>
 
       {/* Stavke (casovi) */}
-      <section className="bg-white rounded-2xl border border-gray-200 p-6 space-y-5">
+      <section className="bg-card rounded-2xl border border-border p-6 space-y-5">
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold text-gray-900">Casovi u mesecu</h2>
+          <h2 className="font-semibold text-foreground">Casovi u mesecu</h2>
           <Button size="sm" variant="outline" onClick={dodajStavku}>
             <Plus className="w-4 h-4" /> Dodaj cas
           </Button>
@@ -332,12 +332,12 @@ export function OperativniPlanEditorPage() {
 
         <div className="space-y-4">
           {stavke.map((s, idx) => (
-            <article key={idx} className="border border-gray-200 rounded-xl p-4 space-y-4">
+            <article key={idx} className="border border-border rounded-xl p-4 space-y-4">
               <div className="flex items-center gap-3">
                 <span className="flex-shrink-0 w-9 h-9 rounded-lg bg-purple-100 text-purple-700 text-sm font-bold flex items-center justify-center">
                   {s.redniBrojCasa}.
                 </span>
-                <span className="text-sm font-medium text-gray-900">Cas #{s.redniBrojCasa}</span>
+                <span className="text-sm font-medium text-foreground">Cas #{s.redniBrojCasa}</span>
                 <Button size="sm" variant="ghost" onClick={() => obrisiStavku(idx)} className="ml-auto">
                   <Trash2 className="w-4 h-4 text-red-500" />
                 </Button>
@@ -345,7 +345,7 @@ export function OperativniPlanEditorPage() {
 
               <div className="grid lg:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label className="text-xs text-gray-500">Tema</Label>
+                  <Label className="text-xs text-muted-foreground">Tema</Label>
                   <Input
                     placeholder="npr. Uvod u racunarske mreze"
                     value={s.nazivTeme}
@@ -353,7 +353,7 @@ export function OperativniPlanEditorPage() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs text-gray-500">Nastavna jedinica</Label>
+                  <Label className="text-xs text-muted-foreground">Nastavna jedinica</Label>
                   <Input
                     placeholder="npr. Sta je mreza"
                     value={s.nazivJedinice}
@@ -364,7 +364,7 @@ export function OperativniPlanEditorPage() {
 
               <div className="grid lg:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label className="text-xs text-gray-500">Tip casa</Label>
+                  <Label className="text-xs text-muted-foreground">Tip casa</Label>
                   <Select value={s.tipCasaId} onValueChange={(v) => azurirajStavku(idx, { tipCasaId: v })}>
                     <SelectTrigger><SelectValue placeholder="Izaberi tip" /></SelectTrigger>
                     <SelectContent>
@@ -378,7 +378,7 @@ export function OperativniPlanEditorPage() {
                   </Select>
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs text-gray-500">Metoda rada</Label>
+                  <Label className="text-xs text-muted-foreground">Metoda rada</Label>
                   <Select value={s.metodaRadaId} onValueChange={(v) => azurirajStavku(idx, { metodaRadaId: v })}>
                     <SelectTrigger><SelectValue placeholder="Izaberi metodu" /></SelectTrigger>
                     <SelectContent>
@@ -394,7 +394,7 @@ export function OperativniPlanEditorPage() {
               </div>
 
               <div className="space-y-1.5">
-                <Label className="text-xs text-gray-500">Ishodi (jedan po redu — auto-save u katalog)</Label>
+                <Label className="text-xs text-muted-foreground">Ishodi (jedan po redu — auto-save u katalog)</Label>
                 <Textarea
                   rows={2}
                   value={s.noviIshodi}
@@ -406,13 +406,13 @@ export function OperativniPlanEditorPage() {
               {/* Medjupredmetno */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label className="text-xs text-gray-500">Medjupredmetno povezivanje</Label>
+                  <Label className="text-xs text-muted-foreground">Medjupredmetno povezivanje</Label>
                   <Button size="sm" variant="ghost" onClick={() => dodajMedjupredmetno(idx)}>
                     <Plus className="w-3.5 h-3.5" /> Predmet
                   </Button>
                 </div>
                 {s.medjupredmetno.length === 0 ? (
-                  <p className="text-xs text-gray-400 italic">Nema povezivanja sa drugim predmetima.</p>
+                  <p className="text-xs text-muted-foreground italic">Nema povezivanja sa drugim predmetima.</p>
                 ) : (
                   <div className="space-y-2">
                     {s.medjupredmetno.map((m, mi) => (
@@ -454,7 +454,7 @@ export function OperativniPlanEditorPage() {
               </div>
 
               <div className="space-y-1.5">
-                <Label className="text-xs text-gray-500">Evaluacija</Label>
+                <Label className="text-xs text-muted-foreground">Evaluacija</Label>
                 <Input
                   placeholder="npr. Usmena provera znanja"
                   value={s.evaluacija}
@@ -466,19 +466,19 @@ export function OperativniPlanEditorPage() {
         </div>
 
         {stavke.length === 0 && (
-          <p className="text-sm text-gray-500 text-center py-6">Klikni "Dodaj cas" za prvi unos.</p>
+          <p className="text-sm text-muted-foreground text-center py-6">Klikni "Dodaj cas" za prvi unos.</p>
         )}
       </section>
 
-      <section className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
-        <h2 className="font-semibold text-gray-900">Samoprocena nastavnika</h2>
+      <section className="bg-card rounded-2xl border border-border p-6 space-y-4">
+        <h2 className="font-semibold text-foreground">Samoprocena nastavnika</h2>
         <Textarea
           rows={3}
           value={samoprocena}
           onChange={(e) => setSamoprocena(e.target.value)}
           placeholder="Kako su ucenici ostvarili ishode u ovom mesecu..."
         />
-        <h3 className="font-medium text-gray-900 text-sm">Napomene</h3>
+        <h3 className="font-medium text-foreground text-sm">Napomene</h3>
         <Textarea rows={2} value={napomene} onChange={(e) => setNapomene(e.target.value)} />
       </section>
 

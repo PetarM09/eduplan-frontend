@@ -42,8 +42,8 @@ const PERIOD_LABEL: Record<PPPeriod, string> = {
 };
 
 const STATUS_META: Record<PPStatus, { label: string; bg: string }> = {
-  NACRT: { label: 'Nacrt', bg: 'bg-gray-100 text-gray-700' },
-  PODNET: { label: 'Podnet', bg: 'bg-blue-100 text-blue-700' },
+  NACRT: { label: 'Nacrt', bg: 'bg-secondary text-foreground' },
+  PODNET: { label: 'Podnet', bg: 'bg-brand-100 text-brand-700' },
   PRIHVACEN: { label: 'Prihvacen', bg: 'bg-emerald-100 text-emerald-700' },
   VRACENO_NA_DORADU: { label: 'Vracen na doradu', bg: 'bg-amber-100 text-amber-700' },
 };
@@ -294,7 +294,7 @@ export function PPIzvestajiPage() {
       />
 
       {/* Filteri */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-4 flex flex-wrap items-end gap-3">
+      <div className="bg-card rounded-2xl border border-border p-4 flex flex-wrap items-end gap-3">
         <div>
           <Label htmlFor="f-godina">Skolska godina</Label>
           <div className="w-36">
@@ -314,7 +314,7 @@ export function PPIzvestajiPage() {
                 id="f-period"
                 value={filterPeriod}
                 onChange={(e) => setFilterPeriod(e.target.value as PPPeriod | '')}
-                className="h-10 px-3 rounded-lg border border-gray-300 text-sm"
+                className="h-10 px-3 rounded-lg border border-input text-sm"
               >
                 <option value="">— svi —</option>
                 {(Object.keys(PERIOD_LABEL) as PPPeriod[]).map((p) => (
@@ -330,7 +330,7 @@ export function PPIzvestajiPage() {
                 id="f-status"
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value as PPStatus | '')}
-                className="h-10 px-3 rounded-lg border border-gray-300 text-sm"
+                className="h-10 px-3 rounded-lg border border-input text-sm"
               >
                 <option value="">— svi —</option>
                 {(Object.keys(STATUS_META) as PPStatus[]).map((s) => (
@@ -358,7 +358,7 @@ export function PPIzvestajiPage() {
       </div>
 
       {loading ? (
-        <div className="bg-white rounded-2xl border border-gray-200 p-12 flex items-center justify-center text-gray-500">
+        <div className="bg-card rounded-2xl border border-border p-12 flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam...
         </div>
       ) : error ? (
@@ -370,15 +370,15 @@ export function PPIzvestajiPage() {
           </Button>
         </div>
       ) : izvestaji.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center text-gray-500">
+        <div className="bg-card rounded-2xl border border-border p-12 text-center text-muted-foreground">
           {user?.uloga === 'NASTAVNIK' && mojaOdeljenja.length === 0
             ? 'Nisi staresina ni jednom odeljenju, pa ne mozes praviti izvestaje.'
             : 'Nema izvestaja po ovim filterima.'}
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+        <div className="bg-card rounded-2xl border border-border overflow-hidden">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-muted border-b border-border">
               <tr>
                 {sviRezim && <Th>Staresina</Th>}
                 <Th>Odeljenje</Th>
@@ -389,14 +389,14 @@ export function PPIzvestajiPage() {
                 <Th className="text-right">Akcije</Th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-border">
               {izvestaji.map((iz) => {
                 const sm = STATUS_META[iz.status];
                 const mojIzvestaj = iz.staresinaId === user?.id;
                 const ukupno = (iz.podaci?.ukupnoUcenika as number | undefined) ?? '—';
                 return (
-                  <tr key={iz.id} className="hover:bg-gray-50">
-                    {sviRezim && <Td className="font-medium text-gray-900">{iz.staresinaIme}</Td>}
+                  <tr key={iz.id} className="hover:bg-secondary">
+                    {sviRezim && <Td className="font-medium text-foreground">{iz.staresinaIme}</Td>}
                     <Td>
                       <div className="flex items-center gap-2">
                         <ClipboardCheck className="w-4 h-4 text-emerald-500" />
@@ -412,7 +412,7 @@ export function PPIzvestajiPage() {
                         {sm.label}
                       </span>
                     </Td>
-                    <Td className="text-xs text-gray-500">{ukupno}</Td>
+                    <Td className="text-xs text-muted-foreground">{ukupno}</Td>
                     <Td className="text-right">
                       <div className="inline-flex items-center gap-1 justify-end">
                         <Button size="sm" variant="ghost" onClick={() => otvoriEdit(iz)}>
@@ -548,14 +548,14 @@ function PPModal({
             <div>
               <Label>Odeljenje</Label>
               {editIzv ? (
-                <p className="h-10 px-3 rounded-lg border border-gray-200 bg-gray-50 text-sm flex items-center">
+                <p className="h-10 px-3 rounded-lg border border-border bg-muted text-sm flex items-center">
                   {editIzv.odeljenjeLabel}
                 </p>
               ) : (
                 <select
                   value={odeljenjeId}
                   onChange={(e) => setOdeljenjeId(e.target.value)}
-                  className="h-10 px-3 rounded-lg border border-gray-300 text-sm w-full"
+                  className="h-10 px-3 rounded-lg border border-input text-sm w-full"
                   disabled={readonly}
                 >
                   {odeljenja.map((o) => (
@@ -571,7 +571,7 @@ function PPModal({
               <select
                 value={period}
                 onChange={(e) => setPeriod(e.target.value as PPPeriod)}
-                className="h-10 px-3 rounded-lg border border-gray-300 text-sm w-full"
+                className="h-10 px-3 rounded-lg border border-input text-sm w-full"
                 disabled={!!editIzv || readonly}
               >
                 {(Object.keys(PERIOD_LABEL) as PPPeriod[]).map((p) => (
@@ -736,11 +736,11 @@ function Sekcija({
   badgeColor?: 'gray' | 'amber';
   children: React.ReactNode;
 }) {
-  const bg = badgeColor === 'amber' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-700';
+  const bg = badgeColor === 'amber' ? 'bg-amber-100 text-amber-700' : 'bg-secondary text-foreground';
   return (
-    <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
+    <div className="border border-border rounded-xl p-4 bg-muted/50">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-gray-900">{naslov}</h3>
+        <h3 className="text-sm font-semibold text-foreground">{naslov}</h3>
         {badge && (
           <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs ${bg}`}>{badge}</span>
         )}
@@ -778,12 +778,12 @@ function NumPolje({
 
 function Th({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
-    <th className={`px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider ${className}`}>
+    <th className={`px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider ${className}`}>
       {children}
     </th>
   );
 }
 
 function Td({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  return <td className={`px-6 py-4 text-sm text-gray-700 ${className}`}>{children}</td>;
+  return <td className={`px-6 py-4 text-sm text-foreground ${className}`}>{children}</td>;
 }

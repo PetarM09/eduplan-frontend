@@ -126,7 +126,7 @@ export function RasporedPage() {
   const isEduAdmin = user?.uloga === 'KOORDINATOR' || user?.uloga === 'ADMIN';
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-muted overflow-hidden">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-y-auto">
         <TopBar />
@@ -134,11 +134,11 @@ export function RasporedPage() {
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3">
-                <Calendar className="w-8 h-8 text-blue-600" />
+              <h2 className="text-3xl font-extrabold text-foreground tracking-tight flex items-center gap-3">
+                <Calendar className="w-8 h-8 text-brand-600" />
                 Raspored časova
               </h2>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-muted-foreground">
                 Pregled Vaših časova u aktivnom rasporedu nastave.
               </p>
             </div>
@@ -154,9 +154,9 @@ export function RasporedPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Schedule View */}
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
-                <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-                  <h3 className="text-lg font-bold text-gray-900">Moj nedeljni raspored</h3>
+              <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border overflow-hidden">
+                <div className="p-6 border-b border-border flex items-center justify-between">
+                  <h3 className="text-lg font-bold text-foreground">Moj nedeljni raspored</h3>
                   <Button variant="outline" size="sm" onClick={fetchRaspored} className="text-xs">
                     Osveži
                   </Button>
@@ -164,8 +164,8 @@ export function RasporedPage() {
 
                 {isLoading ? (
                   <div className="p-20 flex flex-col items-center justify-center space-y-3">
-                    <div className="w-10 h-10 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-                    <span className="text-sm text-gray-500 font-medium">Učitavanje rasporeda...</span>
+                    <div className="w-10 h-10 border-4 border-brand-200 border-t-brand-600 rounded-full animate-spin"></div>
+                    <span className="text-sm text-muted-foreground font-medium">Učitavanje rasporeda...</span>
                   </div>
                 ) : error && raspored.length === 0 ? (
                   <div className="p-12 text-center space-y-4">
@@ -173,8 +173,8 @@ export function RasporedPage() {
                       <AlertCircle className="w-6 h-6" />
                     </div>
                     <div className="max-w-md mx-auto">
-                      <p className="font-semibold text-gray-900">Nema aktivnog rasporeda</p>
-                      <p className="text-sm text-gray-500 mt-1">
+                      <p className="font-semibold text-foreground">Nema aktivnog rasporeda</p>
+                      <p className="text-sm text-muted-foreground mt-1">
                         {error}
                       </p>
                     </div>
@@ -183,20 +183,20 @@ export function RasporedPage() {
                   <div className="overflow-x-auto">
                     <table className="w-full border-collapse">
                       <thead>
-                        <tr className="bg-gray-50 border-b border-gray-100">
-                          <th className="p-4 text-left text-xs font-bold text-gray-400 uppercase w-20">Čas</th>
+                        <tr className="bg-muted border-b border-border">
+                          <th className="p-4 text-left text-xs font-bold text-muted-foreground uppercase w-20">Čas</th>
                           {DANI.map(dan => (
-                            <th key={dan} className="p-4 text-left text-xs font-bold text-gray-400 uppercase w-48">
+                            <th key={dan} className="p-4 text-left text-xs font-bold text-muted-foreground uppercase w-48">
                               {DANI_LABELS[dan as keyof typeof DANI_LABELS]}
                             </th>
                           ))}
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-gray-100">
+                      <tbody className="divide-y divide-border">
                         {CASOVI.map(cas => (
-                          <tr key={cas} className="hover:bg-gray-50/50 transition-colors">
+                          <tr key={cas} className="hover:bg-secondary/50 transition-colors">
                             <td className="p-4 align-middle">
-                              <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 text-sm font-bold text-gray-700">
+                              <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-secondary text-sm font-bold text-foreground">
                                 {cas}
                               </span>
                             </td>
@@ -205,17 +205,17 @@ export function RasporedPage() {
                               return (
                                 <td key={dan} className="p-3 align-top">
                                   {stavka ? (
-                                    <div className="p-3 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 shadow-sm transition-transform hover:-translate-y-0.5 hover:shadow-md">
-                                      <p className="text-xs font-bold text-blue-700 tracking-wide uppercase">
+                                    <div className="p-3 rounded-xl bg-gradient-to-br from-brand-50 to-brand-50 border border-brand-100 shadow-sm transition-transform hover:-translate-y-0.5 hover:shadow-md">
+                                      <p className="text-xs font-bold text-brand-700 tracking-wide uppercase">
                                         {stavka.odeljenjeLabel}
                                       </p>
-                                      <p className="text-sm font-semibold text-gray-900 mt-1 leading-tight">
+                                      <p className="text-sm font-semibold text-foreground mt-1 leading-tight">
                                         {stavka.predmetLabel}
                                       </p>
                                     </div>
                                   ) : (
-                                    <div className="h-16 rounded-xl border border-dashed border-gray-200 flex items-center justify-center bg-gray-50/30">
-                                      <span className="text-xs text-gray-400 font-medium">Slobodno</span>
+                                    <div className="h-16 rounded-xl border border-dashed border-border flex items-center justify-center bg-muted/30">
+                                      <span className="text-xs text-muted-foreground font-medium">Slobodno</span>
                                     </div>
                                   )}
                                 </td>
@@ -233,14 +233,14 @@ export function RasporedPage() {
             {/* XML Import Panel (Admin/Koordinator only) */}
             {isEduAdmin && (
               <div className="space-y-6">
-                <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 p-6 space-y-6">
+                <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-6 space-y-6">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+                    <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600">
                       <Upload className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-gray-900">Uvoz XML rasporeda</h3>
-                      <p className="text-xs text-gray-500">SpreadsheetML 2003 format</p>
+                      <h3 className="text-lg font-bold text-foreground">Uvoz XML rasporeda</h3>
+                      <p className="text-xs text-muted-foreground">SpreadsheetML 2003 format</p>
                     </div>
                   </div>
 
@@ -268,7 +268,7 @@ export function RasporedPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="fajl">Odaberite XML fajl</Label>
-                      <div className="border-2 border-dashed border-gray-200 hover:border-blue-400 rounded-xl p-6 transition-all bg-gray-50/50 cursor-pointer relative group">
+                      <div className="border-2 border-dashed border-border hover:border-brand-400 rounded-xl p-6 transition-all bg-muted/50 cursor-pointer relative group">
                         <input
                           id="fajl"
                           type="file"
@@ -278,11 +278,11 @@ export function RasporedPage() {
                           className="absolute inset-0 opacity-0 cursor-pointer"
                         />
                         <div className="flex flex-col items-center justify-center space-y-2 text-center">
-                          <FileSpreadsheet className="w-8 h-8 text-gray-400 group-hover:text-blue-500 transition-colors" />
-                          <span className="text-sm font-semibold text-gray-700">
+                          <FileSpreadsheet className="w-8 h-8 text-muted-foreground group-hover:text-brand-500 transition-colors" />
+                          <span className="text-sm font-semibold text-foreground">
                             {file ? file.name : 'Izaberite raspored.xml'}
                           </span>
-                          <span className="text-xs text-gray-400">
+                          <span className="text-xs text-muted-foreground">
                             {file ? `${(file.size / 1024).toFixed(1)} KB` : 'Prevucite fajl ovde'}
                           </span>
                         </div>
@@ -292,7 +292,7 @@ export function RasporedPage() {
                     <Button
                       type="submit"
                       disabled={isUploading || !file}
-                      className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-lg shadow-blue-600/10"
+                      className="w-full h-11 bg-brand-600 hover:bg-brand-700 text-white rounded-xl shadow-lg shadow-brand-600/10"
                     >
                       {isUploading ? 'Uvoženje...' : 'Uvezi raspored'}
                     </Button>

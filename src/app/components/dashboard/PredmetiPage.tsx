@@ -225,9 +225,9 @@ export function PredmetiPage() {
       />
 
       {/* Filteri */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col lg:flex-row gap-3">
+      <div className="bg-card rounded-2xl border border-border p-4 flex flex-col lg:flex-row gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             placeholder="Pretrazi po nazivu predmeta"
             value={pretraga}
@@ -253,7 +253,7 @@ export function PredmetiPage() {
       ) : error ? (
         <ErrorRow message={error} onRetry={ucitaj} />
       ) : filtrirani.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center text-gray-500">
+        <div className="bg-card rounded-2xl border border-border p-12 text-center text-muted-foreground">
           Nema predmeta. Klikni "Dodaj predmet" da napravis prvi.
         </div>
       ) : (
@@ -261,33 +261,33 @@ export function PredmetiPage() {
           {filtrirani.map((p) => (
             <article
               key={p.id}
-              className={`bg-white rounded-2xl border p-5 transition-shadow hover:shadow-md ${
-                p.aktivan ? 'border-gray-200' : 'border-gray-200 opacity-60'
+              className={`bg-card rounded-2xl border p-5 transition-shadow hover:shadow-md ${
+                p.aktivan ? 'border-border' : 'border-border opacity-60'
               }`}
             >
               <div className="flex items-start justify-between mb-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center">
                   <BookOpen className="w-5 h-5" />
                 </div>
                 {!p.aktivan && (
-                  <span className="text-xs font-medium rounded-full bg-gray-100 text-gray-600 px-2 py-0.5">
+                  <span className="text-xs font-medium rounded-full bg-secondary text-muted-foreground px-2 py-0.5">
                     Deaktiviran
                   </span>
                 )}
               </div>
-              <h3 className="font-semibold text-gray-900 text-lg mb-1">{p.naziv}</h3>
-              <p className="text-sm text-gray-500 mb-4">
+              <h3 className="font-semibold text-foreground text-lg mb-1">{p.naziv}</h3>
+              <p className="text-sm text-muted-foreground mb-4">
                 {p.razred ? `${p.razred}. razred` : 'Razred nije zadat'}
                 {p.fondCasova ? ` • ${p.fondCasova} casa nedeljno` : ''}
               </p>
               <div className="flex flex-wrap gap-1.5 mb-4 min-h-7">
                 {p.odeljenja.length === 0 ? (
-                  <span className="text-xs text-gray-400 italic">Nema dodeljenih odeljenja</span>
+                  <span className="text-xs text-muted-foreground italic">Nema dodeljenih odeljenja</span>
                 ) : (
                   p.odeljenja.map((o) => (
                     <span
                       key={o.id}
-                      className="inline-flex items-center gap-1 rounded-full bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-0.5"
+                      className="inline-flex items-center gap-1 rounded-full bg-brand-50 text-brand-700 text-xs font-medium px-2.5 py-0.5"
                     >
                       <School className="w-3 h-3" /> {o.label}
                     </span>
@@ -320,7 +320,7 @@ export function PredmetiPage() {
           </DialogHeader>
           <div className="max-h-80 overflow-y-auto space-y-1 -mx-2 px-2">
             {odeljenja.length === 0 ? (
-              <p className="text-sm text-gray-500 py-6 text-center">
+              <p className="text-sm text-muted-foreground py-6 text-center">
                 Nema odeljenja u skoli. Prvo kreiraj odeljenja u sekciji "Odeljenja".
               </p>
             ) : (
@@ -330,18 +330,18 @@ export function PredmetiPage() {
                   <label
                     key={o.id}
                     className={`flex items-center gap-3 rounded-xl px-3 py-2 cursor-pointer ${
-                      checked ? 'bg-blue-50' : 'hover:bg-gray-50'
+                      checked ? 'bg-brand-50' : 'hover:bg-secondary'
                     }`}
                   >
                     <input
                       type="checkbox"
                       checked={checked}
                       onChange={() => toggleOdeljenje(o.id)}
-                      className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600/40"
+                      className="w-4 h-4 rounded border-input text-brand-600 focus:ring-brand-600/40"
                     />
-                    <span className="font-medium text-gray-900">{o.label}</span>
+                    <span className="font-medium text-foreground">{o.label}</span>
                     {o.staresinaIme && (
-                      <span className="text-xs text-gray-500 ml-auto">staresina: {o.staresinaIme}</span>
+                      <span className="text-xs text-muted-foreground ml-auto">staresina: {o.staresinaIme}</span>
                     )}
                   </label>
                 );
@@ -360,7 +360,7 @@ export function PredmetiPage() {
 
 function CenteredLoader() {
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-12 flex items-center justify-center text-gray-500">
+    <div className="bg-card rounded-2xl border border-border p-12 flex items-center justify-center text-muted-foreground">
       <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam...
     </div>
   );

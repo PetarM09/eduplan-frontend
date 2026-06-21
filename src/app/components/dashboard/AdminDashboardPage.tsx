@@ -75,7 +75,7 @@ export function AdminDashboardPage() {
       />
 
       {loading ? (
-        <div className="bg-white rounded-2xl border border-gray-200 p-12 flex items-center justify-center text-gray-500">
+        <div className="bg-card rounded-2xl border border-border p-12 flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam statistiku...
         </div>
       ) : error ? (
@@ -90,7 +90,7 @@ export function AdminDashboardPage() {
               label="Korisnici"
               value={stats.korisnika}
               icon={Users}
-              accent="indigo"
+              accent="info"
               to="/korisnici"
               hint={`${stats.aktivnihKorisnika} aktivnih`}
             />
@@ -98,21 +98,21 @@ export function AdminDashboardPage() {
               label="Predmeti"
               value={stats.predmeta}
               icon={BookOpen}
-              accent="blue"
+              accent="brand"
               to="/predmeti"
             />
             <StatCard
               label="Odeljenja"
               value={stats.odeljenja}
               icon={School}
-              accent="cyan"
+              accent="accent"
               to="/odeljenja"
             />
             <StatCard
               label="Zamene danas"
               value={stats.zameneDanas}
               icon={UserX}
-              accent="orange"
+              accent="warning"
               to="/zamene"
               hint={
                 stats.predlozeneZamene > 0
@@ -124,7 +124,7 @@ export function AdminDashboardPage() {
               label="Godisnji planovi (poslati)"
               value={stats.godisnjiPodnetih}
               icon={FileText}
-              accent="green"
+              accent="success"
               to="/planovi/godisnji"
               hint={`${stats.godisnjiOdobrenih} odobrenih`}
             />
@@ -132,7 +132,7 @@ export function AdminDashboardPage() {
               label="Operativni planovi (poslati)"
               value={stats.operativniPodnetih}
               icon={ClipboardList}
-              accent="purple"
+              accent="accent"
               to="/planovi/operativni"
               hint={`${stats.operativniOdobrenih} odobrenih`}
             />

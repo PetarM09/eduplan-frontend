@@ -251,9 +251,9 @@ export function OdeljenjaPage() {
       />
 
       {/* Filteri */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col lg:flex-row gap-3">
+      <div className="bg-card rounded-2xl border border-border p-4 flex flex-col lg:flex-row gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             placeholder="Pretrazi po oznaci ili imenu staresine"
             value={pretraga}
@@ -275,7 +275,7 @@ export function OdeljenjaPage() {
 
       {/* Lista */}
       {loading ? (
-        <div className="bg-white rounded-2xl border border-gray-200 p-12 flex items-center justify-center text-gray-500">
+        <div className="bg-card rounded-2xl border border-border p-12 flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam odeljenja...
         </div>
       ) : error ? (
@@ -285,7 +285,7 @@ export function OdeljenjaPage() {
           <Button size="sm" variant="outline" onClick={ucitaj} className="ml-auto">Pokusaj ponovo</Button>
         </div>
       ) : filtrirani.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center text-gray-500">
+        <div className="bg-card rounded-2xl border border-border p-12 text-center text-muted-foreground">
           Nema odeljenja. Klikni "Dodaj odeljenje" da kreiras prvo.
         </div>
       ) : (
@@ -293,33 +293,33 @@ export function OdeljenjaPage() {
           {filtrirani.map((o) => (
             <article
               key={o.id}
-              className={`bg-white rounded-2xl border p-5 ${
-                o.aktivan ? 'border-gray-200' : 'border-gray-200 opacity-60'
+              className={`bg-card rounded-2xl border p-5 ${
+                o.aktivan ? 'border-border' : 'border-border opacity-60'
               }`}
             >
               <div className="flex items-start justify-between mb-3">
-                <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl font-bold">
+                <div className="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center text-xl font-bold">
                   {o.label}
                 </div>
                 {!o.aktivan && (
-                  <span className="text-xs font-medium rounded-full bg-gray-100 text-gray-600 px-2 py-0.5">
+                  <span className="text-xs font-medium rounded-full bg-secondary text-muted-foreground px-2 py-0.5">
                     Deaktivirano
                   </span>
                 )}
               </div>
-              <h3 className="font-semibold text-gray-900 mb-1">
+              <h3 className="font-semibold text-foreground mb-1">
                 {o.razred}. razred — odeljenje {o.oznaka}
               </h3>
-              <p className="text-sm text-gray-500 mb-3">Skolska godina {o.skolskaGodina}</p>
-              <div className="text-sm bg-gray-50 rounded-lg px-3 py-2 mb-3 flex items-center gap-2 min-h-10">
-                <School className="w-4 h-4 text-gray-400" />
+              <p className="text-sm text-muted-foreground mb-3">Skolska godina {o.skolskaGodina}</p>
+              <div className="text-sm bg-muted rounded-lg px-3 py-2 mb-3 flex items-center gap-2 min-h-10">
+                <School className="w-4 h-4 text-muted-foreground" />
                 {o.staresinaIme ? (
-                  <span className="text-gray-700">
-                    <span className="text-xs text-gray-500 block">Razredni staresina</span>
+                  <span className="text-foreground">
+                    <span className="text-xs text-muted-foreground block">Razredni staresina</span>
                     {o.staresinaIme}
                   </span>
                 ) : (
-                  <span className="text-gray-400 italic">Bez staresine</span>
+                  <span className="text-muted-foreground italic">Bez staresine</span>
                 )}
               </div>
               <div className="flex gap-2">

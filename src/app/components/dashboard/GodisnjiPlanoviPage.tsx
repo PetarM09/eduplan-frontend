@@ -8,10 +8,10 @@ import { useAuth } from '@/context/AuthContext';
 import type { GodisnjiPlanResponse, PlanStatus } from '@/lib/types';
 
 const STATUS_META: Record<PlanStatus, { label: string; bg: string; text: string }> = {
-  NACRT: { label: 'Nacrt', bg: 'bg-gray-100', text: 'text-gray-700' },
-  PODNET: { label: 'Podnet', bg: 'bg-blue-100', text: 'text-blue-700' },
+  NACRT: { label: 'Nacrt', bg: 'bg-secondary', text: 'text-foreground' },
+  PODNET: { label: 'Podnet', bg: 'bg-brand-100', text: 'text-brand-700' },
   VRACENO_NA_DORADU: { label: 'Vracen na doradu', bg: 'bg-amber-100', text: 'text-amber-700' },
-  ARHIVIRAN: { label: 'Arhiviran', bg: 'bg-gray-100', text: 'text-gray-500' },
+  ARHIVIRAN: { label: 'Arhiviran', bg: 'bg-secondary', text: 'text-muted-foreground' },
 };
 
 export function GodisnjiPlanoviPage() {
@@ -121,7 +121,7 @@ export function GodisnjiPlanoviPage() {
       />
 
       {loading ? (
-        <div className="bg-white rounded-2xl border border-gray-200 p-12 flex items-center justify-center text-gray-500">
+        <div className="bg-card rounded-2xl border border-border p-12 flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam planove...
         </div>
       ) : error ? (
@@ -133,15 +133,15 @@ export function GodisnjiPlanoviPage() {
           </Button>
         </div>
       ) : planovi.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center text-gray-500">
+        <div className="bg-card rounded-2xl border border-border p-12 text-center text-muted-foreground">
           {sviRezim
             ? 'Jos nema unetih godisnjih planova u skoli.'
             : 'Jos nemas nijedan godisnji plan. Klikni "Novi plan" da kreiras prvi.'}
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+        <div className="bg-card rounded-2xl border border-border overflow-hidden">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-muted border-b border-border">
               <tr>
                 {sviRezim && <Th>Nastavnik</Th>}
                 <Th>Predmet</Th>
@@ -152,15 +152,15 @@ export function GodisnjiPlanoviPage() {
                 <Th className="text-right">Akcije</Th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-border">
               {planovi.map((p) => {
                 const sm = STATUS_META[p.status];
                 return (
-                  <tr key={p.id} className="hover:bg-gray-50">
-                    {sviRezim && <Td className="font-medium text-gray-900">{p.nastavnikIme}</Td>}
+                  <tr key={p.id} className="hover:bg-secondary">
+                    {sviRezim && <Td className="font-medium text-foreground">{p.nastavnikIme}</Td>}
                     <Td>
                       <div className="flex items-center gap-2">
-                        <FileText className="w-4 h-4 text-blue-500" />
+                        <FileText className="w-4 h-4 text-brand-500" />
                         {p.predmetNaziv}
                       </div>
                     </Td>
@@ -176,7 +176,7 @@ export function GodisnjiPlanoviPage() {
                         </div>
                       )}
                     </Td>
-                    <Td className="text-xs text-gray-500">{p.teme?.length ?? 0} tema</Td>
+                    <Td className="text-xs text-muted-foreground">{p.teme?.length ?? 0} tema</Td>
                     <Td className="text-right">
                       <div className="inline-flex items-center gap-1 justify-end">
                         {p.imaWord && (
@@ -242,12 +242,12 @@ export function GodisnjiPlanoviPage() {
 
 function Th({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
-    <th className={`px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider ${className}`}>
+    <th className={`px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider ${className}`}>
       {children}
     </th>
   );
 }
 
 function Td({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  return <td className={`px-6 py-4 text-sm text-gray-700 ${className}`}>{children}</td>;
+  return <td className={`px-6 py-4 text-sm text-foreground ${className}`}>{children}</td>;
 }

@@ -132,7 +132,7 @@ function ListaRotacija({
       />
 
       {loading ? (
-        <div className="bg-white rounded-2xl border border-gray-200 p-12 flex items-center justify-center text-gray-500">
+        <div className="bg-card rounded-2xl border border-border p-12 flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam...
         </div>
       ) : error ? (
@@ -144,7 +144,7 @@ function ListaRotacija({
           </Button>
         </div>
       ) : rotacije.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center text-gray-500">
+        <div className="bg-card rounded-2xl border border-border p-12 text-center text-muted-foreground">
           {nastavnikRezim
             ? 'Trenutno nisi ukljucen ni u jednu rotaciju. Koordinator skole pravi rotacije i bira profesore.'
             : mozePraviti
@@ -152,9 +152,9 @@ function ListaRotacija({
               : 'Jos nema rotacija.'}
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+        <div className="bg-card rounded-2xl border border-border overflow-hidden">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-muted border-b border-border">
               <tr>
                 <Th>Naziv</Th>
                 <Th>Kreirao</Th>
@@ -165,12 +165,12 @@ function ListaRotacija({
                 {mozeBrisati && <Th className="text-right">Akcije</Th>}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-border">
               {rotacije.map((r) => (
-                <tr key={r.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => onOtvori(r.id)}>
-                  <Td className="font-medium text-gray-900">
+                <tr key={r.id} className="hover:bg-secondary cursor-pointer" onClick={() => onOtvori(r.id)}>
+                  <Td className="font-medium text-foreground">
                     <div className="flex items-center gap-2">
-                      <Repeat className="w-4 h-4 text-indigo-500" />
+                      <Repeat className="w-4 h-4 text-brand-500" />
                       {r.naziv}
                     </div>
                   </Td>
@@ -180,7 +180,7 @@ function ListaRotacija({
                   <Td>
                     {r.brojGrupa} grupa × {r.brojNedelja} ned.
                   </Td>
-                  <Td className="text-xs text-gray-500">{r.predmeti.length}</Td>
+                  <Td className="text-xs text-muted-foreground">{r.predmeti.length}</Td>
                   {mozeBrisati && (
                     <Td className="text-right" onClick={(e) => e.stopPropagation()}>
                       <Button
@@ -393,16 +393,16 @@ function NoviRotacijaWizard({
         }
       />
 
-      <div className="flex items-center gap-2 text-sm text-gray-500">
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <KorakIndikator broj={1} aktivan={korak === 1} prosao={korak > 1} label="Odeljenje" />
-        <div className="flex-1 h-px bg-gray-200" />
+        <div className="flex-1 h-px bg-secondary" />
         <KorakIndikator broj={2} aktivan={korak === 2} prosao={korak > 2} label="Predmeti" />
-        <div className="flex-1 h-px bg-gray-200" />
+        <div className="flex-1 h-px bg-secondary" />
         <KorakIndikator broj={3} aktivan={korak === 3} prosao={false} label="Generisi" />
       </div>
 
       {korak === 1 && (
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-5">
+        <div className="bg-card rounded-2xl border border-border p-6 space-y-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="naziv">Naziv rotacije</Label>
@@ -423,7 +423,7 @@ function NoviRotacijaWizard({
                 id="od"
                 value={odeljenjeId}
                 onChange={(e) => setOdeljenjeId(e.target.value)}
-                className="h-10 px-3 rounded-lg border border-gray-300 text-sm w-full"
+                className="h-10 px-3 rounded-lg border border-input text-sm w-full"
               >
                 <option value="">— izaberi —</option>
                 {odeljenja.map((o) => (
@@ -432,7 +432,7 @@ function NoviRotacijaWizard({
                   </option>
                 ))}
               </select>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Sistem ce auto-detektovati profesore vezbi za izabrano odeljenje iz aktivne verzije rasporeda.
               </p>
             </div>
@@ -442,7 +442,7 @@ function NoviRotacijaWizard({
               <AlertCircle className="w-4 h-4" /> {detekcijaError}
             </div>
           )}
-          <div className="flex justify-end gap-2 pt-2 border-t border-gray-100">
+          <div className="flex justify-end gap-2 pt-2 border-t border-border">
             <Button variant="outline" onClick={onOtkazi}>
               Otkazi
             </Button>
@@ -455,13 +455,13 @@ function NoviRotacijaWizard({
       )}
 
       {korak === 2 && detekcija && (
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-5">
+        <div className="bg-card rounded-2xl border border-border p-6 space-y-5">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">
+              <h2 className="text-lg font-semibold text-foreground">
                 Profesori vezbi — {detekcija.odeljenjeLabel}
               </h2>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-muted-foreground">
                 Iz rasporeda: <strong>{detekcija.ukupnoStavki}</strong> stavki kroz{' '}
                 <strong>{detekcija.ukupnoTerminaUkupno}</strong> termina. Detektovano{' '}
                 <strong>{detekcija.termini.length}</strong> termina vezbi (sa 2+ profesora),{' '}
@@ -474,7 +474,7 @@ function NoviRotacijaWizard({
             <DebugRaspored detekcija={detekcija} />
           ) : (
             <div className="space-y-3">
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-blue-800">
+              <div className="bg-brand-50 border border-brand-200 rounded-lg p-3 text-xs text-brand-800">
                 Profesori koji nisu u sistemu se i dalje mogu ukljuciti — rotacija ce raditi po
                 imenu iz rasporeda. Kad takav profesor bude dodat kao korisnik (rucno ili kroz
                 mapiranje u "Verzije rasporeda"), automatski se povezuje sa svojim rotacijama.
@@ -495,9 +495,9 @@ function NoviRotacijaWizard({
                     key={p.profesorIme}
                     className={`rounded-xl border p-4 ${
                       iskljucen
-                        ? 'border-gray-200 bg-gray-50 opacity-70'
+                        ? 'border-border bg-muted opacity-70'
                         : ok
-                          ? 'border-gray-200'
+                          ? 'border-border'
                           : 'border-amber-300 bg-amber-50/30'
                     }`}
                   >
@@ -507,14 +507,14 @@ function NoviRotacijaWizard({
                           type="checkbox"
                           checked={!iskljucen}
                           onChange={() => toggleIskljucen(p)}
-                          className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                          className="w-4 h-4 rounded border-input text-brand-600 focus:ring-brand-500 cursor-pointer"
                           title="Ukljuci u rotaciju"
                         />
                         <div>
-                          <p className={`font-medium ${iskljucen ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+                          <p className={`font-medium ${iskljucen ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
                             {p.profesorIme}
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-muted-foreground">
                             Iz rasporeda: <strong>{p.brojCasovaVezbi}</strong> casova vezbi
                           </p>
                         </div>
@@ -524,7 +524,7 @@ function NoviRotacijaWizard({
                           </span>
                         )}
                         {iskljucen && (
-                          <span className="inline-flex items-center rounded-full bg-gray-200 text-gray-700 px-2 py-0.5 text-xs font-semibold">
+                          <span className="inline-flex items-center rounded-full bg-secondary text-foreground px-2 py-0.5 text-xs font-semibold">
                             Iskljucen
                           </span>
                         )}
@@ -540,7 +540,7 @@ function NoviRotacijaWizard({
                       )}
                     </div>
                     {iskljucen ? (
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-muted-foreground">
                         Profesor je iskljucen iz ove rotacije. Njegovi termini se nece uracunati u dodele grupa.
                       </p>
                     ) : (
@@ -572,7 +572,7 @@ function NoviRotacijaWizard({
                         ))}
                         <button
                           onClick={() => dodajPredmet(p.profesorIme, p.profesorId)}
-                          className="text-sm text-blue-600 hover:text-blue-700 inline-flex items-center gap-1"
+                          className="text-sm text-brand-600 hover:text-brand-700 inline-flex items-center gap-1"
                         >
                           <Plus className="w-3.5 h-3.5" /> Jos jedan predmet
                         </button>
@@ -584,7 +584,7 @@ function NoviRotacijaWizard({
             </div>
           )}
 
-          <div className="flex justify-between items-center gap-2 pt-2 border-t border-gray-100">
+          <div className="flex justify-between items-center gap-2 pt-2 border-t border-border">
             <Button variant="outline" onClick={() => setKorak(1)}>
               <ArrowLeft className="w-4 h-4" /> Nazad
             </Button>
@@ -599,10 +599,10 @@ function NoviRotacijaWizard({
       )}
 
       {korak === 3 && (
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-5">
+        <div className="bg-card rounded-2xl border border-border p-6 space-y-5">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Grupe i nedelje</h2>
-            <p className="text-sm text-gray-500">
+            <h2 className="text-lg font-semibold text-foreground">Grupe i nedelje</h2>
+            <p className="text-sm text-muted-foreground">
               Odeljenje se deli na grupe; rotacija prati casove vezbi kroz N nedelja.
             </p>
           </div>
@@ -630,7 +630,7 @@ function NoviRotacijaWizard({
               />
             </div>
           </div>
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
+          <div className="bg-brand-50 border border-brand-200 rounded-lg p-3 text-sm text-brand-800">
             Rotacija ce kreirati ukupno{' '}
             <strong>
               {brojNedelja} × {(detekcija?.termini.length ?? 0)} termina = {brojNedelja * (detekcija?.termini.length ?? 0)}
@@ -638,7 +638,7 @@ function NoviRotacijaWizard({
             dodela grupa.
           </div>
 
-          <div className="flex justify-between items-center gap-2 pt-2 border-t border-gray-100">
+          <div className="flex justify-between items-center gap-2 pt-2 border-t border-border">
             <Button variant="outline" onClick={() => setKorak(2)}>
               <ArrowLeft className="w-4 h-4" /> Nazad
             </Button>
@@ -676,28 +676,28 @@ function DebugRaspored({ detekcija }: { detekcija: DetekcijaVezbiResponse }) {
           stanje rasporeda za ovo odeljenje:
         </p>
       </div>
-      <div className="overflow-x-auto rounded-lg border border-gray-200">
+      <div className="overflow-x-auto rounded-lg border border-border">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b border-gray-200">
+          <thead className="bg-muted border-b border-border">
             <tr>
-              <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase">Dan</th>
-              <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase">Cas</th>
-              <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase">Profesori</th>
-              <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase">Broj</th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground uppercase">Dan</th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground uppercase">Cas</th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground uppercase">Profesori</th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-muted-foreground uppercase">Broj</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-border">
             {detekcija.sviTermini.map((t, i) => {
               const vezba = t.profesoriIds.length >= 2;
               return (
                 <tr key={i} className={vezba ? 'bg-emerald-50/40' : ''}>
-                  <td className="px-3 py-1.5 text-gray-700">{DAN_LABEL[t.dan]}</td>
-                  <td className="px-3 py-1.5 text-gray-700">{t.cas}.</td>
-                  <td className="px-3 py-1.5 text-gray-700">{t.profesoriImena.join(', ')}</td>
+                  <td className="px-3 py-1.5 text-foreground">{DAN_LABEL[t.dan]}</td>
+                  <td className="px-3 py-1.5 text-foreground">{t.cas}.</td>
+                  <td className="px-3 py-1.5 text-foreground">{t.profesoriImena.join(', ')}</td>
                   <td className="px-3 py-1.5">
                     <span
                       className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                        vezba ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600'
+                        vezba ? 'bg-emerald-100 text-emerald-700' : 'bg-secondary text-muted-foreground'
                       }`}
                     >
                       {t.profesoriIds.length}
@@ -725,16 +725,16 @@ function KorakIndikator({
   label: string;
 }) {
   const klasa = aktivan
-    ? 'bg-blue-600 text-white'
+    ? 'bg-brand-600 text-white'
     : prosao
     ? 'bg-emerald-500 text-white'
-    : 'bg-gray-200 text-gray-600';
+    : 'bg-secondary text-muted-foreground';
   return (
     <div className="flex items-center gap-2">
       <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold ${klasa}`}>
         {prosao ? <CheckCircle2 className="w-4 h-4" /> : broj}
       </div>
-      <span className={`text-xs font-medium ${aktivan ? 'text-blue-700' : prosao ? 'text-emerald-700' : 'text-gray-500'}`}>
+      <span className={`text-xs font-medium ${aktivan ? 'text-brand-700' : prosao ? 'text-emerald-700' : 'text-muted-foreground'}`}>
         {label}
       </span>
     </div>
@@ -765,7 +765,7 @@ function DetaljRotacije({ rotacijaId, onNazad }: { rotacijaId: string; onNazad: 
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl border border-gray-200 p-12 flex items-center justify-center text-gray-500">
+      <div className="bg-card rounded-2xl border border-border p-12 flex items-center justify-center text-muted-foreground">
         <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam...
       </div>
     );
@@ -794,13 +794,13 @@ function DetaljRotacije({ rotacijaId, onNazad }: { rotacijaId: string; onNazad: 
         }
       />
 
-      <div className="bg-white rounded-2xl border border-gray-200 p-5">
-        <h3 className="font-semibold text-gray-900 mb-3">Predmeti vezbi</h3>
+      <div className="bg-card rounded-2xl border border-border p-5">
+        <h3 className="font-semibold text-foreground mb-3">Predmeti vezbi</h3>
         <div className="flex flex-wrap gap-2">
           {rot.predmeti.map((p) => (
             <span
               key={p.id}
-              className="inline-flex items-center rounded-full bg-indigo-50 text-indigo-700 px-3 py-1 text-xs font-medium"
+              className="inline-flex items-center rounded-full bg-brand-50 text-brand-700 px-3 py-1 text-xs font-medium"
             >
               {p.profesorIme} → <strong className="ml-1">{p.naziv}</strong> ({p.casovaNedeljno}č)
             </span>
@@ -855,46 +855,46 @@ function NedeljaTabela({
   });
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-      <header className="p-4 border-b border-gray-200 flex items-center gap-2">
-        <span className="inline-flex w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 items-center justify-center text-xs font-semibold">
+    <div className="bg-card rounded-2xl border border-border overflow-hidden">
+      <header className="p-4 border-b border-border flex items-center gap-2">
+        <span className="inline-flex w-7 h-7 rounded-full bg-brand-100 text-brand-700 items-center justify-center text-xs font-semibold">
           {brojNedelje}
         </span>
-        <h3 className="font-semibold text-gray-900">Nedelja {brojNedelje}</h3>
+        <h3 className="font-semibold text-foreground">Nedelja {brojNedelje}</h3>
       </header>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b border-gray-200">
+          <thead className="bg-muted border-b border-border">
             <tr>
-              <th className="px-4 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <th className="px-4 py-2 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 Profesor (Predmet)
               </th>
               {koloneSorted.map((c) => (
                 <th
                   key={c.key}
-                  className="px-3 py-2 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                  className="px-3 py-2 text-center text-xs font-semibold text-muted-foreground uppercase tracking-wider"
                 >
                   {DAN_LABEL[c.dan]} {c.cas}.č
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-border">
             {redovi.map((r) => (
               <tr key={`${r.profesorIme}|${r.predmetNaziv}`}>
-                <td className="px-4 py-2 font-medium text-gray-900">
-                  {r.profesorIme} <span className="text-gray-500 font-normal">({r.predmetNaziv})</span>
+                <td className="px-4 py-2 font-medium text-foreground">
+                  {r.profesorIme} <span className="text-muted-foreground font-normal">({r.predmetNaziv})</span>
                 </td>
                 {koloneSorted.map((c) => {
                   const g = dodelaMapa.get(`${r.profesorIme}|${r.predmetNaziv}|${c.dan}|${c.cas}`);
                   return (
                     <td key={c.key} className="px-3 py-2 text-center">
                       {g != null ? (
-                        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold">
+                        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-brand-100 text-brand-700 text-xs font-semibold">
                           G{g}
                         </span>
                       ) : (
-                        <span className="text-gray-300">—</span>
+                        <span className="text-muted-foreground">—</span>
                       )}
                     </td>
                   );
@@ -912,7 +912,7 @@ function NedeljaTabela({
 
 function Th({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
-    <th className={`px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider ${className}`}>
+    <th className={`px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider ${className}`}>
       {children}
     </th>
   );
@@ -928,7 +928,7 @@ function Td({
   onClick?: (e: React.MouseEvent) => void;
 }) {
   return (
-    <td className={`px-6 py-4 text-sm text-gray-700 ${className}`} onClick={onClick}>
+    <td className={`px-6 py-4 text-sm text-foreground ${className}`} onClick={onClick}>
       {children}
     </td>
   );

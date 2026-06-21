@@ -136,14 +136,14 @@ export function VerzijeRasporedaPage() {
       />
 
       {user?.uloga === 'KOORDINATOR' && nemapirani.length > 0 && (
-        <div className="bg-white rounded-2xl border border-amber-200">
+        <div className="bg-card rounded-2xl border border-amber-200">
           <header className="p-4 border-b border-amber-200 bg-amber-50/50 flex items-center gap-2">
             <Link2 className="w-5 h-5 text-amber-600" />
-            <h2 className="font-semibold text-gray-900">Nemapirani profesori iz rasporeda</h2>
+            <h2 className="font-semibold text-foreground">Nemapirani profesori iz rasporeda</h2>
             <span className="ml-auto text-xs text-amber-700">{nemapirani.length} stavki</span>
           </header>
           <div className="p-4 space-y-2">
-            <p className="text-xs text-gray-500 mb-2">
+            <p className="text-xs text-muted-foreground mb-2">
               Ovo su imena iz XML rasporeda koja nisu povezana sa korisnickim nalogom. Izaberi
               postojeceg korisnika za svako ime i klikni "Mapiraj" da povezes sve casove tog
               profesora. Pri dodavanju novog korisnika sa istim imenom auto-mapiranje radi
@@ -152,18 +152,18 @@ export function VerzijeRasporedaPage() {
             {nemapirani.map((nm) => (
               <div
                 key={nm.nastavnikLabel}
-                className="grid grid-cols-[1fr_auto_auto] gap-2 items-center px-3 py-2 rounded-lg border border-gray-200"
+                className="grid grid-cols-[1fr_auto_auto] gap-2 items-center px-3 py-2 rounded-lg border border-border"
               >
                 <div>
-                  <div className="font-medium text-gray-900">{nm.nastavnikLabel}</div>
-                  <div className="text-xs text-gray-500">{nm.brojStavki} casova u rasporedu</div>
+                  <div className="font-medium text-foreground">{nm.nastavnikLabel}</div>
+                  <div className="text-xs text-muted-foreground">{nm.brojStavki} casova u rasporedu</div>
                 </div>
                 <select
                   value={izbor[nm.nastavnikLabel] ?? ''}
                   onChange={(e) =>
                     setIzbor((prev) => ({ ...prev, [nm.nastavnikLabel]: e.target.value }))
                   }
-                  className="h-9 px-2 rounded-md border border-gray-300 text-sm min-w-[220px]"
+                  className="h-9 px-2 rounded-md border border-input text-sm min-w-[220px]"
                 >
                   <option value="">— izaberi korisnika —</option>
                   {nastavniciDostupni.map((k) => (
@@ -191,7 +191,7 @@ export function VerzijeRasporedaPage() {
       )}
 
       {loading ? (
-        <div className="bg-white rounded-2xl border border-gray-200 p-12 flex items-center justify-center text-gray-500">
+        <div className="bg-card rounded-2xl border border-border p-12 flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam...
         </div>
       ) : error ? (
@@ -203,54 +203,54 @@ export function VerzijeRasporedaPage() {
           </Button>
         </div>
       ) : verzije.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center text-gray-500">
+        <div className="bg-card rounded-2xl border border-border p-12 text-center text-muted-foreground">
           Nema uvezenih verzija rasporeda. Uvezi XML kroz stranicu "Raspored".
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+        <div className="bg-card rounded-2xl border border-border overflow-hidden">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-muted border-b border-border">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Naziv</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Sk. godina</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Datum od</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Profesora</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Casova</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Akcije</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Naziv</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Sk. godina</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Datum od</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Profesora</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Casova</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-right text-xs font-semibold text-muted-foreground uppercase tracking-wider">Akcije</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-border">
               {verzije.map((v) => (
                 <tr key={v.id} className={v.aktivan ? 'bg-emerald-50/40' : ''}>
                   <td className="px-6 py-4 text-sm">
-                    <div className="flex items-center gap-2 font-medium text-gray-900">
-                      <History className="w-4 h-4 text-indigo-500" />
-                      {v.naziv ?? <span className="text-gray-400 italic">(bez naziva)</span>}
+                    <div className="flex items-center gap-2 font-medium text-foreground">
+                      <History className="w-4 h-4 text-brand-500" />
+                      {v.naziv ?? <span className="text-muted-foreground italic">(bez naziva)</span>}
                     </div>
-                    <div className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                    <div className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
                       <Clock className="w-3 h-3" />
                       {new Date(v.createdAt).toLocaleString('sr-Latn-RS')}
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-700">{v.skolskaGodina ?? '—'}</td>
-                  <td className="px-6 py-4 text-sm text-gray-700">{v.datumOd ?? '—'}</td>
-                  <td className="px-6 py-4 text-sm text-gray-700">{v.brojProfesora}</td>
-                  <td className="px-6 py-4 text-sm text-gray-700">{v.brojStavki}</td>
+                  <td className="px-6 py-4 text-sm text-foreground">{v.skolskaGodina ?? '—'}</td>
+                  <td className="px-6 py-4 text-sm text-foreground">{v.datumOd ?? '—'}</td>
+                  <td className="px-6 py-4 text-sm text-foreground">{v.brojProfesora}</td>
+                  <td className="px-6 py-4 text-sm text-foreground">{v.brojStavki}</td>
                   <td className="px-6 py-4">
                     {v.aktivan ? (
                       <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-700 px-2.5 py-0.5 text-xs font-medium">
                         <CheckCircle2 className="w-3 h-3" /> Aktivna
                       </span>
                     ) : (
-                      <span className="inline-flex items-center rounded-full bg-gray-100 text-gray-600 px-2.5 py-0.5 text-xs font-medium">
+                      <span className="inline-flex items-center rounded-full bg-secondary text-muted-foreground px-2.5 py-0.5 text-xs font-medium">
                         Neaktivna
                       </span>
                     )}
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="inline-flex items-center gap-1">
-                      {busy === v.id && <Loader2 className="w-4 h-4 animate-spin text-gray-400" />}
+                      {busy === v.id && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}
                       {!v.aktivan && mozeAktivirati && (
                         <Button
                           size="sm"
