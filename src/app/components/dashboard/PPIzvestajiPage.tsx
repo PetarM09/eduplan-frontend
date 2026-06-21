@@ -294,7 +294,7 @@ export function PPIzvestajiPage() {
       />
 
       {/* Filteri */}
-      <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-4 flex flex-wrap items-end gap-3">
+      <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-4 flex flex-wrap items-end gap-3">
         <div>
           <Label htmlFor="f-godina">Skolska godina</Label>
           <div className="w-36">
@@ -358,7 +358,7 @@ export function PPIzvestajiPage() {
       </div>
 
       {loading ? (
-        <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-12 flex items-center justify-center text-muted-foreground">
+        <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-12 flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam...
         </div>
       ) : error ? (
@@ -370,13 +370,13 @@ export function PPIzvestajiPage() {
           </Button>
         </div>
       ) : izvestaji.length === 0 ? (
-        <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-12 text-center text-muted-foreground">
+        <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-12 text-center text-muted-foreground">
           {user?.uloga === 'NASTAVNIK' && mojaOdeljenja.length === 0
             ? 'Nisi staresina ni jednom odeljenju, pa ne mozes praviti izvestaje.'
             : 'Nema izvestaja po ovim filterima.'}
         </div>
       ) : (
-        <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border overflow-hidden">
+        <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border overflow-hidden">
           <table className="w-full">
             <thead className="bg-muted border-b border-border">
               <tr>

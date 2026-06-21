@@ -226,7 +226,7 @@ export function OperativniPlanEditorPage() {
   if (bootstrap) {
     return (
       <AppLayout>
-        <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-12 flex items-center justify-center text-muted-foreground">
+        <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-12 flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam...
         </div>
       </AppLayout>
@@ -258,7 +258,7 @@ export function OperativniPlanEditorPage() {
       )}
 
       {/* Osnovni podaci */}
-      <section className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-6 space-y-4">
+      <section className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-6 space-y-4">
         <h2 className="font-semibold text-foreground">Osnovni podaci</h2>
         <div className="grid lg:grid-cols-4 gap-4">
           <div className="space-y-1.5">
@@ -322,7 +322,7 @@ export function OperativniPlanEditorPage() {
       </section>
 
       {/* Stavke (casovi) */}
-      <section className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-6 space-y-5">
+      <section className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-6 space-y-5">
         <div className="flex items-center justify-between">
           <h2 className="font-semibold text-foreground">Casovi u mesecu</h2>
           <Button size="sm" variant="outline" onClick={dodajStavku}>
@@ -470,7 +470,7 @@ export function OperativniPlanEditorPage() {
         )}
       </section>
 
-      <section className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-6 space-y-4">
+      <section className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-6 space-y-4">
         <h2 className="font-semibold text-foreground">Samoprocena nastavnika</h2>
         <Textarea
           rows={3}

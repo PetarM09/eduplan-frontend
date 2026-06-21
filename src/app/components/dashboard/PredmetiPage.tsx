@@ -225,7 +225,7 @@ export function PredmetiPage() {
       />
 
       {/* Filteri */}
-      <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-4 flex flex-col lg:flex-row gap-3">
+      <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-4 flex flex-col lg:flex-row gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
@@ -253,7 +253,7 @@ export function PredmetiPage() {
       ) : error ? (
         <ErrorRow message={error} onRetry={ucitaj} />
       ) : filtrirani.length === 0 ? (
-        <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-12 text-center text-muted-foreground">
+        <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-12 text-center text-muted-foreground">
           Nema predmeta. Klikni "Dodaj predmet" da napravis prvi.
         </div>
       ) : (
@@ -261,7 +261,7 @@ export function PredmetiPage() {
           {filtrirani.map((p) => (
             <article
               key={p.id}
-              className={`bg-card rounded-2xl shadow-xl shadow-gray-200/50 border p-5 transition-shadow hover:shadow-md ${
+              className={`bg-card rounded-2xl shadow-md shadow-gray-200/50 border p-5 transition-shadow hover:shadow-md ${
                 p.aktivan ? 'border-border' : 'border-border opacity-60'
               }`}
             >
@@ -360,7 +360,7 @@ export function PredmetiPage() {
 
 function CenteredLoader() {
   return (
-    <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-12 flex items-center justify-center text-muted-foreground">
+    <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-12 flex items-center justify-center text-muted-foreground">
       <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam...
     </div>
   );

@@ -203,7 +203,7 @@ export function PozivnicePage() {
       )}
 
       {loading ? (
-        <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-12 flex items-center justify-center text-muted-foreground">
+        <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-12 flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam...
         </div>
       ) : error ? (
@@ -212,12 +212,12 @@ export function PozivnicePage() {
           <span>{error}</span>
         </div>
       ) : pozvani.length === 0 ? (
-        <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-12 text-center text-muted-foreground">
+        <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-12 text-center text-muted-foreground">
           <UserPlus className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
           Nema POZVAN naloga. Kliknite "Bootstrap iz rasporeda" ili uvezite Excel.
         </div>
       ) : (
-        <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border overflow-hidden">
+        <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border overflow-hidden">
           <table className="w-full">
             <thead className="bg-muted border-b border-border">
               <tr>
