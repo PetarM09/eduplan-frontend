@@ -18,7 +18,7 @@ export function ForgotPasswordPage() {
           </div>
         </div>
 
-        <div className="bg-card rounded-2xl border border-border shadow-xl p-8 space-y-6">
+        <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-8 space-y-6">
           <div className="text-center">
             <div className="mx-auto w-16 h-16 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center mb-4">
               <ShieldQuestion className="w-8 h-8" />

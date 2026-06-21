@@ -121,7 +121,7 @@ export function GodisnjiPlanoviPage() {
       />
 
       {loading ? (
-        <div className="bg-card rounded-2xl border border-border p-12 flex items-center justify-center text-muted-foreground">
+        <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-12 flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam planove...
         </div>
       ) : error ? (
@@ -133,13 +133,13 @@ export function GodisnjiPlanoviPage() {
           </Button>
         </div>
       ) : planovi.length === 0 ? (
-        <div className="bg-card rounded-2xl border border-border p-12 text-center text-muted-foreground">
+        <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-12 text-center text-muted-foreground">
           {sviRezim
             ? 'Jos nema unetih godisnjih planova u skoli.'
             : 'Jos nemas nijedan godisnji plan. Klikni "Novi plan" da kreiras prvi.'}
         </div>
       ) : (
-        <div className="bg-card rounded-2xl border border-border overflow-hidden">
+        <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border overflow-hidden">
           <table className="w-full">
             <thead className="bg-muted border-b border-border">
               <tr>

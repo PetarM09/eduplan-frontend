@@ -91,7 +91,7 @@ export function PostavkeSkolePage() {
       />
 
       {loading ? (
-        <div className="bg-card rounded-2xl border border-border p-12 flex items-center justify-center text-muted-foreground">
+        <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-12 flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam...
         </div>
       ) : error ? (
@@ -104,7 +104,7 @@ export function PostavkeSkolePage() {
         </div>
       ) : skola ? (
         <>
-          <div className="bg-card rounded-2xl border border-border p-6">
+          <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-6">
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center">
                 <School className="w-6 h-6" />
@@ -136,7 +136,7 @@ export function PostavkeSkolePage() {
             </div>
           </div>
 
-          <div className="bg-card rounded-2xl border border-border p-6 space-y-4">
+          <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-6 space-y-4">
             <div className="flex items-center gap-2">
               <Mail className="w-5 h-5 text-brand-600" />
               <h3 className="font-semibold text-foreground">Mail za primanje planova</h3>

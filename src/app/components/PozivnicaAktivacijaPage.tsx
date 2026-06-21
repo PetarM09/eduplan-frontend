@@ -62,7 +62,7 @@ export function PozivnicaAktivacijaPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-0 to-brand-50 flex items-center justify-center px-4">
-      <div className="bg-card rounded-2xl shadow-xl border border-border w-full max-w-md p-8">
+      <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border w-full max-w-md p-8">
         <div className="flex items-center gap-2 text-brand-600 mb-6">
           <GraduationCap className="w-7 h-7" />
           <span className="text-xl font-bold">BehindClasses</span>

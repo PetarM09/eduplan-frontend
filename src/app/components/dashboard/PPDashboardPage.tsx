@@ -129,7 +129,7 @@ export function PPDashboardPage() {
       />
 
       {loading ? (
-        <div className="bg-card rounded-2xl border border-border p-12 flex items-center justify-center text-muted-foreground">
+        <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-12 flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam dashboard...
         </div>
       ) : error ? (
@@ -166,7 +166,7 @@ export function PPDashboardPage() {
             />
           </div>
 
-          <div className="bg-card rounded-2xl border border-border">
+          <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border">
             <div className="px-6 py-4 border-b border-border flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <BarChart3 className="w-5 h-5 text-brand-600" />
@@ -220,7 +220,7 @@ export function PPDashboardPage() {
             </div>
           </div>
 
-          <div className="bg-card rounded-2xl border border-border">
+          <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border">
             <div className="px-6 py-4 border-b border-border">
               <h2 className="font-semibold text-foreground">Poslednji PP izvestaji</h2>
             </div>
@@ -285,7 +285,7 @@ function StatKartica({
   };
   const stavke = Object.entries(podStatusi).filter(([, v]) => v > 0);
   return (
-    <div className="bg-card rounded-2xl border border-border p-6">
+    <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-6">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-sm font-medium text-muted-foreground">{naslov}</p>

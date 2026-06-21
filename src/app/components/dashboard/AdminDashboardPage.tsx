@@ -75,7 +75,7 @@ export function AdminDashboardPage() {
       />
 
       {loading ? (
-        <div className="bg-card rounded-2xl border border-border p-12 flex items-center justify-center text-muted-foreground">
+        <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-12 flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam statistiku...
         </div>
       ) : error ? (

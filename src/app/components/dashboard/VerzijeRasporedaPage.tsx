@@ -136,7 +136,7 @@ export function VerzijeRasporedaPage() {
       />
 
       {user?.uloga === 'KOORDINATOR' && nemapirani.length > 0 && (
-        <div className="bg-card rounded-2xl border border-amber-200">
+        <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-amber-200">
           <header className="p-4 border-b border-amber-200 bg-amber-50/50 flex items-center gap-2">
             <Link2 className="w-5 h-5 text-amber-600" />
             <h2 className="font-semibold text-foreground">Nemapirani profesori iz rasporeda</h2>
@@ -191,7 +191,7 @@ export function VerzijeRasporedaPage() {
       )}
 
       {loading ? (
-        <div className="bg-card rounded-2xl border border-border p-12 flex items-center justify-center text-muted-foreground">
+        <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-12 flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam...
         </div>
       ) : error ? (
@@ -203,11 +203,11 @@ export function VerzijeRasporedaPage() {
           </Button>
         </div>
       ) : verzije.length === 0 ? (
-        <div className="bg-card rounded-2xl border border-border p-12 text-center text-muted-foreground">
+        <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-12 text-center text-muted-foreground">
           Nema uvezenih verzija rasporeda. Uvezi XML kroz stranicu "Raspored".
         </div>
       ) : (
-        <div className="bg-card rounded-2xl border border-border overflow-hidden">
+        <div className="bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border overflow-hidden">
           <table className="w-full">
             <thead className="bg-muted border-b border-border">
               <tr>
