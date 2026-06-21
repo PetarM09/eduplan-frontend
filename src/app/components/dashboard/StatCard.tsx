@@ -22,9 +22,9 @@ const ACCENT_MAP: Record<NonNullable<StatCardProps['accent']>, string> = {
 export function StatCard({ label, value, icon: Icon, to, accent = 'brand', hint }: StatCardProps) {
   const accentClass = ACCENT_MAP[accent];
   const content = (
-    <div className="bg-card rounded-2xl border border-border p-5 hover:shadow-md transition-shadow">
+    <div className="h-full bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-5 hover:shadow-xl transition-shadow">
       <div className="flex items-center gap-4">
-        <div className={`w-12 h-12 rounded-xl ${accentClass} flex items-center justify-center`}>
+        <div className={`w-12 h-12 rounded-xl ${accentClass} flex items-center justify-center flex-shrink-0`}>
           <Icon className="w-6 h-6" />
         </div>
         <div className="flex-1 min-w-0">
@@ -35,5 +35,11 @@ export function StatCard({ label, value, icon: Icon, to, accent = 'brand', hint 
       </div>
     </div>
   );
-  return to ? <Link to={to}>{content}</Link> : content;
+  return to ? (
+    <Link to={to} className="block h-full">
+      {content}
+    </Link>
+  ) : (
+    content
+  );
 }

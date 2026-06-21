@@ -132,7 +132,7 @@ function ListaRotacija({
       />
 
       {loading ? (
-        <div className="bg-card rounded-2xl border border-border p-12 flex items-center justify-center text-muted-foreground">
+        <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-12 flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam...
         </div>
       ) : error ? (
@@ -144,7 +144,7 @@ function ListaRotacija({
           </Button>
         </div>
       ) : rotacije.length === 0 ? (
-        <div className="bg-card rounded-2xl border border-border p-12 text-center text-muted-foreground">
+        <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-12 text-center text-muted-foreground">
           {nastavnikRezim
             ? 'Trenutno nisi ukljucen ni u jednu rotaciju. Koordinator skole pravi rotacije i bira profesore.'
             : mozePraviti
@@ -152,7 +152,7 @@ function ListaRotacija({
               : 'Jos nema rotacija.'}
         </div>
       ) : (
-        <div className="bg-card rounded-2xl border border-border overflow-hidden">
+        <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border overflow-hidden">
           <table className="w-full">
             <thead className="bg-muted border-b border-border">
               <tr>
@@ -402,7 +402,7 @@ function NoviRotacijaWizard({
       </div>
 
       {korak === 1 && (
-        <div className="bg-card rounded-2xl border border-border p-6 space-y-5">
+        <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-6 space-y-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="naziv">Naziv rotacije</Label>
@@ -455,7 +455,7 @@ function NoviRotacijaWizard({
       )}
 
       {korak === 2 && detekcija && (
-        <div className="bg-card rounded-2xl border border-border p-6 space-y-5">
+        <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-6 space-y-5">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-lg font-semibold text-foreground">
@@ -599,7 +599,7 @@ function NoviRotacijaWizard({
       )}
 
       {korak === 3 && (
-        <div className="bg-card rounded-2xl border border-border p-6 space-y-5">
+        <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-6 space-y-5">
           <div>
             <h2 className="text-lg font-semibold text-foreground">Grupe i nedelje</h2>
             <p className="text-sm text-muted-foreground">
@@ -765,7 +765,7 @@ function DetaljRotacije({ rotacijaId, onNazad }: { rotacijaId: string; onNazad: 
 
   if (loading) {
     return (
-      <div className="bg-card rounded-2xl border border-border p-12 flex items-center justify-center text-muted-foreground">
+      <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-12 flex items-center justify-center text-muted-foreground">
         <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam...
       </div>
     );
@@ -794,7 +794,7 @@ function DetaljRotacije({ rotacijaId, onNazad }: { rotacijaId: string; onNazad: 
         }
       />
 
-      <div className="bg-card rounded-2xl border border-border p-5">
+      <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-5">
         <h3 className="font-semibold text-foreground mb-3">Predmeti vezbi</h3>
         <div className="flex flex-wrap gap-2">
           {rot.predmeti.map((p) => (
@@ -855,7 +855,7 @@ function NedeljaTabela({
   });
 
   return (
-    <div className="bg-card rounded-2xl border border-border overflow-hidden">
+    <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border overflow-hidden">
       <header className="p-4 border-b border-border flex items-center gap-2">
         <span className="inline-flex w-7 h-7 rounded-full bg-brand-100 text-brand-700 items-center justify-center text-xs font-semibold">
           {brojNedelje}

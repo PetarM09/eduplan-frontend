@@ -222,7 +222,7 @@ export function KatalogPage() {
       />
 
       {/* Izbor predmeta */}
-      <div className="bg-card rounded-2xl border border-border p-4 flex items-center gap-3">
+      <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-4 flex items-center gap-3">
         <Folder className="w-5 h-5 text-muted-foreground" />
         <span className="text-sm text-foreground font-medium">Predmet:</span>
         {loadingPredmeti ? (
@@ -259,7 +259,7 @@ export function KatalogPage() {
       {izabraniPredmet && (
         <div className="grid lg:grid-cols-5 gap-6">
           {/* Leva kolona: Teme */}
-          <section className="lg:col-span-2 bg-card rounded-2xl border border-border overflow-hidden flex flex-col">
+          <section className="lg:col-span-2 bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border overflow-hidden flex flex-col">
             <header className="p-4 border-b border-border">
               <div className="flex items-center gap-2 mb-2">
                 <BookOpen className="w-5 h-5 text-brand-600" />
@@ -340,12 +340,12 @@ export function KatalogPage() {
           {/* Desna kolona: Jedinice + Ishodi */}
           <section className="lg:col-span-3 space-y-6">
             {!izabranaTema ? (
-              <div className="bg-card rounded-2xl border border-border p-12 text-center text-muted-foreground">
+              <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-12 text-center text-muted-foreground">
                 Izaberi temu iz liste da vidis njene nastavne jedinice i ishode.
               </div>
             ) : (
               <>
-                <div className="bg-card rounded-2xl border border-border overflow-hidden">
+                <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border overflow-hidden">
                   <header className="p-4 border-b border-border flex items-center gap-2">
                     <Layers className="w-5 h-5 text-brand-600" />
                     <h2 className="font-semibold text-foreground">
@@ -383,7 +383,7 @@ export function KatalogPage() {
                   )}
                 </div>
 
-                <div className="bg-card rounded-2xl border border-border overflow-hidden">
+                <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border overflow-hidden">
                   <header className="p-4 border-b border-border flex items-center gap-2">
                     <Target className="w-5 h-5 text-green-600" />
                     <h2 className="font-semibold text-foreground">
@@ -551,7 +551,7 @@ function PadajuciSekcija({
   };
 
   return (
-    <div className="bg-card rounded-2xl border border-border overflow-hidden">
+    <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border overflow-hidden">
       <header className="p-4 border-b border-border">
         <div className="flex items-center gap-2 mb-1">
           <Icon className="w-5 h-5 text-amber-600" />

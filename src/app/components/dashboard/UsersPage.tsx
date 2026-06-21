@@ -218,7 +218,7 @@ export function UsersPage() {
             </div>
 
             {/* Filteri */}
-            <div className="bg-card rounded-2xl border border-border p-4 flex flex-col lg:flex-row gap-3">
+            <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-4 flex flex-col lg:flex-row gap-3">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
@@ -252,7 +252,7 @@ export function UsersPage() {
             </div>
 
             {/* Lista */}
-            <div className="bg-card rounded-2xl border border-border overflow-hidden">
+            <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border overflow-hidden">
               {loading ? (
                 <div className="p-12 flex items-center justify-center text-muted-foreground">
                   <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam korisnike...
@@ -350,7 +350,7 @@ export function UsersPage() {
 
 function StatBox({ label, value, accent }: { label: string; value: number; accent?: string }) {
   return (
-    <div className="bg-card rounded-2xl border border-border p-4">
+    <div className="bg-card rounded-2xl shadow-md shadow-gray-200/50 border border-border p-4">
       <div className="text-sm text-muted-foreground">{label}</div>
       <div className={`text-2xl font-bold mt-1 ${accent ?? 'text-foreground'}`}>{value}</div>
     </div>
