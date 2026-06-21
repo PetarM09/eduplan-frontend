@@ -135,7 +135,7 @@ export function LoginPage() {
 
         {/* DESNO — forma */}
         <div className="w-full max-w-xl mx-auto lg:mx-0 lg:justify-self-end bg-card rounded-3xl shadow-xl shadow-gray-200/50 border border-border p-10 sm:p-12">
-          <img src={logoWordmark} alt="BehindClasses" className="h-24 sm:h-28 w-auto mb-10" />
+          <img src={logoWordmark} alt="BehindClasses" className="w-full h-auto mb-10" />
 
           <div className="mb-8">
             <h2 className="text-4xl font-bold text-foreground mb-2">Dobrodošli nazad</h2>
