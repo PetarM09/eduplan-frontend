@@ -91,42 +91,42 @@ export function LoginPage() {
       </button>
 
       {/* Sadrzaj: brend levo, forma desno — sve na istoj pozadini (bez sava) */}
-      <div className="relative z-10 flex-1 w-full max-w-6xl mx-auto px-6 grid lg:grid-cols-2 items-center gap-10 lg:gap-16 py-16">
+      <div className="relative z-10 flex-1 w-full max-w-7xl 2xl:max-w-[96rem] mx-auto px-6 sm:px-10 grid lg:grid-cols-2 items-center gap-12 lg:gap-24 py-12">
 
         {/* LEVO — brend / marketing */}
         <div className="hidden lg:block">
-          <div className="flex items-center gap-3 mb-12">
-            <img src={logoIcon} alt="BehindClasses" className="w-14 h-14 rounded-2xl" />
+          <div className="flex items-center gap-4 mb-14">
+            <img src={logoIcon} alt="BehindClasses" className="w-20 h-20 rounded-3xl" />
             <div>
-              <h1 className="text-2xl font-bold text-foreground">BehindClasses</h1>
-              <p className="text-sm text-muted-foreground">Sistem za planiranje nastave</p>
+              <h1 className="text-3xl font-bold text-foreground">BehindClasses</h1>
+              <p className="text-base text-muted-foreground">Sistem za planiranje nastave</p>
             </div>
           </div>
 
-          <div className="space-y-6 max-w-md">
-            <h2 className="text-4xl font-bold text-foreground leading-tight">
+          <div className="space-y-8 max-w-xl">
+            <h2 className="text-5xl xl:text-6xl font-bold text-foreground leading-[1.1]">
               Organizujte nastavu{' '}
               <span className="text-accent-600 dark:text-accent-400">brže i efikasnije</span>
             </h2>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-xl text-muted-foreground">
               Moderna platforma za upravljanje predmetima, temama i nastavnim jedinicama
             </p>
-            <div className="space-y-3 pt-4">
+            <div className="space-y-4 pt-2">
               {FEATURES.map((feature) => (
-                <div key={feature} className="flex items-center gap-3">
-                  <div className="w-7 h-7 rounded-full bg-accent-400/20 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="w-4 h-4 text-accent-600 dark:text-accent-300" />
+                <div key={feature} className="flex items-center gap-4">
+                  <div className="w-9 h-9 rounded-full bg-accent-400/20 flex items-center justify-center flex-shrink-0">
+                    <CheckCircle2 className="w-5 h-5 text-accent-600 dark:text-accent-300" />
                   </div>
-                  <span className="text-foreground">{feature}</span>
+                  <span className="text-lg text-foreground">{feature}</span>
                 </div>
               ))}
             </div>
 
-            <div className="grid grid-cols-3 gap-6 pt-6">
+            <div className="grid grid-cols-3 gap-6 pt-8">
               {STATS.map((stat) => (
                 <div key={stat.label}>
-                  <div className="text-3xl font-bold text-foreground">{stat.value}</div>
-                  <div className="text-sm text-muted-foreground">{stat.label}</div>
+                  <div className="text-4xl font-bold text-foreground">{stat.value}</div>
+                  <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -134,12 +134,12 @@ export function LoginPage() {
         </div>
 
         {/* DESNO — forma */}
-        <div className="w-full max-w-md mx-auto lg:mx-0 lg:justify-self-end bg-card rounded-2xl shadow-xl shadow-gray-200/50 border border-border p-8 sm:p-10">
-          <img src={logoWordmark} alt="BehindClasses" className="h-16 w-auto mb-8" />
+        <div className="w-full max-w-xl mx-auto lg:mx-0 lg:justify-self-end bg-card rounded-3xl shadow-xl shadow-gray-200/50 border border-border p-10 sm:p-12">
+          <img src={logoWordmark} alt="BehindClasses" className="h-24 sm:h-28 w-auto mb-10" />
 
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-foreground mb-2">Dobrodošli nazad</h2>
-            <p className="text-muted-foreground">Prijavite se na svoj nalog</p>
+            <h2 className="text-4xl font-bold text-foreground mb-2">Dobrodošli nazad</h2>
+            <p className="text-lg text-muted-foreground">Prijavite se na svoj nalog</p>
           </div>
 
           {errorMessage && (

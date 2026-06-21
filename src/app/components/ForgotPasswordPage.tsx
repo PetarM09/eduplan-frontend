@@ -5,7 +5,7 @@ import logoIcon from '@/assets/logo-icon.svg';
 
 export function ForgotPasswordPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-brand-50/30 to-brand-50/50">
+    <div className="dark min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-brand-900 via-brand-950 to-brand-900">
       <div className="w-full max-w-md">
         <div className="flex justify-center mb-8">
           <div className="flex items-center gap-3">
