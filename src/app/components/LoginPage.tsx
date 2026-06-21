@@ -5,13 +5,8 @@ import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
 import { useAuth } from '@/context/AuthContext';
 import { ApiError } from '@/lib/api';
-import {
-  Eye,
-  EyeOff,
-  GraduationCap,
-  ArrowRight,
-  CheckCircle2,
-} from 'lucide-react';
+import { Eye, EyeOff, ArrowRight, CheckCircle2 } from 'lucide-react';
+import logoIcon from '@/assets/logo-icon.svg';
 
 function pocetnaPoUlogi(uloga: string): string {
   switch (uloga) {
@@ -70,25 +65,25 @@ export function LoginPage() {
   return (
     <div className="min-h-screen flex">
       {/* LEVA STRANA */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 p-12 flex-col justify-between relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-brand-800 via-brand-900 to-brand-950 p-12 flex-col justify-between relative overflow-hidden">
 
         {/* Blur efekti */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-accent-400/15 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-brand-500/25 rounded-full blur-3xl"></div>
 
         <div className="relative z-10">
           {/* Logo */}
           <div className="flex items-center gap-3 mb-16">
-            <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center">
-              <GraduationCap className="w-7 h-7 text-white" />
+            <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center overflow-hidden">
+              <img src={logoIcon} alt="BehindClasses" className="w-9 h-9" />
             </div>
 
             <div>
               <h1 className="text-2xl font-bold text-white">
-                EduPlan
+                BehindClasses
               </h1>
 
-              <p className="text-sm text-blue-100">
+              <p className="text-sm text-brand-100">
                 Sistem za planiranje nastave
               </p>
             </div>
@@ -98,12 +93,12 @@ export function LoginPage() {
           <div className="space-y-6 max-w-md">
             <h2 className="text-4xl font-bold text-white leading-tight">
               Organizujte nastavu{' '}
-              <span className="text-cyan-300">
+              <span className="text-accent-300">
                 brže i efikasnije
               </span>
             </h2>
 
-            <p className="text-lg text-blue-100">
+            <p className="text-lg text-brand-100">
               Moderna platforma za upravljanje predmetima,
               temama i nastavnim jedinicama
             </p>
@@ -120,11 +115,11 @@ export function LoginPage() {
                   key={i}
                   className="flex items-center gap-3 text-white"
                 >
-                  <div className="w-8 h-8 rounded-full bg-cyan-400/20 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="w-5 h-5 text-cyan-300" />
+                  <div className="w-8 h-8 rounded-full bg-accent-400/20 flex items-center justify-center flex-shrink-0">
+                    <CheckCircle2 className="w-5 h-5 text-accent-300" />
                   </div>
 
-                  <span className="text-blue-50">
+                  <span className="text-brand-50">
                     {feature}
                   </span>
                 </div>
@@ -145,7 +140,7 @@ export function LoginPage() {
                 {stat.value}
               </div>
 
-              <div className="text-sm text-blue-200">
+              <div className="text-sm text-brand-200">
                 {stat.label}
               </div>
             </div>
@@ -154,18 +149,18 @@ export function LoginPage() {
       </div>
 
       {/* DESNA STRANA */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-gray-50">
+      <div className="flex-1 flex items-center justify-center p-8 bg-background">
         <div className="w-full max-w-md">
 
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center">
-              <GraduationCap className="w-6 h-6 text-white" />
+            <div className="w-10 h-10 rounded-xl bg-brand-900 flex items-center justify-center overflow-hidden">
+              <img src={logoIcon} alt="BehindClasses" className="w-7 h-7" />
             </div>
 
             <div>
-              <h1 className="text-xl font-bold text-gray-900">
-                EduPlan
+              <h1 className="text-xl font-bold text-foreground">
+                BehindClasses
               </h1>
             </div>
           </div>
@@ -173,11 +168,11 @@ export function LoginPage() {
           <div>
             {/* Header */}
             <div className="mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+              <h2 className="text-3xl font-bold text-foreground mb-2">
                 Dobrodošli nazad
               </h2>
 
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 Prijavite se na svoj nalog
               </p>
             </div>
@@ -199,7 +194,7 @@ export function LoginPage() {
               <div className="space-y-2">
                 <Label
                   htmlFor="username"
-                  className="text-gray-700"
+                  className="text-foreground"
                 >
                   Korisničko ime
                 </Label>
@@ -213,7 +208,7 @@ export function LoginPage() {
                     setUsername(e.target.value)
                   }
                   required
-                  className="h-12 px-4 bg-white border-gray-300 focus:border-blue-600 focus:ring-blue-600/20 rounded-xl transition-all"
+                  className="h-12 px-4 bg-input-background border-input focus:border-ring focus:ring-ring/30 rounded-xl transition-all"
                 />
               </div>
 
@@ -223,14 +218,14 @@ export function LoginPage() {
                 <div className="flex items-center justify-between">
                   <Label
                     htmlFor="password"
-                    className="text-gray-700"
+                    className="text-foreground"
                   >
                     Lozinka
                   </Label>
 
                   <Link
                     to="/forgot-password"
-                    className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                    className="text-sm text-brand-600 hover:text-brand-700 font-medium transition-colors"
                   >
                     Zaboravili ste?
                   </Link>
@@ -250,7 +245,7 @@ export function LoginPage() {
                       setPassword(e.target.value)
                     }
                     required
-                    className="h-12 px-4 pr-12 bg-white border-gray-300 focus:border-blue-600 focus:ring-blue-600/20 rounded-xl transition-all"
+                    className="h-12 px-4 pr-12 bg-input-background border-input focus:border-ring focus:ring-ring/30 rounded-xl transition-all"
                   />
 
                   <button
@@ -258,7 +253,7 @@ export function LoginPage() {
                     onClick={() =>
                       setShowPassword(!showPassword)
                     }
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {showPassword ? (
                       <EyeOff className="w-5 h-5" />
@@ -273,7 +268,7 @@ export function LoginPage() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium shadow-lg shadow-blue-600/25 transition-all hover:shadow-xl hover:shadow-blue-600/30 group"
+                className="w-full h-12 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-medium shadow-lg shadow-brand-600/25 transition-all hover:shadow-xl hover:shadow-brand-600/30 group"
               >
                 {isLoading ? (
                   <div className="flex items-center gap-2">
@@ -292,7 +287,7 @@ export function LoginPage() {
             </form>
 
             {/* Info — registracija nije javna (admin skole kreira naloge) */}
-            <div className="mt-8 rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
+            <div className="mt-8 rounded-xl border border-border bg-secondary p-4 text-sm text-muted-foreground">
               <p className="text-center">
                 Nalog kreira koordinator vase skole. Ako jos nemate pristup,
                 kontaktirajte administraciju.

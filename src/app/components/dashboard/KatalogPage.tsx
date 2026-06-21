@@ -222,13 +222,13 @@ export function KatalogPage() {
       />
 
       {/* Izbor predmeta */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-4 flex items-center gap-3">
-        <Folder className="w-5 h-5 text-gray-400" />
-        <span className="text-sm text-gray-700 font-medium">Predmet:</span>
+      <div className="bg-card rounded-2xl border border-border p-4 flex items-center gap-3">
+        <Folder className="w-5 h-5 text-muted-foreground" />
+        <span className="text-sm text-foreground font-medium">Predmet:</span>
         {loadingPredmeti ? (
-          <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+          <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
         ) : predmeti.length === 0 ? (
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-muted-foreground">
             Nema predmeta u skoli. Prvo kreiraj predmete u sekciji "Predmeti".
           </span>
         ) : (
@@ -259,14 +259,14 @@ export function KatalogPage() {
       {izabraniPredmet && (
         <div className="grid lg:grid-cols-5 gap-6">
           {/* Leva kolona: Teme */}
-          <section className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 overflow-hidden flex flex-col">
-            <header className="p-4 border-b border-gray-200">
+          <section className="lg:col-span-2 bg-card rounded-2xl border border-border overflow-hidden flex flex-col">
+            <header className="p-4 border-b border-border">
               <div className="flex items-center gap-2 mb-2">
-                <BookOpen className="w-5 h-5 text-blue-600" />
-                <h2 className="font-semibold text-gray-900">Teme predmeta {izabraniPredmet.naziv}</h2>
+                <BookOpen className="w-5 h-5 text-brand-600" />
+                <h2 className="font-semibold text-foreground">Teme predmeta {izabraniPredmet.naziv}</h2>
               </div>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   placeholder="Pretrazi teme"
                   value={pretragaTema}
@@ -288,7 +288,7 @@ export function KatalogPage() {
                   }
                 />
               ) : (
-                <ul className="divide-y divide-gray-100">
+                <ul className="divide-y divide-border">
                   {filtriraneTeme.map((t) => {
                     const isActive = t.id === temaId;
                     return (
@@ -296,27 +296,27 @@ export function KatalogPage() {
                         <button
                           onClick={() => setTemaId(t.id)}
                           className={`w-full text-left px-4 py-3 transition-colors flex items-start gap-3 ${
-                            isActive ? 'bg-blue-50' : 'hover:bg-gray-50'
+                            isActive ? 'bg-brand-50' : 'hover:bg-secondary'
                           }`}
                         >
                           <span
                             className={`flex-shrink-0 w-7 h-7 rounded-lg text-xs font-semibold flex items-center justify-center ${
-                              isActive ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'
+                              isActive ? 'bg-brand-600 text-white' : 'bg-secondary text-muted-foreground'
                             }`}
                           >
                             {t.redniBroj}
                           </span>
                           <div className="flex-1 min-w-0">
-                            <div className={`text-sm font-medium ${isActive ? 'text-blue-900' : 'text-gray-900'}`}>
+                            <div className={`text-sm font-medium ${isActive ? 'text-brand-900' : 'text-foreground'}`}>
                               {t.naziv}
                             </div>
-                            <div className="text-xs text-gray-500 mt-0.5">
+                            <div className="text-xs text-muted-foreground mt-0.5">
                               Obrada {t.casObrada} • Utvrd. {t.casUtvrd} • Ostalo {t.casOstalo}
                             </div>
                           </div>
                           {isActive && (
                             <ChevronRight
-                              className={`w-4 h-4 text-blue-600 mt-1.5 ${mozeBrisati ? 'group-hover:hidden' : ''}`}
+                              className={`w-4 h-4 text-brand-600 mt-1.5 ${mozeBrisati ? 'group-hover:hidden' : ''}`}
                             />
                           )}
                         </button>
@@ -340,18 +340,18 @@ export function KatalogPage() {
           {/* Desna kolona: Jedinice + Ishodi */}
           <section className="lg:col-span-3 space-y-6">
             {!izabranaTema ? (
-              <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center text-gray-500">
+              <div className="bg-card rounded-2xl border border-border p-12 text-center text-muted-foreground">
                 Izaberi temu iz liste da vidis njene nastavne jedinice i ishode.
               </div>
             ) : (
               <>
-                <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                  <header className="p-4 border-b border-gray-200 flex items-center gap-2">
-                    <Layers className="w-5 h-5 text-indigo-600" />
-                    <h2 className="font-semibold text-gray-900">
+                <div className="bg-card rounded-2xl border border-border overflow-hidden">
+                  <header className="p-4 border-b border-border flex items-center gap-2">
+                    <Layers className="w-5 h-5 text-brand-600" />
+                    <h2 className="font-semibold text-foreground">
                       Nastavne jedinice — {izabranaTema.naziv}
                     </h2>
-                    <span className="ml-auto text-xs text-gray-500">{jedinice.length} ukupno</span>
+                    <span className="ml-auto text-xs text-muted-foreground">{jedinice.length} ukupno</span>
                   </header>
                   {loadingJedinice ? (
                     <CenteredLoader />
@@ -361,13 +361,13 @@ export function KatalogPage() {
                       poruka="Tema jos nema unetih nastavnih jedinica. One se kreiraju kroz operativne planove."
                     />
                   ) : (
-                    <ol className="divide-y divide-gray-100">
+                    <ol className="divide-y divide-border">
                       {jedinice.map((j) => (
                         <li key={j.id} className="px-4 py-3 flex items-start gap-3 group">
-                          <span className="flex-shrink-0 w-7 h-7 rounded-lg bg-indigo-50 text-indigo-700 text-xs font-semibold flex items-center justify-center">
+                          <span className="flex-shrink-0 w-7 h-7 rounded-lg bg-brand-50 text-brand-700 text-xs font-semibold flex items-center justify-center">
                             {j.redniBroj ?? '—'}
                           </span>
-                          <span className="flex-1 text-sm text-gray-900">{j.naziv}</span>
+                          <span className="flex-1 text-sm text-foreground">{j.naziv}</span>
                           {mozeBrisati && (
                             <button
                               onClick={() => obrisiJedinicu(j)}
@@ -383,13 +383,13 @@ export function KatalogPage() {
                   )}
                 </div>
 
-                <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                  <header className="p-4 border-b border-gray-200 flex items-center gap-2">
+                <div className="bg-card rounded-2xl border border-border overflow-hidden">
+                  <header className="p-4 border-b border-border flex items-center gap-2">
                     <Target className="w-5 h-5 text-green-600" />
-                    <h2 className="font-semibold text-gray-900">
+                    <h2 className="font-semibold text-foreground">
                       Ishodi ucenja — {izabranaTema.naziv}
                     </h2>
-                    <span className="ml-auto text-xs text-gray-500">{ishodi.length} ukupno</span>
+                    <span className="ml-auto text-xs text-muted-foreground">{ishodi.length} ukupno</span>
                     {mozeUreditiIshode && (
                       <Button size="sm" variant="outline" onClick={() => setIshodOpen(true)}>
                         <Plus className="w-3.5 h-3.5" /> Dodaj
@@ -402,13 +402,13 @@ export function KatalogPage() {
                       poruka="Tema jos nema definisanih ishoda. Ishodi se dodaju pri izradi planova."
                     />
                   ) : (
-                    <ul className="divide-y divide-gray-100">
+                    <ul className="divide-y divide-border">
                       {ishodi.map((i, idx) => (
                         <li key={i.id} className="px-4 py-3 flex items-start gap-3 group">
                           <span className="flex-shrink-0 w-7 h-7 rounded-lg bg-green-50 text-green-700 text-xs font-semibold flex items-center justify-center">
                             {idx + 1}
                           </span>
-                          <span className="flex-1 text-sm text-gray-900 leading-relaxed">{i.opis}</span>
+                          <span className="flex-1 text-sm text-foreground leading-relaxed">{i.opis}</span>
                           {mozeBrisati && (
                             <button
                               onClick={() => obrisiIshod(i)}
@@ -482,7 +482,7 @@ export function KatalogPage() {
               placeholder="Ucenik je u stanju da..."
               rows={4}
             />
-            <p className="text-xs text-gray-500">Maks. 2000 karaktera. Trenutno: {noviIshodOpis.length}</p>
+            <p className="text-xs text-muted-foreground">Maks. 2000 karaktera. Trenutno: {noviIshodOpis.length}</p>
           </div>
           {ishodError && (
             <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
@@ -551,19 +551,19 @@ function PadajuciSekcija({
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-      <header className="p-4 border-b border-gray-200">
+    <div className="bg-card rounded-2xl border border-border overflow-hidden">
+      <header className="p-4 border-b border-border">
         <div className="flex items-center gap-2 mb-1">
           <Icon className="w-5 h-5 text-amber-600" />
-          <h2 className="font-semibold text-gray-900">{naslov}</h2>
-          <span className="ml-auto text-xs text-gray-500">{stavke.length} ukupno</span>
+          <h2 className="font-semibold text-foreground">{naslov}</h2>
+          <span className="ml-auto text-xs text-muted-foreground">{stavke.length} ukupno</span>
         </div>
-        <p className="text-xs text-gray-500">{opis}</p>
+        <p className="text-xs text-muted-foreground">{opis}</p>
       </header>
       <div className="p-4 space-y-3">
         {sistemski.length > 0 && (
           <div>
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
               Sistemski
             </p>
             <div className="flex flex-wrap gap-1.5">
@@ -580,14 +580,14 @@ function PadajuciSekcija({
         )}
         {skolski.length > 0 && (
           <div>
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
               Skolski
             </p>
             <div className="flex flex-wrap gap-1.5">
               {skolski.map((s) => (
                 <span
                   key={s.id}
-                  className="group inline-flex items-center gap-1 rounded-full bg-blue-50 text-blue-700 px-2.5 py-1 text-xs"
+                  className="group inline-flex items-center gap-1 rounded-full bg-brand-50 text-brand-700 px-2.5 py-1 text-xs"
                 >
                   {s.naziv}
                   {mozeMenjati && (
@@ -605,7 +605,7 @@ function PadajuciSekcija({
           </div>
         )}
         {mozeMenjati && (
-          <div className="pt-2 border-t border-gray-100 flex items-center gap-2">
+          <div className="pt-2 border-t border-border flex items-center gap-2">
             <Input
               value={noviNaziv}
               onChange={(e) => setNoviNaziv(e.target.value)}
@@ -622,7 +622,7 @@ function PadajuciSekcija({
           </div>
         )}
         {stavke.length === 0 && !mozeMenjati && (
-          <p className="text-sm text-gray-500 text-center py-2">Lista je prazna.</p>
+          <p className="text-sm text-muted-foreground text-center py-2">Lista je prazna.</p>
         )}
       </div>
     </div>
@@ -635,8 +635,8 @@ interface EmptyStateProps {
 }
 function EmptyState({ ikona: Icon, poruka }: EmptyStateProps) {
   return (
-    <div className="p-8 text-center text-gray-500">
-      <Icon className="w-8 h-8 mx-auto mb-2 text-gray-300" />
+    <div className="p-8 text-center text-muted-foreground">
+      <Icon className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
       <p className="text-sm">{poruka}</p>
     </div>
   );
@@ -644,7 +644,7 @@ function EmptyState({ ikona: Icon, poruka }: EmptyStateProps) {
 
 function CenteredLoader() {
   return (
-    <div className="p-8 flex items-center justify-center text-gray-500">
+    <div className="p-8 flex items-center justify-center text-muted-foreground">
       <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam...
     </div>
   );

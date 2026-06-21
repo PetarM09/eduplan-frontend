@@ -2,8 +2,20 @@
 <html lang="sr">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Skolska platforma</title>
+    <meta name="theme-color" content="#0e2443" />
+    <title>BehindClasses</title>
+    <script>
+      // Apply persisted/system theme before paint to avoid a flash.
+      (function () {
+        try {
+          var t = localStorage.getItem('sp.theme');
+          if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          if (t === 'dark') document.documentElement.classList.add('dark');
+        } catch (e) {}
+      })();
+    </script>
     <style>
       html, body { height: 100%; margin: 0; }
       #root { height: 100%; }

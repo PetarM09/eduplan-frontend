@@ -27,11 +27,11 @@ const PERIOD_LABEL: Record<PPPeriod, string> = {
 };
 
 const STATUS_BG: Record<string, string> = {
-  NACRT: 'bg-gray-100 text-gray-700',
-  PODNET: 'bg-blue-100 text-blue-700',
+  NACRT: 'bg-secondary text-foreground',
+  PODNET: 'bg-brand-100 text-brand-700',
   PRIHVACEN: 'bg-emerald-100 text-emerald-700',
   VRACENO_NA_DORADU: 'bg-amber-100 text-amber-700',
-  ARHIVIRAN: 'bg-gray-100 text-gray-500',
+  ARHIVIRAN: 'bg-secondary text-muted-foreground',
 };
 
 function trenutnaSkolskaGodina(): string {
@@ -129,7 +129,7 @@ export function PPDashboardPage() {
       />
 
       {loading ? (
-        <div className="bg-white rounded-2xl border border-gray-200 p-12 flex items-center justify-center text-gray-500">
+        <div className="bg-card rounded-2xl border border-border p-12 flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" /> Ucitavam dashboard...
         </div>
       ) : error ? (
@@ -166,16 +166,16 @@ export function PPDashboardPage() {
             />
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-200">
-            <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+          <div className="bg-card rounded-2xl border border-border">
+            <div className="px-6 py-4 border-b border-border flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <BarChart3 className="w-5 h-5 text-blue-600" />
-                <h2 className="font-semibold text-gray-900">Statistika izvestaja</h2>
+                <BarChart3 className="w-5 h-5 text-brand-600" />
+                <h2 className="font-semibold text-foreground">Statistika izvestaja</h2>
               </div>
               <select
                 value={period}
                 onChange={(e) => setPeriod(e.target.value as PPPeriod)}
-                className="h-9 px-2 rounded-lg border border-gray-300 text-sm"
+                className="h-9 px-2 rounded-lg border border-input text-sm"
               >
                 {(Object.keys(PERIOD_LABEL) as PPPeriod[]).map((p) => (
                   <option key={p} value={p}>
@@ -186,7 +186,7 @@ export function PPDashboardPage() {
             </div>
             <div className="p-6">
               {statLoading ? (
-                <div className="text-sm text-gray-500 flex items-center gap-2">
+                <div className="text-sm text-muted-foreground flex items-center gap-2">
                   <Loader2 className="w-4 h-4 animate-spin" /> Ucitavam statistiku...
                 </div>
               ) : statistika && statistika.brojIzvestaja > 0 ? (
@@ -204,7 +204,7 @@ export function PPDashboardPage() {
                   <Distribucija
                     naslov="Vladanje"
                     podaci={statistika.vladanjeDistribucija}
-                    classBg="bg-blue-500"
+                    classBg="bg-brand-500"
                   />
                   <Distribucija
                     naslov="Uspeh"
@@ -213,22 +213,22 @@ export function PPDashboardPage() {
                   />
                 </div>
               ) : (
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-muted-foreground">
                   Nema PP izvestaja za odabrani period i skolsku godinu.
                 </p>
               )}
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-200">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="font-semibold text-gray-900">Poslednji PP izvestaji</h2>
+          <div className="bg-card rounded-2xl border border-border">
+            <div className="px-6 py-4 border-b border-border">
+              <h2 className="font-semibold text-foreground">Poslednji PP izvestaji</h2>
             </div>
             {dashboard.izvestaji.length === 0 ? (
-              <p className="p-6 text-sm text-gray-500">Jos nema PP izvestaja.</p>
+              <p className="p-6 text-sm text-muted-foreground">Jos nema PP izvestaja.</p>
             ) : (
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-muted border-b border-border">
                   <tr>
                     <Th>Staresina</Th>
                     <Th>Odeljenje</Th>
@@ -237,10 +237,10 @@ export function PPDashboardPage() {
                     <Th>Status</Th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-border">
                   {dashboard.izvestaji.slice(0, 10).map((iz) => (
-                    <tr key={iz.id} className="hover:bg-gray-50">
-                      <Td className="font-medium text-gray-900">{iz.staresinaIme}</Td>
+                    <tr key={iz.id} className="hover:bg-secondary">
+                      <Td className="font-medium text-foreground">{iz.staresinaIme}</Td>
                       <Td>{iz.odeljenjeLabel}</Td>
                       <Td>{PERIOD_LABEL[iz.period]}</Td>
                       <Td>{iz.skolskaGodina}</Td>
@@ -279,17 +279,17 @@ function StatKartica({
   podStatusi: Record<string, number>;
 }) {
   const bojaMap = {
-    blue: 'bg-blue-50 text-blue-600',
+    blue: 'bg-brand-50 text-brand-600',
     purple: 'bg-purple-50 text-purple-600',
     emerald: 'bg-emerald-50 text-emerald-600',
   };
   const stavke = Object.entries(podStatusi).filter(([, v]) => v > 0);
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-6">
+    <div className="bg-card rounded-2xl border border-border p-6">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm font-medium text-gray-500">{naslov}</p>
-          <p className="text-3xl font-bold text-gray-900 mt-1">{broj}</p>
+          <p className="text-sm font-medium text-muted-foreground">{naslov}</p>
+          <p className="text-3xl font-bold text-foreground mt-1">{broj}</p>
         </div>
         <div className={`w-12 h-12 rounded-xl ${bojaMap[boja]} flex items-center justify-center`}>
           <Icon className="w-6 h-6" />
@@ -316,8 +316,8 @@ function StatKartica({
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-xs text-gray-500 uppercase tracking-wider">{label}</p>
-      <p className="text-lg font-semibold text-gray-900 mt-1">{value}</p>
+      <p className="text-xs text-muted-foreground uppercase tracking-wider">{label}</p>
+      <p className="text-lg font-semibold text-foreground mt-1">{value}</p>
     </div>
   );
 }
@@ -334,20 +334,20 @@ function Distribucija({
   const ukupno = useMemo(() => Object.values(podaci).reduce((a, b) => a + b, 0), [podaci]);
   return (
     <div className="md:col-span-2">
-      <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">{naslov}</p>
+      <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">{naslov}</p>
       {ukupno === 0 ? (
-        <p className="text-sm text-gray-400">—</p>
+        <p className="text-sm text-muted-foreground">—</p>
       ) : (
         <div className="space-y-1.5">
           {Object.entries(podaci).map(([k, v]) => {
             const pct = ukupno > 0 ? Math.round((v * 100) / ukupno) : 0;
             return (
               <div key={k} className="flex items-center gap-2 text-sm">
-                <span className="w-32 text-gray-700 truncate">{k}</span>
-                <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                <span className="w-32 text-foreground truncate">{k}</span>
+                <div className="flex-1 h-2 bg-secondary rounded-full overflow-hidden">
                   <div className={`h-full ${classBg}`} style={{ width: `${pct}%` }} />
                 </div>
-                <span className="w-12 text-right text-xs text-gray-500">
+                <span className="w-12 text-right text-xs text-muted-foreground">
                   {v} ({pct}%)
                 </span>
               </div>
@@ -361,12 +361,12 @@ function Distribucija({
 
 function Th({ children }: { children: React.ReactNode }) {
   return (
-    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+    <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
       {children}
     </th>
   );
 }
 
 function Td({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  return <td className={`px-6 py-4 text-sm text-gray-700 ${className}`}>{children}</td>;
+  return <td className={`px-6 py-4 text-sm text-foreground ${className}`}>{children}</td>;
 }

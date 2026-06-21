@@ -61,15 +61,15 @@ export function PozivnicaAktivacijaPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center px-4">
-      <div className="bg-white rounded-2xl shadow-xl border border-gray-200 w-full max-w-md p-8">
-        <div className="flex items-center gap-2 text-blue-600 mb-6">
+    <div className="min-h-screen bg-gradient-to-br from-brand-0 to-brand-50 flex items-center justify-center px-4">
+      <div className="bg-card rounded-2xl shadow-xl border border-border w-full max-w-md p-8">
+        <div className="flex items-center gap-2 text-brand-600 mb-6">
           <GraduationCap className="w-7 h-7" />
-          <span className="text-xl font-bold">Skolska platforma</span>
+          <span className="text-xl font-bold">BehindClasses</span>
         </div>
 
         {loading ? (
-          <div className="flex items-center gap-2 text-gray-500">
+          <div className="flex items-center gap-2 text-muted-foreground">
             <Loader2 className="w-5 h-5 animate-spin" /> Ucitavam pozivnicu...
           </div>
         ) : error ? (
@@ -91,19 +91,19 @@ export function PozivnicaAktivacijaPage() {
               <CheckCircle2 className="w-6 h-6" />
               <span className="font-medium">Nalog aktiviran!</span>
             </div>
-            <p className="text-sm text-gray-600">Prebacujemo te na ekran za prijavu...</p>
+            <p className="text-sm text-muted-foreground">Prebacujemo te na ekran za prijavu...</p>
           </div>
         ) : info ? (
           <div className="space-y-4">
             <div>
-              <h1 className="text-xl font-semibold text-gray-900">
+              <h1 className="text-xl font-semibold text-foreground">
                 Dobrodosao, {info.ime} {info.prezime}
               </h1>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-sm text-muted-foreground mt-1">
                 {info.skolaNaziv && <>Skola: <span className="font-medium">{info.skolaNaziv}</span><br /></>}
                 Mejl: <span className="font-medium">{info.email}</span>
               </p>
-              <p className="text-sm text-gray-500 mt-2">
+              <p className="text-sm text-muted-foreground mt-2">
                 Postavi svoju sifru da bi aktivirao nalog.
               </p>
             </div>
